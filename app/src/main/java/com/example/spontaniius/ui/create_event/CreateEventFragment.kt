@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import com.example.spontaniius.R
 
@@ -12,13 +13,13 @@ import com.example.spontaniius.R
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [CreateEventFragment.OnFragmentInteractionListener] interface
+ * [CreateEventFragment.OnCreateEventFragmentInteractionListener] interface
  * to handle interaction events.
  * Use the [CreateEventFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
 class CreateEventFragment : Fragment() {
-    private var listener: OnFragmentInteractionListener? = null
+    private var listenerCreateEvent: OnCreateEventFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +30,19 @@ class CreateEventFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_event, container, false)
+        val viewLayout = inflater.inflate(R.layout.fragment_create_event, container, false)
+        val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
+        iconSelectButton.setOnClickListener{
+            listenerCreateEvent?.selectEventIcon()
+//            TODO("Make the image that the user selects the icon here")
+        }
+        return viewLayout
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
+        if (context is OnCreateEventFragmentInteractionListener) {
+            listenerCreateEvent = context
         } else {
             throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
@@ -43,7 +50,7 @@ class CreateEventFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+        listenerCreateEvent = null
     }
 
     /**
@@ -57,7 +64,8 @@ class CreateEventFragment : Fragment() {
      * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnFragmentInteractionListener {
+    interface OnCreateEventFragmentInteractionListener {
+        fun selectEventIcon(): Any?
     }
 
     companion object {

@@ -3,4 +3,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_event_title">Create Event</string>
+    <string name="content_description_event_icon">An icon to represent the event</string>
+    <string name="hint_event_title">Event Title</string>
+    <string name="hint_event_description">Event Description</string>
+    <string name="prompt_select_event_icon">Choose Event Icon</string>
 </resources>

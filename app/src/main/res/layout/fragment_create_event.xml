@@ -1,14 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.create_event.CreateEventFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.create_event.CreateEventFragment"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="start">
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                style="@style/create_event_item_layout"
+                >
+                <ImageButton
+                    android:id="@+id/event_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_launcher_round"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@string/content_description_event_icon" />
 
-</FrameLayout>
+                <TextView
+                    android:id="@+id/prompt_select_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/prompt_select_event_icon"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow>
+            <EditText
+                android:id="@+id/event_title"
+                style="@style/create_event_item_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/hint_event_title"
+                android:hint="@string/hint_event_title"
+                android:inputType="text"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+        </TableRow>
+        <TableRow>
+            <EditText
+                android:id="@+id/event_description"
+                style="@style/create_event_item_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/hint_event_description"
+                android:hint="@string/hint_event_description"
+                android:inputType="text"
+                android:minHeight="100dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        </TableRow>
+    </TableLayout>
+</ScrollView>

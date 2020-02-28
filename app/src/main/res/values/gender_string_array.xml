@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gender_array">
+        <item>Any Gender</item>
+        <item>Men only</item>
+        <item>Women only</item>
+        <item>Non-Binary only</item>
+    </string-array>
+</resources>

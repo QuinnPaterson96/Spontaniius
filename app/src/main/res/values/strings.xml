@@ -8,4 +8,13 @@
     <string name="hint_event_title">Event Title</string>
     <string name="hint_event_description">Event Description</string>
     <string name="prompt_select_event_icon">Choose Event Icon</string>
+    <string name="select_start_time_prompt">Start Time:</string>
+    <string name="select_end_time_prompt">End Time:</string>
+    <string name="select_gender_prompt">Gender</string>
+    <string name="select_location_prompt">Location</string>
+    <string name="create_event">Create Event</string>
+    <string name="invite_prompt">Invite:</string>
+    <string name="invite_neighbours">Neighbours</string>
+    <string name="invite_neighbourhood">Neighbourhood</string>
+    <string name="invite_everyone">Everyone</string>
 </resources>

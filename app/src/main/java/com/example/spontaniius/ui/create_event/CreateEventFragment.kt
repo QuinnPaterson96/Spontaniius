@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageButton
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import com.example.spontaniius.R
 
@@ -35,6 +37,15 @@ class CreateEventFragment : Fragment() {
         iconSelectButton.setOnClickListener{
             listenerCreateEvent?.selectEventIcon()
 //            TODO("Make the image that the user selects the icon here")
+        }
+        val genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
+        ArrayAdapter.createFromResource(
+            listenerCreateEvent as Context,
+            R.array.gender_array,
+            android.R.layout.simple_spinner_item
+        ).also {arrayAdapter ->  
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            genderSpinner.adapter = arrayAdapter
         }
         return viewLayout
     }

@@ -13,8 +13,7 @@
         <TableRow>
             <LinearLayout
                 android:orientation="horizontal"
-                style="@style/create_event_item_layout"
-                >
+                style="@style/create_event_item_layout">
                 <ImageButton
                     android:id="@+id/event_icon"
                     android:layout_width="wrap_content"
@@ -57,6 +56,115 @@
                 android:inputType="text"
                 android:minHeight="100dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        </TableRow>
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                style="@style/create_event_item_layout"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/pick_location_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_start_time_prompt" />
+<!--                TODO: add location function to button-->
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/create_event_item_layout"
+                    android:text="Location Button"/>
+            </LinearLayout>
+        </TableRow>
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                style="@style/create_event_item_layout"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/pick_start_time_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_start_time_prompt" />
+                <TimePicker
+                    android:id="@+id/event_start_time_picker"
+                    style="@style/create_event_item_layout"
+                    android:timePickerMode="spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp" />
+            </LinearLayout>
+        </TableRow>
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                style="@style/create_event_item_layout"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/pick_end_time_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_end_time_prompt" />
+                <TimePicker
+                    android:id="@+id/event_end_time_picker"
+                    style="@style/create_event_item_layout"
+                    android:timePickerMode="spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp" />
+            </LinearLayout>
+        </TableRow>
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                style="@style/create_event_item_layout"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/pick_gender_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_gender_prompt" />
+                <Spinner
+                    android:id="@+id/gender_select_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </TableRow>
+        <TableRow>
+            <LinearLayout
+                android:orientation="vertical"
+                style="@style/create_event_item_layout"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/invite_prompt"/>
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:id="@+id/invite_neighbours"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/invite_neighbours"/>
+                    <RadioButton
+                        android:id="@+id/invite_neighbourhood"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/invite_neighbourhood"/>
+                    <RadioButton
+                        android:id="@+id/invite_everyone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/invite_everyone"/>
+                </RadioGroup>
+            </LinearLayout>
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/create_event_button"
+                style="@style/create_event_item_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_event"
+                android:textAlignment="center"/>
         </TableRow>
     </TableLayout>
 </ScrollView>

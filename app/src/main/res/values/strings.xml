@@ -17,4 +17,6 @@
     <string name="invite_neighbours">Neighbours</string>
     <string name="invite_neighbourhood">Neighbourhood</string>
     <string name="invite_everyone">Everyone</string>
+    <string name="warning_input_title">Please add a title to your event</string>
+    <string name="warning_input_description">Please add a description to your event</string>
 </resources>

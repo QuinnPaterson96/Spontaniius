@@ -29,4 +29,22 @@ class CreateEventActivity :
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         return -1
     }
+
+    override fun selectLocation(): Any? {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return -1
+    }
+
+    override fun createEvent(
+        title: String,
+        description: String,
+        startTime: Long,
+        endTime: Long,
+        location: Any?,
+        gender: Any?,
+        invitation: Any?
+    ) {
+
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

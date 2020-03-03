@@ -40,6 +40,10 @@ class CreateEventFragment : Fragment() {
             listenerCreateEvent?.selectEventIcon()
 //            TODO("Make the image that the user selects the icon here")
         }
+        val locationButton = viewLayout.findViewById<Button>(R.id.location_button)
+        locationButton.setOnClickListener {
+            listenerCreateEvent?.selectLocation()
+        }
         val genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
         ArrayAdapter.createFromResource(
             listenerCreateEvent as Context,

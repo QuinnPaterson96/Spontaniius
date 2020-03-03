@@ -9,6 +9,8 @@ class CreateEventActivity :
     AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener {
 
+    private val createEventFragmentTag = "CREATE EVENT TAG"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
@@ -16,7 +18,7 @@ class CreateEventActivity :
         supportFragmentManager.beginTransaction().add(
             R.id.create_event_container,
             CreateEventFragment.newInstance(),
-            "CREATE EVENT TAG"
+            createEventFragmentTag
         ).commit()
     }
 
@@ -31,7 +33,11 @@ class CreateEventActivity :
     }
 
     override fun selectLocation(): Any? {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val currentFragment = supportFragmentManager.findFragmentByTag(createEventFragmentTag)
+        if (currentFragment != null) {
+            supportFragmentManager.beginTransaction().hide(currentFragment)
+                .add(R.id.create_event_container, MapsFragment()).commit()
+        }
         return -1
     }
 

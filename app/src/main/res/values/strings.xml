@@ -19,4 +19,5 @@
     <string name="invite_everyone">Everyone</string>
     <string name="warning_input_title">Please add a title to your event</string>
     <string name="warning_input_description">Please add a description to your event</string>
+    <string name="prompt_choose_icon_input">Select an icon from gallery or use camera</string>
 </resources>

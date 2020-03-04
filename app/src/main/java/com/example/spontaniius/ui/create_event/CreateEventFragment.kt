@@ -1,6 +1,7 @@
 package com.example.spontaniius.ui.create_event
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,6 +24,10 @@ import java.util.*
  */
 class CreateEventFragment : Fragment() {
     private var listenerCreateEvent: OnCreateEventFragmentInteractionListener? = null
+    private lateinit var eventIcon: ImageButton
+    private val iconWidth = 150
+    private val iconHeight = 150
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +40,9 @@ class CreateEventFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val viewLayout = inflater.inflate(R.layout.fragment_create_event, container, false)
+        eventIcon = viewLayout.findViewById(R.id.event_icon)
         val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
-        iconSelectButton.setOnClickListener{
+        iconSelectButton.setOnClickListener {
             listenerCreateEvent?.selectEventIcon()
 //            TODO("Make the image that the user selects the icon here")
         }
@@ -49,23 +55,28 @@ class CreateEventFragment : Fragment() {
             listenerCreateEvent as Context,
             R.array.gender_array,
             android.R.layout.simple_spinner_item
-        ).also {arrayAdapter ->  
+        ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             genderSpinner.adapter = arrayAdapter
         }
         val createEventButton = viewLayout.findViewById<Button>(R.id.create_event_button)
-        createEventButton.setOnClickListener{
+        createEventButton.setOnClickListener {
             val title = viewLayout.findViewById<EditText>(R.id.event_title)
             val description = viewLayout.findViewById<EditText>(R.id.event_description)
 //            TODO: Location
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
-            val endTime= viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
+            val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
             when {
                 title.text.toString() == "" -> {
-                    Toast.makeText(context, getString(R.string.warning_input_title), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.warning_input_title),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 description.text.toString() == "" -> {
-                    Toast.makeText(context, R.string.warning_input_description, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.warning_input_description, Toast.LENGTH_LONG)
+                        .show()
                 }
 
                 else -> {
@@ -102,6 +113,26 @@ class CreateEventFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listenerCreateEvent = null
+    }
+
+    fun updateIcon(input: Bitmap?) {
+        if (input != null) {
+            val croppedBitmap = cropBitmapSquareCentered(input)
+            val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, iconWidth, iconHeight, true)
+            eventIcon.setImageBitmap(scaledBitmap)
+        }
+    }
+
+    private fun cropBitmapSquareCentered(
+        input: Bitmap
+    ): Bitmap {
+        val width = input.width
+        val height = input.height
+        return if (width > height) {
+            Bitmap.createBitmap(input, (width - height) / 2, 0, height, height)
+        } else {
+            Bitmap.createBitmap(input, 0, (height - width) / 2, width, width)
+        }
     }
 
     /**

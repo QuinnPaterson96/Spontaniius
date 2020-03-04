@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import com.example.spontaniius.R
+import com.example.spontaniius.data.DefaultRepository
+import com.example.spontaniius.data.Repository
 
 class CreateEventActivity :
     AppCompatActivity(),
@@ -14,10 +16,13 @@ class CreateEventActivity :
 
     private val pickRequestCode = 1
     private val createEventFragmentTag = "CREATE EVENT TAG"
+    private lateinit var repository: Repository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
+//        TODO("dependency inject the repository")
+        repository = DefaultRepository()
         setupActionBar()
         supportFragmentManager.beginTransaction().add(
             R.id.create_event_container,
@@ -79,13 +84,13 @@ class CreateEventActivity :
     override fun createEvent(
         title: String,
         description: String,
+        icon: Bitmap,
         startTime: Long,
         endTime: Long,
         location: Any?,
         gender: Any?,
         invitation: Any?
     ) {
-
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        repository.createEvent(title, description, icon, startTime, endTime, location, gender, invitation)
     }
 }

@@ -2,6 +2,7 @@ package com.example.spontaniius.ui.create_event
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,10 +25,10 @@ import java.util.*
  */
 class CreateEventFragment : Fragment() {
     private var listenerCreateEvent: OnCreateEventFragmentInteractionListener? = null
-    private lateinit var eventIcon: ImageButton
+    private lateinit var eventIconView: ImageButton
     private val iconWidth = 150
     private val iconHeight = 150
-
+    private var eventIcon: Bitmap = BitmapFactory.decodeResource(context?.resources, R.drawable.ic_pin_drop_black_56dp)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,7 @@ class CreateEventFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val viewLayout = inflater.inflate(R.layout.fragment_create_event, container, false)
-        eventIcon = viewLayout.findViewById(R.id.event_icon)
+        eventIconView = viewLayout.findViewById(R.id.event_icon)
         val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
         iconSelectButton.setOnClickListener {
             listenerCreateEvent?.selectEventIcon()
@@ -89,6 +90,7 @@ class CreateEventFragment : Fragment() {
                     listenerCreateEvent?.createEvent(
                         title.text.toString(),
                         description.text.toString(),
+                        eventIcon,
                         startDate.timeInMillis,
                         endDate.timeInMillis,
                         1,
@@ -119,7 +121,8 @@ class CreateEventFragment : Fragment() {
         if (input != null) {
             val croppedBitmap = cropBitmapSquareCentered(input)
             val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, iconWidth, iconHeight, true)
-            eventIcon.setImageBitmap(scaledBitmap)
+            eventIcon = scaledBitmap
+            eventIconView.setImageBitmap(eventIcon)
         }
     }
 
@@ -152,6 +155,7 @@ class CreateEventFragment : Fragment() {
         fun createEvent(
             title: String,
             description: String,
+            icon: Bitmap,
             startTime: Long, //using unix timestamp
             endTime: Long,
             location: Any?,

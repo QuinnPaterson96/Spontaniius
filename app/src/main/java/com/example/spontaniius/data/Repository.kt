@@ -1,5 +1,17 @@
 package com.example.spontaniius.data
 
+import android.graphics.Bitmap
+
 interface Repository {
-    //        TODO("Not yet implemented")
+
+    fun createEvent(
+        title: String,
+        description: String,
+        icon: Bitmap,
+        startTime: Long,
+        endTime: Long,
+        location: Any?,
+        gender: Any?,
+        invitation: Any?)
+    //        TODO("add Functions")
 }

@@ -28,21 +28,22 @@ class CreateEventActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == pickRequestCode && resultCode == Activity.RESULT_OK){
+        if (requestCode == pickRequestCode && resultCode == Activity.RESULT_OK) {
             val currentFragment = supportFragmentManager.findFragmentByTag(createEventFragmentTag)
-            if (currentFragment is CreateEventFragment){
+            if (currentFragment is CreateEventFragment) {
                 val imageUri = data?.data
                 if (imageUri != null) {
 
 //                    Deprecated method replacement is not available until API 29, current min is below that
-                val imageBitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+                    val imageBitmap: Bitmap =
+                        MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
                     currentFragment.updateIcon(imageBitmap)
                 }
             }
         }
     }
 
-    private fun setupActionBar(){
+    private fun setupActionBar() {
         actionBar?.title = getString(R.string.create_event_title)
     }
 
@@ -55,7 +56,7 @@ class CreateEventActivity :
 
         val chooseActionTitle = getString(R.string.prompt_choose_icon_input)
         val choiceIntent = Intent.createChooser(chooseIconIntent, chooseActionTitle)
-        val intentExtrasArray: Array<Intent> = Array(1){takePhotoIconIntent}
+        val intentExtrasArray: Array<Intent> = Array(1) { takePhotoIconIntent }
 
         choiceIntent.putExtra(
             Intent.EXTRA_INITIAL_INTENTS,

@@ -16,12 +16,11 @@
             <LinearLayout
                 style="@style/create_event_item_layout"
                 android:orientation="horizontal">
-                <!--                    TODO: add default icon-->
                 <ImageButton
                     android:id="@+id/event_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher_round"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_pin_drop_black_56dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:contentDescription="@string/content_description_event_icon" />

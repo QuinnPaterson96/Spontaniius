@@ -2,7 +2,6 @@ package com.example.spontaniius.ui.create_event
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,7 +27,9 @@ class CreateEventFragment : Fragment() {
     private lateinit var eventIconView: ImageButton
     private val iconWidth = 150
     private val iconHeight = 150
-    private var eventIcon: Bitmap = BitmapFactory.decodeResource(context?.resources, R.drawable.ic_pin_drop_black_56dp)
+
+    //    TODO: event icon with string implementation
+    private var eventIcon: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +95,8 @@ class CreateEventFragment : Fragment() {
                         startDate.timeInMillis,
                         endDate.timeInMillis,
                         1,
-                        1,
+//                        TODO: Gender
+                        "GENDER STRING",
                         1
                     )
                 }
@@ -115,15 +117,6 @@ class CreateEventFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listenerCreateEvent = null
-    }
-
-    fun updateIcon(input: Bitmap?) {
-        if (input != null) {
-            val croppedBitmap = cropBitmapSquareCentered(input)
-            val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, iconWidth, iconHeight, true)
-            eventIcon = scaledBitmap
-            eventIconView.setImageBitmap(eventIcon)
-        }
     }
 
     private fun cropBitmapSquareCentered(
@@ -155,12 +148,12 @@ class CreateEventFragment : Fragment() {
         fun createEvent(
             title: String,
             description: String,
-            icon: Bitmap,
+            icon: String,
             startTime: Long, //using unix timestamp
             endTime: Long,
             location: Any?,
-            gender: Any?,
-            invitation: Any?
+            gender: String,
+            invitation: Int
         )
     }
 

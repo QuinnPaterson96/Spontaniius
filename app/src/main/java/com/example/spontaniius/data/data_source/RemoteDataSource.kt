@@ -1,5 +1,5 @@
 package com.example.spontaniius.data.data_source
 
-class RemoteDataSource {
+class RemoteDataSource: DataSource {
     //    TODO("Not yet implementd")
 }

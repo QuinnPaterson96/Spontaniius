@@ -22,11 +22,12 @@ import java.util.*
  * Use the [CreateEventFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CreateEventFragment : Fragment() {
+class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var listenerCreateEvent: OnCreateEventFragmentInteractionListener? = null
     private lateinit var eventIconView: ImageButton
     private val iconWidth = 150
     private val iconHeight = 150
+    private lateinit var gender: String
 
     //    TODO: event icon with string implementation
     private var eventIcon: String = ""
@@ -45,8 +46,7 @@ class CreateEventFragment : Fragment() {
         eventIconView = viewLayout.findViewById(R.id.event_icon)
         val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
         iconSelectButton.setOnClickListener {
-            listenerCreateEvent?.selectEventIcon()
-//            TODO("Make the image that the user selects the icon here")
+//            TODO: Select some icons from a set of chosen ones here
         }
         val locationButton = viewLayout.findViewById<Button>(R.id.location_button)
         locationButton.setOnClickListener {
@@ -61,6 +61,7 @@ class CreateEventFragment : Fragment() {
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             genderSpinner.adapter = arrayAdapter
         }
+        genderSpinner.onItemSelectedListener = this
         val createEventButton = viewLayout.findViewById<Button>(R.id.create_event_button)
         createEventButton.setOnClickListener {
             val title = viewLayout.findViewById<EditText>(R.id.event_title)
@@ -68,6 +69,7 @@ class CreateEventFragment : Fragment() {
 //            TODO: Location
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
             val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
+            val invitationType = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
             when {
                 title.text.toString() == "" -> {
                     Toast.makeText(
@@ -80,7 +82,6 @@ class CreateEventFragment : Fragment() {
                     Toast.makeText(context, R.string.warning_input_description, Toast.LENGTH_LONG)
                         .show()
                 }
-
                 else -> {
                     val startDate = Calendar.getInstance()
                     startDate.set(Calendar.HOUR, startTime.hour)
@@ -88,6 +89,9 @@ class CreateEventFragment : Fragment() {
                     val endDate = Calendar.getInstance()
                     endDate.set(Calendar.HOUR, endTime.hour)
                     endDate.set(Calendar.MINUTE, endTime.minute)
+                    val selectedInvitationID = invitationType.checkedRadioButtonId
+                    val selectedButton = viewLayout.findViewById<RadioButton>(selectedInvitationID)
+                    val invitationPosition = invitationType.indexOfChild(selectedButton)
                     listenerCreateEvent?.createEvent(
                         title.text.toString(),
                         description.text.toString(),
@@ -95,9 +99,8 @@ class CreateEventFragment : Fragment() {
                         startDate.timeInMillis,
                         endDate.timeInMillis,
                         1,
-//                        TODO: Gender
-                        "GENDER STRING",
-                        1
+                        gender,
+                        invitationPosition
                     )
                 }
             }
@@ -105,10 +108,21 @@ class CreateEventFragment : Fragment() {
         return viewLayout
     }
 
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+//        Do nothing
+    }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnCreateEventFragmentInteractionListener) {
             listenerCreateEvent = context
+            if (!::gender.isInitialized) {
+                gender = context.resources.getStringArray(R.array.gender_array)[0]
+            }
         } else {
             throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
@@ -143,7 +157,6 @@ class CreateEventFragment : Fragment() {
      * for more information.
      */
     interface OnCreateEventFragmentInteractionListener {
-        fun selectEventIcon(): Any?
         fun selectLocation(): Any?
         fun createEvent(
             title: String,
@@ -164,7 +177,6 @@ class CreateEventFragment : Fragment() {
          *
          * @return A new instance of fragment CreateEventFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
             CreateEventFragment().apply {

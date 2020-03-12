@@ -5,10 +5,10 @@ import com.example.spontaniius.data.data_source.RemoteDataSource
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-class DefaultRepository : Repository {
-
-    private val localDataSource = LocalDataSource()
-    private val remoteDataSource = RemoteDataSource()
+class DefaultRepository(
+    private val localDataSource: LocalDataSource,
+    private val remoteDataSource: RemoteDataSource
+) : Repository {
 
     override suspend fun saveEvent(eventEntity: EventEntity) {
         coroutineScope {

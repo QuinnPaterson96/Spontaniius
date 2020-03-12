@@ -6,6 +6,8 @@ import com.example.spontaniius.R
 import com.example.spontaniius.data.DefaultRepository
 import com.example.spontaniius.data.EventEntity
 import com.example.spontaniius.data.Repository
+import com.example.spontaniius.data.data_source.LocalDataSource
+import com.example.spontaniius.data.data_source.RemoteDataSource
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -19,8 +21,11 @@ class CreateEventActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
-//        TODO("dependency inject the repository")
-        repository = DefaultRepository()
+//        TODO("refactor the following to use DAGGER")
+        val localDataSource = LocalDataSource()
+        val remoteDataSource = RemoteDataSource()
+        repository = DefaultRepository(localDataSource, remoteDataSource)
+
         setupActionBar()
         supportFragmentManager.beginTransaction().add(
             R.id.create_event_container,

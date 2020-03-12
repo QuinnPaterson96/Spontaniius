@@ -164,25 +164,44 @@
 
                 <RadioGroup
                     android:id="@+id/invite_group"
-                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <RadioButton
                         android:id="@+id/invite_neighbours"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:textAlignment="center"
+                        android:background="@drawable/radio_button_background"
+                        android:drawableTop="@drawable/ic_location_on_black_24dp"
+                        android:button="@android:color/transparent"
+                        android:layout_weight="1"
                         android:text="@string/invite_neighbours" />
 
                     <RadioButton
                         android:id="@+id/invite_neighbourhood"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="4dp"
+                        android:textAlignment="center"
+                        android:background="@drawable/radio_button_background"
+                        android:button="@android:color/transparent"
+                        android:drawableTop="@drawable/ic_home_black_24dp"
                         android:text="@string/invite_neighbourhood" />
 
                     <RadioButton
                         android:id="@+id/invite_everyone"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:textAlignment="center"
+                        android:background="@drawable/radio_button_background"
+                        android:button="@android:color/transparent"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/ic_brightness_1_black_24dp"
                         android:text="@string/invite_everyone" />
                 </RadioGroup>
             </LinearLayout>

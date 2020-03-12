@@ -1,7 +1,6 @@
 package com.example.spontaniius.ui.create_event
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,16 +24,11 @@ import java.util.*
 class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var listenerCreateEvent: OnCreateEventFragmentInteractionListener? = null
     private lateinit var eventIconView: ImageButton
-    private val iconWidth = 150
-    private val iconHeight = 150
     private lateinit var gender: String
 
     //    TODO: event icon with string implementation
     private var eventIcon: String = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -47,6 +41,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
         iconSelectButton.setOnClickListener {
 //            TODO: Select some icons from a set of chosen ones here
+//            TODO: Go through icons with quinn and select a few good ones to use
         }
         val locationButton = viewLayout.findViewById<Button>(R.id.location_button)
         locationButton.setOnClickListener {
@@ -131,18 +126,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onDetach() {
         super.onDetach()
         listenerCreateEvent = null
-    }
-
-    private fun cropBitmapSquareCentered(
-        input: Bitmap
-    ): Bitmap {
-        val width = input.width
-        val height = input.height
-        return if (width > height) {
-            Bitmap.createBitmap(input, (width - height) / 2, 0, height, height)
-        } else {
-            Bitmap.createBitmap(input, 0, (height - width) / 2, width, width)
-        }
     }
 
     /**

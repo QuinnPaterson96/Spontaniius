@@ -9,6 +9,4 @@ data class EventEntity(
     val location: Any?,
     val gender: String,
     val invitation: Int
-) {
-
-}
+)

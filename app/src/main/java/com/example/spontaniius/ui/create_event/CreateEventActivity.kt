@@ -6,8 +6,10 @@ import com.example.spontaniius.R
 import com.example.spontaniius.data.DefaultRepository
 import com.example.spontaniius.data.EventEntity
 import com.example.spontaniius.data.Repository
-import com.example.spontaniius.data.data_source.LocalDataSource
 import com.example.spontaniius.data.data_source.RemoteDataSource
+import com.example.spontaniius.data.data_source.local.EventDao
+import com.example.spontaniius.data.data_source.local.EventDatabase
+import com.example.spontaniius.data.data_source.local.LocalDataSource
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -21,8 +23,10 @@ class CreateEventActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
+
 //        TODO("refactor the following to use DAGGER")
-        val localDataSource = LocalDataSource()
+        val eventDao: EventDao = EventDatabase.getDatabase(applicationContext).eventDao()
+        val localDataSource = LocalDataSource(eventDao)
         val remoteDataSource = RemoteDataSource()
         repository = DefaultRepository(localDataSource, remoteDataSource)
 
@@ -59,7 +63,19 @@ class CreateEventActivity :
         invitation: Int
     ) {
         GlobalScope.launch {
-            repository.saveEvent(EventEntity(IntArray(0), title, description, gender,"Null address", "null icon", startTime, endTime, invitation))
+            repository.saveEvent(
+                EventEntity(
+//                    IntArray(0),
+                    title,
+                    description,
+                    gender,
+                    "Null address",
+                    "null icon",
+                    startTime,
+                    endTime,
+                    invitation
+                )
+            )
         }
     }
 }

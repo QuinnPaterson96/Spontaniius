@@ -40,8 +40,17 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     def room_version = "2.2.4"
+    // Room persistence library component dependencies
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+    testImplementation "androidx.room:room-testing:$room_version"
+
+
+    def lifecycleVersion = '2.2.0'
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
 
 }

@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "events")
 data class EventEntity(
-    val cardIDs: IntArray,
+//    val cardIDs: IntArray, TODO: figure it out: Room cannot figure out how to save an int array
     val title: String,
     val description: String,
     val gender: String,
@@ -18,7 +18,7 @@ data class EventEntity(
 ) {
     @PrimaryKey(autoGenerate = true)
     var eventID: Int = 0
-
+/*
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is EventEntity) return false
@@ -49,5 +49,5 @@ data class EventEntity(
         result = 31 * result + endTime.hashCode()
         result = 31 * result + invitation
         return result
-    }
+    }*/
 }

@@ -59,7 +59,7 @@ class CreateEventActivity :
         invitation: Int
     ) {
         GlobalScope.launch {
-            repository.saveEvent(EventEntity(title, description, icon, startTime, endTime, location, gender, invitation))
+            repository.saveEvent(EventEntity(IntArray(0), title, description, gender,"Null address", "null icon", startTime, endTime, invitation))
         }
     }
 }

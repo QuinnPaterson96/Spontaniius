@@ -4,8 +4,9 @@ import com.example.spontaniius.data.data_source.RemoteDataSource
 import com.example.spontaniius.data.data_source.local.LocalDataSource
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DefaultRepository(
+class DefaultRepository @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val remoteDataSource: RemoteDataSource
 ) : Repository {

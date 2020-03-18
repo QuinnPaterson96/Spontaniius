@@ -13,7 +13,7 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: EventEntity)
 
-//    TODO: Change when we have more solid ways of parsing location data so that we don't load whole database into memory
+    //    TODO: Change when we have more solid ways of parsing location data so that we don't load whole database into memory
     @Query("SELECT * FROM events")
     fun getEvents(): LiveData<List<EventEntity>>
 

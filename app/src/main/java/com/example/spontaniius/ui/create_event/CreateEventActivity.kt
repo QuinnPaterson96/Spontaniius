@@ -3,33 +3,31 @@ package com.example.spontaniius.ui.create_event
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.spontaniius.R
-import com.example.spontaniius.data.DefaultRepository
+import com.example.spontaniius.SpontaniiusApplication
 import com.example.spontaniius.data.EventEntity
 import com.example.spontaniius.data.Repository
-import com.example.spontaniius.data.data_source.RemoteDataSource
-import com.example.spontaniius.data.data_source.local.EventDao
-import com.example.spontaniius.data.data_source.local.EventDatabase
-import com.example.spontaniius.data.data_source.local.LocalDataSource
+import com.example.spontaniius.dependency_injection.CreateEventComponent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class CreateEventActivity :
     AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener {
 
     private val createEventFragmentTag = "CREATE EVENT TAG"
-    private lateinit var repository: Repository
+
+    @Inject
+    lateinit var repository: Repository
+    private lateinit var createEventComponent: CreateEventComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createEventComponent =
+            (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
+                .create()
+        createEventComponent.inject(this)
         setContentView(R.layout.activity_create_event)
-
-//        TODO("refactor the following to use DAGGER")
-        val eventDao: EventDao = EventDatabase.getDatabase(applicationContext).eventDao()
-        val localDataSource = LocalDataSource(eventDao)
-        val remoteDataSource = RemoteDataSource()
-        repository = DefaultRepository(localDataSource, remoteDataSource)
-
         setupActionBar()
         supportFragmentManager.beginTransaction().add(
             R.id.create_event_container,
@@ -40,6 +38,7 @@ class CreateEventActivity :
 
 
     private fun setupActionBar() {
+//        TODO: Debug
         actionBar?.title = getString(R.string.create_event_title)
     }
 

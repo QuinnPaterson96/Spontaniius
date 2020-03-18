@@ -28,18 +28,12 @@ class CreateEventActivity :
                 .create()
         createEventComponent.inject(this)
         setContentView(R.layout.activity_create_event)
-        setupActionBar()
+        setTitle(R.string.create_event_title)
         supportFragmentManager.beginTransaction().add(
             R.id.create_event_container,
             CreateEventFragment.newInstance(),
             createEventFragmentTag
         ).commit()
-    }
-
-
-    private fun setupActionBar() {
-//        TODO: Debug
-        actionBar?.title = getString(R.string.create_event_title)
     }
 
     override fun selectLocation(): Any? {

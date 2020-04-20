@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.275" />
 
-    <Button
+    <!--<Button
         android:id="@+id/UwU"
         android:layout_width="183dp"
         android:layout_height="73dp"
@@ -27,13 +27,18 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.395" />
+        app:layout_constraintVertical_bias="0.395" />-->
 
     <ListView
-        android:id="@+id/list_view"
+        android:id="@+id/Promotion_List"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/colorPrimary"
-        android:dividerHeight = "2dp"/>
+        android:dividerHeight="2dp"
+        tools:layout_editor_absoluteX="-39dp"
+        tools:layout_editor_absoluteY="134dp" >
+
+    </ListView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

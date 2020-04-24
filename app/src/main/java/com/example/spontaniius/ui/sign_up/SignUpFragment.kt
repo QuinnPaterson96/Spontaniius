@@ -39,7 +39,7 @@ class SignUpFragment : Fragment() {
         if (context is OnSignUpFragmentInteractionListener) {
             listenerSignUp = context
         } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnFragmentInteractionListener") as Throwable
         }
     }
 

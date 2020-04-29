@@ -1,6 +1,6 @@
 package com.example.spontaniius.data
 
-import com.example.spontaniius.data.data_source.RemoteDataSource
+import com.example.spontaniius.data.data_source.remote.RemoteDataSource
 import com.example.spontaniius.data.data_source.local.LocalDataSource
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch

@@ -25,6 +25,9 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var listenerCreateEvent: OnCreateEventFragmentInteractionListener? = null
     private lateinit var eventIconView: ImageButton
     private lateinit var gender: String
+    private val radius1 = 100
+    private val radius2 = 500
+    private val radius3 = 1000
 
     //    TODO: event icon with string implementation
     private var eventIcon: String = ""
@@ -87,6 +90,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     val selectedInvitationID = invitationType.checkedRadioButtonId
                     val selectedButton = viewLayout.findViewById<RadioButton>(selectedInvitationID)
                     val invitationPosition = invitationType.indexOfChild(selectedButton)
+                    val invitation = when {
+                        invitationPosition < 1 -> radius1
+                        invitationPosition == 1 -> radius2
+                        else -> radius3
+                    }
                     listenerCreateEvent?.createEvent(
                         title.text.toString(),
                         description.text.toString(),

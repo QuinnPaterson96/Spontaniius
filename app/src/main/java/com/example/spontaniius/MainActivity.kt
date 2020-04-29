@@ -23,6 +23,17 @@ class PromotionEntry {//Class format taken from [1] https://grokonez.com/android
     }
 }
 
+class PromotionDetailPage {//Class format taken from [1] https://grokonez.com/android/kotlin-listview-example-android.
+var id: Int? = null
+    var title: String? = null
+    var content: String? = null
+
+    constructor(id: Int, title: String, content: String){
+        this.id = id
+        this.title = title
+        this.content = content
+    }
+}
 
 class MainActivity : AppCompatActivity() { //So I have random notations pointing to a tutorial, we'll see what happens with that later
 
@@ -31,13 +42,16 @@ class MainActivity : AppCompatActivity() { //So I have random notations pointing
     //Default Repo: will have a bunch of infomation. Get data from there after debug builds (Wat dis mean??)
 
     private var PromosForList = ArrayList<PromotionEntry>() //[1]
+    private var promotionDetailList = ArrayList<PromotionDetailPage>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         PromosForList.add(PromotionEntry(1, "FirstYETI", "This is a text feild yooo!")) //[1]
+        promotionDetailList.add(PromotionDetailPage(1,"FirstYETI","This is a detail pargarapgh. This code likely requires further rewrites but let's get the intial concept up and running"))
         PromosForList.add(PromotionEntry(2, "YETI^2", "Huh we still out here with text lads"))
+        promotionDetailList.add(PromotionDetailPage(2,"YETI^2","YETI*YETI = YETI^2 QUICKMATHS"))
         PromosForList.add(
             PromotionEntry(
                 3,
@@ -45,11 +59,14 @@ class MainActivity : AppCompatActivity() { //So I have random notations pointing
                 "Listening to chillhop at 4:17am and coding. Quarintine life"
             )
         )
+        promotionDetailList.add(PromotionDetailPage(3,"YETI YEET","The wild yeti can be heard screaming 'Yeet!' from the mountaintops regularly in this spectacular display of a mating call in the Hymilayas"))
 
-        var promoAdapter = PromosAdapter(this, PromosForList)
+        var promoAdapter = PromoDetailAdapter(this, PromosForList)
         Promotion_List.adapter = promoAdapter
         Promotion_List.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
             Toast.makeText(this, "Click on " + PromosForList[position].title, Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, PromotionTab::class.java)
+            startActivity(intent);
         }
 
 
@@ -69,7 +86,12 @@ class MainActivity : AppCompatActivity() { //So I have random notations pointing
         //listView.adapter = adapter
 
     }
-    inner class PromosAdapter : BaseAdapter { //[1]
+
+   /* inner class PromoDetailPageAdapter : BaseAdapter{
+        override fun getView()
+    }*/
+
+    inner class PromoDetailAdapter : BaseAdapter { //[1]
 
         private var PromoList = ArrayList<PromotionEntry>()
         private var context: Context? = null

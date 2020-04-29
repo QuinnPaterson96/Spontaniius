@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+   <!-- <TextView
         android:layout_width="108dp"
         android:layout_height="24dp"
         android:text="Welcome to hell"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.275" />
 
-    <!--<Button
+    <Button
         android:id="@+id/UwU"
         android:layout_width="183dp"
         android:layout_height="73dp"

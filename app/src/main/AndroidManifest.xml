@@ -38,15 +38,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.sign_up.SignUpActivity" />
-        <activity android:name=".MainActivity">
-
-            <!--
+        <activity android:name=".MainActivity">       
+        <activity android:name=".PromotionTab"></activity>
+        <activity android:name=".ui.sign_up.SignUpActivity3" />
+        <activity android:name=".ui.sign_up.SignUpActivity2" />
+        <activity android:name=".ui.create_event.CreateEventActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".ui.sign_up.SignUpActivity">
             <intent-filter>
             TODO: Revert before merging
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            -->
+            
         </activity>
     </application>
 

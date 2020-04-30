@@ -8,11 +8,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="create_event_item_layout">
+  <style name="create_event_item_layout">
         <item name="android:layout_marginStart">@dimen/create_event_left_margin</item>
         <item name="android:gravity">start</item>
         <item name="android:layout_marginTop">@dimen/create_event_top_margin</item>
         <item name="android:layout_marginEnd">@dimen/create_event_left_margin</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

@@ -2,7 +2,8 @@
     <string name="app_name">Spontaniius</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+  <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="create_event_title">Create Event</string>
     <string name="content_description_event_icon">An icon to represent the event</string>
     <string name="hint_event_title">Event Title</string>
@@ -20,4 +21,36 @@
     <string name="warning_input_title">Please add a title to your event</string>
     <string name="warning_input_description">Please add a description to your event</string>
     <string name="prompt_choose_location">Select Location</string>
+    <string name="re_enter_password">Re-enter Password</string>
+    <string name="title_activity_sign_up3">SignUpActivity3</string>
+    <string name="password">Password</string>
+    <string name="username">Name</string>
+    <string name="phone_num">Phone Number</string>
+    <string name="done">Done</string>
+    <string name="include_phone">Include Phone Number</string>
+    <string name="include_greeting">Include Preferred Greeting</string>
+    <string name="back">Back</string>
+    <string name="hello">Hello my name is</string>
+    <string name="custom">Customise your greeting card!</string>
+    <string name="select">Seclect a background color</string>
+    <string name="phone_string">Phone Number:</string>
+    <string name="my_name">Hello my name is</string>
+    <string name="special_string">Please greet me with a</string>
+    <string name="five_string">high Five</string>
+    <string name="wave_string">wave</string>
+    <string name="hug_string">hug</string>
+    <string name="shake_string">hand shake</string>
+    <string name="greeted_string">How would you like to be greeted?</string>
+
+
+    <string-array name="color_array">
+        <item>Red</item>
+        <item>Orange</item>
+        <item>Yellow</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Purple</item>
+        <item>Pink</item>
+        <item>White</item>
+    </string-array>
 </resources>

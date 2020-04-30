@@ -9,10 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+
         <activity android:name=".PromotionTab"></activity>
-        <activity android:name=".ui.create_event.CreateEventActivity"></activity>
-        <activity android:name=".ui.sign_up.SignUpActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.sign_up.SignUpActivity3" />
+        <activity android:name=".ui.sign_up.SignUpActivity2" />
+        <activity android:name=".ui.create_event.CreateEventActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".ui.sign_up.SignUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

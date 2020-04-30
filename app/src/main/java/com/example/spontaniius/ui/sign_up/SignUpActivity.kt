@@ -17,7 +17,10 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
-        supportFragmentManager.beginTransaction().add(R.id.signup_container, SignUpFragment.newInstance(), "SIGNUP_FRAGMENT_TAG").commit()
+        supportFragmentManager.beginTransaction().add(
+            R.id.signup_container, 
+            SignUpFragment.newInstance(),
+            "SIGNUP_FRAGMENT_TAG").commit()
 
 
         //Variables for gender drop down
@@ -65,6 +68,5 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
 
         }
-
     }
 

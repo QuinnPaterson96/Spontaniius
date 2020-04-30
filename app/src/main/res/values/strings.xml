@@ -2,7 +2,25 @@
     <string name="app_name">Spontaniius</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_event_title">Create Event</string>
+    <string name="content_description_event_icon">An icon to represent the event</string>
+    <string name="hint_event_title">Event Title</string>
+    <string name="hint_event_description">Event Description</string>
+    <string name="prompt_select_event_icon">Choose Event Icon</string>
+    <string name="select_start_time_prompt">Start Time:</string>
+    <string name="select_end_time_prompt">End Time:</string>
+    <string name="select_gender_prompt">Gender</string>
+    <string name="select_location_prompt">Location</string>
+    <string name="create_event">Create Event</string>
+    <string name="invite_prompt">Invite:</string>
+    <string name="invite_neighbours">Neighbours</string>
+    <string name="invite_neighbourhood">Neighbourhood</string>
+    <string name="invite_everyone">Everyone</string>
+    <string name="warning_input_title">Please add a title to your event</string>
+    <string name="warning_input_description">Please add a description to your event</string>
+    <string name="prompt_choose_location">Select Location</string>
     <string name="re_enter_password">Re-enter Password</string>
     <string name="title_activity_sign_up3">SignUpActivity3</string>
     <string name="password">Password</string>
@@ -35,8 +53,4 @@
         <item>Pink</item>
         <item>White</item>
     </string-array>
-
-
-
-
 </resources>

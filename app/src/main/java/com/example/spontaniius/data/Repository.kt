@@ -1,5 +1,6 @@
 package com.example.spontaniius.data
 
 interface Repository {
-    //        TODO("Not yet implemented")
+
+    suspend fun saveEvent(eventEntity: EventEntity)
 }

@@ -9,6 +9,7 @@ import android.widget.*
 import com.example.spontaniius.R
 import android.view.View
 import androidx.cardview.widget.CardView
+import com.example.spontaniius.ui.find_event.FindEventActivity
 
 
 class SignUpActivity3 : AppCompatActivity() {
@@ -34,7 +35,7 @@ class SignUpActivity3 : AppCompatActivity() {
             text = name
         }
 
-
+        val done3 = findViewById<Button>(R.id.done_button3)
 
 
 
@@ -122,11 +123,21 @@ class SignUpActivity3 : AppCompatActivity() {
                 }
             }
 
+
+
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // Another interface callback
             }
+
         }
 
+        done3.setOnClickListener{
+
+            val intent = Intent(this, FindEventActivity::class.java).apply{
+
+            }
+            startActivity(intent)
+        }
 
     }
 

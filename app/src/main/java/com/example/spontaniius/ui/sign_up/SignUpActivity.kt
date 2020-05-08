@@ -18,7 +18,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
         supportFragmentManager.beginTransaction().add(
-            R.id.signup_container, 
+            R.id.sign_up_container,
             SignUpFragment.newInstance(),
             "SIGNUP_FRAGMENT_TAG").commit()
 

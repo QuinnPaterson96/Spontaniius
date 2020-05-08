@@ -3,7 +3,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
 
-  <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="create_event_title">Create Event</string>
     <string name="content_description_event_icon">An icon to represent the event</string>
     <string name="hint_event_title">Event Title</string>
@@ -53,4 +53,8 @@
         <item>Pink</item>
         <item>White</item>
     </string-array>
+    <string name="title_activity_find_event">FindEventActivity</string>
+    <string name="find_screen">Join In</string>
+    <string name="create_screen">Invite</string>
+    <string name="promotions_screen">Deals</string>
 </resources>

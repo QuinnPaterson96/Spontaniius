@@ -7,7 +7,6 @@ import org.json.JSONObject
 
 @Entity(tableName = "events")
 data class EventEntity(
-//    val cardIDs: IntArray, TODO: figure it out: Room cannot figure out how to save an int array
     val title: String,
     val description: String,
     val gender: String,

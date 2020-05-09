@@ -23,6 +23,7 @@ class SignUpActivity3 : AppCompatActivity() {
         val name = intent.getStringExtra(USER_NAME)
         val phone = intent.getStringExtra(PHONE_NUMBER)
         val greet = intent.getStringExtra(GREETING)
+        val userid = intent.getStringExtra(USER_ID)
         val greeting_card : CardView = findViewById(R.id.greeting_card)
         val phone_s : String = getString(R.string.phone_string)
         val greet_s : String = getString(R.string.special_string)

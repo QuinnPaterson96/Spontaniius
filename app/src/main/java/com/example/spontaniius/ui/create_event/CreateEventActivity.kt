@@ -49,8 +49,8 @@ class CreateEventActivity :
         title: String,
         description: String,
         icon: String,
-        startTime: Long,
-        endTime: Long,
+        startTime: String,
+        endTime: String,
         location: Any?,
         gender: String,
         invitation: Int
@@ -58,7 +58,6 @@ class CreateEventActivity :
         GlobalScope.launch {
             repository.saveEvent(
                 EventEntity(
-//                    IntArray(0),
                     title,
                     description,
                     gender,

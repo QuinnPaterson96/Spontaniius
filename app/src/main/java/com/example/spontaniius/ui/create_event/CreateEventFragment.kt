@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.spontaniius.R
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -99,8 +100,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         title.text.toString(),
                         description.text.toString(),
                         eventIcon,
-                        startDate.timeInMillis,
-                        endDate.timeInMillis,
+                        getDateString(startDate),
+                        getDateString(endDate),
                         1,
                         gender,
                         invitationPosition
@@ -136,6 +137,15 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         listenerCreateEvent = null
     }
 
+
+    private fun getDateString(calendar: Calendar): String {
+//        TODO: Figure out why this returns the wrong date
+        val pattern = "yy-MM-dd hh:mm:00"
+        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+        formatter.timeZone = calendar.timeZone
+        return formatter.format(calendar.time)
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -153,8 +163,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             title: String,
             description: String,
             icon: String,
-            startTime: Long, //using unix timestamp
-            endTime: Long,
+            startTime: String, //using unix timestamp
+            endTime: String,
             location: Any?,
             gender: String,
             invitation: Int

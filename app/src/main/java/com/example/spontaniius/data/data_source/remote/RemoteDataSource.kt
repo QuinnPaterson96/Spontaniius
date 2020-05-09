@@ -24,7 +24,7 @@ class RemoteDataSource @Inject constructor() :
                 urlConnection.connect()
 
                 val outputStream = DataOutputStream(urlConnection.outputStream as OutputStream)
-                val data = "PostData=" + eventEntity.toJSON().toString()
+                val data = eventEntity.toJSON().toString()
                 outputStream.writeBytes(data)
                 outputStream.flush()
                 outputStream.close()

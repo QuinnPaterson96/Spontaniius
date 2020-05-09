@@ -12,10 +12,12 @@ data class EventEntity(
     val gender: String,
     val address: String,
     val icon: String,
-    val startTime: Long,
-    val endTime: Long,
+    val startTime: String,
+    val endTime: String,
     val invitation: Int
 ) {
+
+
     @PrimaryKey(autoGenerate = true)
     var eventID: Int = 0
 

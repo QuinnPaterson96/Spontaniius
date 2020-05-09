@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.spontaniius.data.EventEntity
 
 //TODO: Export schema = true for release
-@Database(entities = [EventEntity::class], version = 1, exportSchema = false)
+@Database(entities = [EventEntity::class], version = 2, exportSchema = false)
 abstract class EventDatabase : RoomDatabase() {
 
     abstract fun eventDao(): EventDao
@@ -25,7 +25,9 @@ abstract class EventDatabase : RoomDatabase() {
             synchronized(this) {
                 val newInstance =
                     Room.databaseBuilder(context, EventDatabase::class.java, "event_database")
+                        .fallbackToDestructiveMigration()
                         .build()
+//                TODO: remove fallback to destructive Migration for release
                 instance = newInstance
                 return newInstance
             }

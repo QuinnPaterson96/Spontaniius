@@ -65,7 +65,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         createEventButton.setOnClickListener {
             val title = viewLayout.findViewById<EditText>(R.id.event_title)
             val description = viewLayout.findViewById<EditText>(R.id.event_description)
-//            TODO: Location
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
             val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
             val invitationType = viewLayout.findViewById<RadioGroup>(R.id.invite_group)

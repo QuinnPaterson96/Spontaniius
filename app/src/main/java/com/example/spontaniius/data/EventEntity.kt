@@ -14,6 +14,8 @@ data class EventEntity(
     val icon: String,
     val startTime: String,
     val endTime: String,
+    val latitude: Double,
+    val longitude: Double,
     val invitation: Int
 ) {
 
@@ -27,8 +29,8 @@ data class EventEntity(
         jsonObject.put("eventText", this.description)
         jsonObject.put("genderRestrict", this.gender)
         jsonObject.put("icon", this.icon)
-//        TODO: actual addresses
-        jsonObject.put("streetAddress", "(48.4335854,-123.33710359999999)")
+//        TODO: test actual addresses
+        jsonObject.put("streetAddress", "(${this.latitude},${this.longitude})")
         jsonObject.put("maxRadius", this.invitation)
         jsonObject.put("eventStarts", this.startTime)
         jsonObject.put("eventEnds", this.endTime)

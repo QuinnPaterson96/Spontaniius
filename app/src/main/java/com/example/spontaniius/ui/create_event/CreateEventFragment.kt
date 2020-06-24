@@ -102,7 +102,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         eventIcon,
                         getDateString(startDate),
                         getDateString(endDate),
-                        1,
                         gender,
                         invitationPosition
                     )
@@ -165,7 +164,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             icon: String,
             startTime: String, //using unix timestamp
             endTime: String,
-            location: Any?,
             gender: String,
             invitation: Int
         )

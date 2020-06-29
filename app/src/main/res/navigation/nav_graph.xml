@@ -2,4 +2,61 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph" />
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.spontaniius.ui.sign_up.SignUpFragment"
+        android:label="SignUpFragment" >
+        <action
+            android:id="@+id/action_signUpFragment_to_findEventFragment"
+            app:destination="@id/findEventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/findEventFragment"
+        android:name="com.example.spontaniius.ui.find_event.FindEventFragment"
+        android:label="find_event_fragment"
+        tools:layout="@layout/find_event_fragment" >
+        <action
+            android:id="@+id/action_findEventFragment_to_createEventFragment2"
+            app:destination="@id/createEventFragment2" />
+        <action
+            android:id="@+id/action_findEventFragment_to_promotionTabFragment"
+            app:destination="@id/promotionTabFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createEventFragment2"
+        android:name="com.example.spontaniius.ui.create_event.CreateEventFragment"
+        android:label="fragment_create_event"
+        tools:layout="@layout/fragment_create_event" >
+        <action
+            android:id="@+id/action_createEventFragment2_to_findEventFragment"
+            app:destination="@id/findEventFragment" />
+        <action
+            android:id="@+id/action_createEventFragment2_to_promotionTabFragment"
+            app:destination="@id/promotionTabFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/promotionTabFragment"
+        android:name="com.example.spontaniius.ui.promotions.PromotionTabFragment"
+        android:label="PromotionTabFragment" >
+        <action
+            android:id="@+id/action_promotionTabFragment_to_findEventFragment"
+            app:destination="@id/findEventFragment" />
+        <action
+            android:id="@+id/action_promotionTabFragment_to_createEventFragment2"
+            app:destination="@id/createEventFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.spontaniius.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_findEventFragment"
+            app:destination="@id/findEventFragment" />
+    </fragment>
+</navigation>

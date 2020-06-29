@@ -9,18 +9,26 @@
         android:id="@+id/find_event"
         android:name="com.example.spontaniius.ui.find_event.FindEventFragment"
         android:label="@string/find_screen"
-        tools:layout="@layout/fragment_find_event" />
-
-    <fragment
-        android:id="@+id/createEventFragment"
-        android:name="com.example.spontaniius.ui.create_event.CreateEventFragment"
-        android:label="fragment_create_event"
-        tools:layout="@layout/fragment_create_event" />
-
-    <fragment
-        android:id="@+id/promotions"
-        android:name="com.example.spontaniius.ui.promotions.PromotionTabFragment"
-        android:label="@string/promotions_screen"
+        tools:layout="@layout/fragment_find_event" >
+        <action
+            android:id="@+id/action_find_event_to_createEventFragment2"
+            app:destination="@id/createEventFragment2" />
+        <action
+            android:id="@+id/action_find_event_to_promotionTab"
+            app:destination="@id/promotionTab" />
+        <action
+            android:id="@+id/action_find_event_to_createEventActivity"
+            app:destination="@id/createEventActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/promotionTab"
+        android:name="com.example.spontaniius.ui.promotions.PromotionTab"
+        android:label="fragment_promotions"
         tools:layout="@layout/fragment_promotions" />
+    <activity
+        android:id="@+id/createEventActivity"
+        android:name="com.example.spontaniius.ui.create_event.CreateEventActivity"
+        android:label="activity_create_event"
+        tools:layout="@layout/activity_create_event" />
 
 </navigation>

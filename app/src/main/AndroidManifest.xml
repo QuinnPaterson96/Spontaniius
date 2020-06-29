@@ -18,6 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/title_activity_sign_in">
+
+        </activity>
+        <activity
             android:name=".ui.find_event.FindEventActivity"
             android:label="@string/title_activity_find_event"></activity>
         <!--
@@ -32,16 +37,16 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".ui.create_event.CreateEventActivity" />
-        <activity android:name=".ui.sign_up.SignUpActivity">
+        <activity android:name=".ui.create_event.CreateEventActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.sign_up.SignUpActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".ui.promotions.PromotionTab" />
+        <activity android:name=".ui.promotions.PromotionTab"></activity>
         <activity android:name=".ui.sign_up.SignUpActivity3" />
         <activity android:name=".ui.sign_up.SignUpActivity2" />
     </application>

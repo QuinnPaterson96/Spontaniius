@@ -31,22 +31,17 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".ui.create_event.CreateEventActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".PromotionTab" />
         <activity android:name=".ui.sign_up.SignUpActivity3" />
         <activity android:name=".ui.sign_up.SignUpActivity2" />
         <activity android:name=".ui.sign_up.SignUpActivity">
-            <!-- <intent-filter>
+             <intent-filter>
                  <action android:name="android.intent.action.MAIN" />
                  <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
- -->
         </activity>
     </application>
 

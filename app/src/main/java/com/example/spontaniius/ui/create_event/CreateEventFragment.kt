@@ -10,7 +10,6 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.spontaniius.R
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -81,12 +80,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         .show()
                 }
                 else -> {
-                    val startDate = Calendar.getInstance()
-                    startDate.set(Calendar.HOUR, startTime.hour)
-                    startDate.set(Calendar.MINUTE, startTime.minute)
-                    val endDate = Calendar.getInstance()
-                    endDate.set(Calendar.HOUR, endTime.hour)
-                    endDate.set(Calendar.MINUTE, endTime.minute)
+                    val currentDate = Calendar.getInstance(TimeZone.getDefault())
+                    val year = currentDate.get(Calendar.YEAR)
+                    val month = currentDate.get(Calendar.MONTH) + 1
+                    val day = currentDate.get(Calendar.DAY_OF_MONTH)
                     val selectedInvitationID = invitationType.checkedRadioButtonId
                     val selectedButton = viewLayout.findViewById<RadioButton>(selectedInvitationID)
                     val invitationPosition = invitationType.indexOfChild(selectedButton)
@@ -99,8 +96,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         title.text.toString(),
                         description.text.toString(),
                         eventIcon,
-                        getDateString(startDate),
-                        getDateString(endDate),
+                        getDateString(year, month, day, startTime.hour, startTime.minute),
+                        getDateString(year, month, day, endTime.hour, endTime.minute),
                         gender,
                         invitationPosition
                     )
@@ -136,12 +133,21 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    private fun getDateString(calendar: Calendar): String {
-//        TODO: Figure out why this returns the wrong date
-        val pattern = "yy-MM-dd hh:mm:00"
-        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
-        formatter.timeZone = calendar.timeZone
-        return formatter.format(calendar.time)
+    private fun getDateString(year: Int, month: Int, day: Int, hour: Int, minute: Int): String {
+//      pattern = "yy-MM-dd hh:mm:00"
+        val dateStringBuilder = StringBuilder()
+        dateStringBuilder.append(year)
+        dateStringBuilder.append("-")
+        dateStringBuilder.append(month)
+        dateStringBuilder.append("-")
+        dateStringBuilder.append(day)
+        dateStringBuilder.append(" ")
+        dateStringBuilder.append(hour)
+        dateStringBuilder.append(":")
+        dateStringBuilder.append(minute)
+        dateStringBuilder.append(":")
+        dateStringBuilder.append("00")
+        return dateStringBuilder.toString()
     }
 
     /**

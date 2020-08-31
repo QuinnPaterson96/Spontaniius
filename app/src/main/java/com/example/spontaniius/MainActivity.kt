@@ -1,13 +1,16 @@
 package com.example.spontaniius
 
-import android.content.Intent
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.BaseAdapter
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.spontaniius.ui.promotions.PromotionTab
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -66,7 +69,7 @@ class MainActivity : AppCompatActivity() { //So I have random notations pointing
         Promotion_List.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
             Toast.makeText(this, "Click on " + PromosForList[position].title, Toast.LENGTH_SHORT).show()
             val intent = Intent(this, PromotionTab::class.java)
-            startActivity(intent);
+            startActivity(intent)
         }
 
 
@@ -141,7 +144,7 @@ class MainActivity : AppCompatActivity() { //So I have random notations pointing
 
         init {
             this.tvTitle = view?.findViewById(R.id.tvTitle) as TextView
-            this.tvContent = view?.findViewById(R.id.tvContent) as TextView
+            this.tvContent = view.findViewById(R.id.tvContent) as TextView
         }
     }
 

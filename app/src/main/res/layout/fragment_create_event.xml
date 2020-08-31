@@ -19,12 +19,12 @@
 
                 <ImageButton
                     android:id="@+id/event_icon"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_pin_drop_black_56dp"
+                    android:layout_width="62dp"
+                    android:layout_height="match_parent"
                     android:clickable="true"
+                    android:contentDescription="@string/content_description_event_icon"
                     android:focusable="true"
-                    android:contentDescription="@string/content_description_event_icon" />
+                    android:src="@drawable/ic_pin_drop_black_56dp" />
 
                 <TextView
                     android:id="@+id/prompt_select_icon"
@@ -105,9 +105,9 @@
                 <TimePicker
                     android:id="@+id/event_start_time_picker"
                     style="@style/create_event_item_layout"
-                    android:timePickerMode="spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="150dp" />
+                    android:layout_height="70dp"
+                    android:timePickerMode="spinner" />
             </LinearLayout>
         </TableRow>
 
@@ -127,9 +127,9 @@
                 <TimePicker
                     android:id="@+id/event_end_time_picker"
                     style="@style/create_event_item_layout"
-                    android:timePickerMode="spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="150dp" />
+                    android:layout_width="272dp"
+                    android:layout_height="77dp"
+                    android:timePickerMode="spinner" />
             </LinearLayout>
         </TableRow>
 

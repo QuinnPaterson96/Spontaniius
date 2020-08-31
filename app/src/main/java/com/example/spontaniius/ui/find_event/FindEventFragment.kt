@@ -1,12 +1,11 @@
 package com.example.spontaniius.ui.find_event
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.spontaniius.R
 
 class FindEventFragment : Fragment() {

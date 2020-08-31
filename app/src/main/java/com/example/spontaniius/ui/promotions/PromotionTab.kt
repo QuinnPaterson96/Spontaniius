@@ -1,8 +1,8 @@
 package com.example.spontaniius.ui.promotions
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import com.example.spontaniius.R
 
 class PromotionTab : AppCompatActivity() {

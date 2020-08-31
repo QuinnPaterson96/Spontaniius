@@ -19,6 +19,7 @@ class VolleySingleton constructor(context: Context) {
                 }
             }
     }
+
     val imageLoader: ImageLoader by lazy {
         ImageLoader(requestQueue,
             object : ImageLoader.ImageCache {
@@ -26,6 +27,7 @@ class VolleySingleton constructor(context: Context) {
                 override fun getBitmap(url: String): Bitmap? {
                     return cache.get(url)
                 }
+
                 override fun putBitmap(url: String, bitmap: Bitmap) {
                     cache.put(url, bitmap)
                 }
@@ -36,6 +38,7 @@ class VolleySingleton constructor(context: Context) {
         // Activity or BroadcastReceiver if someone passes one in.
         Volley.newRequestQueue(context.applicationContext)
     }
+
     fun <T> addToRequestQueue(req: Request<T>) {
         requestQueue.add(req)
     }

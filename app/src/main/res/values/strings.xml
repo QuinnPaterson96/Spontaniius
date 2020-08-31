@@ -41,7 +41,8 @@
     <string name="hug_string">hug</string>
     <string name="shake_string">hand shake</string>
     <string name="greeted_string">How would you like to be greeted?</string>
-
+    <string name="confirm_location_yes">Confirm location</string>
+    <string name="warning_no_location">Please select a location first</string>
 
     <string-array name="color_array">
         <item>Red</item>

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.example.spontaniius.ui.promotions.PromotionTab
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_sign_up3.*
 
 
 class PromotionEntry {//Class format taken from [1] https://grokonez.com/android/kotlin-listview-example-android.
@@ -66,6 +67,8 @@ class MainActivity : AppCompatActivity() { //So I have random notations pointing
         Promotion_List.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
             Toast.makeText(this, "Click on " + PromosForList[position].title, Toast.LENGTH_SHORT).show()
             val intent = Intent(this, PromotionTab::class.java)
+            val ID = "ID"
+            intent.putExtra(ID, PromosForList[position].id as? Int)
             startActivity(intent);
         }
 

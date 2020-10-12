@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.spontaniius.dependency_injection.ContextModule
 import com.example.spontaniius.dependency_injection.CreateEventComponent
 import com.example.spontaniius.dependency_injection.EventDaoModule
+import com.example.spontaniius.dependency_injection.FindEventComponent
 import dagger.Component
 import javax.inject.Singleton
 
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 interface ApplicationComponent {
 
     fun createEventComponent(): CreateEventComponent.Factory
+    fun FindEventComponent(): FindEventComponent.Factory
 
     @Component.Builder
     interface Builder {

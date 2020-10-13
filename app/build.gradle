@@ -56,6 +56,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.google.android.libraries.places:places:2.4.0'
+
+
 
     def room_version = "2.2.4"
     // Room persistence library component dependencies

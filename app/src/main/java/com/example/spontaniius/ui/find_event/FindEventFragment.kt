@@ -18,19 +18,32 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.example.spontaniius.R
 import com.example.spontaniius.dependency_injection.VolleySingleton
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class FindEventFragment : Fragment() {
+
+
+
     private var eventList: ArrayList<EventTile> = ArrayList()
     private lateinit var recyclerView: RecyclerView
     private var viewAdapter: RecyclerView.Adapter<*> = EventFindAdapter(eventList)
     private lateinit var viewManager: RecyclerView.LayoutManager
     lateinit var swipeContainer:SwipeRefreshLayout
+    lateinit var streetName:String
+    lateinit var currLatLng:String
+    var locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// Make this refeence google maps api key
 
     companion object {
         fun newInstance() = FindEventFragment()
@@ -44,35 +57,63 @@ class FindEventFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val exampleList: ArrayList<EventTile> = ArrayList()
-        exampleList.add(EventTile(R.drawable.ic_cofee_24, "Line 1", "Line 2"))
-        exampleList.add(EventTile(R.drawable.ic_cofee_24, "Line 3", "Line 4"))
-        exampleList.add(EventTile(R.drawable.ic_cofee_24, "Line 5", "Line 6"))
-
-        // Inflate the layout for this fragment
-
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_find_event, container, false)
-        swipeContainer = view.findViewById(R.id.swipeContainer);
-        recyclerView = view.findViewById(R.id.recyclerview);
+        swipeContainer = view.findViewById(R.id.swipeContainer)
+        recyclerView = view.findViewById(R.id.recyclerview)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(view.context)
 
-        recyclerView.setLayoutManager(LinearLayoutManager(view.context));
-        recyclerView.setAdapter(viewAdapter);
-        getEvents()
+        recyclerView.setLayoutManager(LinearLayoutManager(view.context))
+        recyclerView.setAdapter(viewAdapter)
+
+        streetName="909 Thistle Place, Britannia Beach, BC"
+        getLocationFromAddress(streetName)
+
 
 
         // Setup refresh listener which triggers new data loading
-        swipeContainer!!.setOnRefreshListener() {
-            getEvents()
+        swipeContainer.setOnRefreshListener() {
+            getEvents(currLatLng)
 
         }
         // Configure the refreshing colors
-        swipeContainer!!.setColorSchemeResources(android.R.color.holo_blue_bright,
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
             android.R.color.holo_green_light,
             android.R.color.holo_orange_light,
-            android.R.color.holo_red_light);
+            android.R.color.holo_red_light)
+
+        // Initialize Places.
+
+        // Initialize Places.
+        Places.initialize(view.context, locationAPIKey)
+
+// Create a new Places client instance.
+
+// Create a new Places client instance.
+        val placesClient = Places.createClient(view.context)
+        val autocompleteFragment: AutocompleteSupportFragment =
+            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
+
+
+
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+
+                Log.i("AddLocationFragment.TAG", "Place: " + place.name)
+                val coords: LatLng? = place.latLng
+                if (coords != null) {
+                    getLocationFromAddress(coords.latitude.toString()+", "+coords.longitude.toString())
+                }
+            }
+
+            override fun onError(p0: Status) {
+                Log.i("AddLocationFragment.TAG", p0.statusMessage)
+            }
+
+        })
 
         return view
     }
@@ -84,15 +125,42 @@ class FindEventFragment : Fragment() {
     }
 
 
-    fun getEvents(){
-        val queue = this!!.context?.let { VolleySingleton.getInstance(it).requestQueue }
+    // Not needed as google autocomplete returns coordinate, will keep if we ever want to move away from using google's api + fragment
+    fun getLocationFromAddress(strAddress: String?){
+
+        val url = "https://maps.googleapis.com/maps/api/geocode/json?address="+strAddress+"&key="+locationAPIKey
+        val getLocationRequest = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                val JSONResponse= JSONObject(response.toString())
+                val resultJSONArray:JSONArray = JSONResponse.get("results") as JSONArray
+                val resultJSON:JSONObject = resultJSONArray.getJSONObject(0)
+                val geometryJSON:JSONObject = resultJSON.get("geometry") as JSONObject
+                val locationJSON:JSONObject = geometryJSON.get("location") as JSONObject
+                currLatLng = locationJSON.get("lat").toString() + ", "+locationJSON.get("lng").toString()
+
+                getEvents(currLatLng)
+
+
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+            }
+
+        )
+        val queue = this.context?.let { VolleySingleton.getInstance(it).requestQueue }
+        queue?.add(getLocationRequest)
+    }
+
+
+    fun getEvents(userAddress:String){
+        val queue = this.context?.let { VolleySingleton.getInstance(it).requestQueue }
 
         // ...
 
         // Add a request (in this example, called stringRequest) to your RequestQueue.
 
-             var streetAddress = "49.627795, -123.199644"
-        if (this!!.getContext()?.let { ContextCompat.checkSelfPermission(it,android.Manifest.permission.ACCESS_COARSE_LOCATION ) } != PackageManager.PERMISSION_GRANTED )
+             var streetAddress =userAddress // "49.627795, -123.199644"
+        if (this.getContext()?.let { ContextCompat.checkSelfPermission(it,android.Manifest.permission.ACCESS_COARSE_LOCATION ) } != PackageManager.PERMISSION_GRANTED )
 
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
@@ -102,7 +170,7 @@ class FindEventFragment : Fragment() {
 
         val url =
             "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress"
-            val getEventsRequest: StringRequest = StringRequest(Request.Method.GET, url,
+            val getEventsRequest = StringRequest(Request.Method.GET, url,
                 Response.Listener<String> { response ->
                     eventList.clear()
                     val newList: ArrayList<EventTile> = ArrayList()

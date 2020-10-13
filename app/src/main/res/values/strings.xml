@@ -60,4 +60,7 @@
     <string name="create_screen">Invite</string>
     <string name="promotions_screen">Deals</string>
     <string name="title_activity_login">MainActivity</string>
+
+
+
 </resources>

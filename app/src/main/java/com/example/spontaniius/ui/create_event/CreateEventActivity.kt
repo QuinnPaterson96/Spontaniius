@@ -13,6 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Deprecated("This activity has been replaced by BottomNavigationActivity (Or MainActivity, if it has been renamed)")
 class CreateEventActivity :
     AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener,
@@ -31,7 +32,7 @@ class CreateEventActivity :
         createEventComponent =
             (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
                 .create()
-        createEventComponent.inject(this)
+//        createEventComponent.inject(this)
         setContentView(R.layout.activity_create_event)
         setTitle(R.string.create_event_title)
         supportFragmentManager.beginTransaction().add(

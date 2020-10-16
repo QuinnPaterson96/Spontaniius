@@ -1,6 +1,6 @@
 package com.example.spontaniius.dependency_injection
 
-import com.example.spontaniius.ui.create_event.CreateEventActivity
+import com.example.spontaniius.ui.BottomNavigationActivity
 import dagger.Subcomponent
 import javax.inject.Scope
 
@@ -19,6 +19,6 @@ interface CreateEventComponent {
     }
 
 
-    fun inject(createEventActivity: CreateEventActivity)
+    fun inject(mainActivity: BottomNavigationActivity)
 
 }

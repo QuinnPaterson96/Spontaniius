@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.spontaniius.R
+import com.example.spontaniius.SpontaniiusApplication
 import com.example.spontaniius.data.EventEntity
 import com.example.spontaniius.data.Repository
 import com.example.spontaniius.dependency_injection.CreateEventComponent
@@ -42,10 +43,10 @@ class BottomNavigationActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_navigation)
 
-//        createEventComponent =
-//            (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
-//                .create()
-//        createEventComponent.inject(this)
+        createEventComponent =
+            (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
+                .create()
+        createEventComponent.inject(this)
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         fragment_container = findViewById(R.id.fragment_container)
@@ -108,11 +109,9 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
     override fun selectLocation() {
-        val currentFragment = supportFragmentManager.findFragmentByTag(createEventFragmentTag)
-        if (currentFragment != null) {
-            supportFragmentManager.beginTransaction().hide(currentFragment)
-                .add(R.id.create_event_container, MapsFragment(), mapsFragmentTag).commit()
-        }
+        supportFragmentManager.beginTransaction().hide(currentFragment)
+            .add(R.id.create_event_container, MapsFragment(), mapsFragmentTag).commit()
+//        TODO: Fix this, it no longer works
     }
 
 

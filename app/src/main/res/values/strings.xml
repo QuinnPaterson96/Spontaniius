@@ -4,6 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="find_event_title">Find Event</string>
     <string name="create_event_title">Create Event</string>
     <string name="content_description_event_icon">An icon to represent the event</string>
     <string name="hint_event_title">Event Title</string>
@@ -41,7 +42,8 @@
     <string name="hug_string">hug</string>
     <string name="shake_string">hand shake</string>
     <string name="greeted_string">How would you like to be greeted?</string>
-
+    <string name="confirm_location_yes">Confirm location</string>
+    <string name="warning_no_location">Please select a location first</string>
 
     <string-array name="color_array">
         <item>Red</item>
@@ -57,4 +59,8 @@
     <string name="find_screen">Join In</string>
     <string name="create_screen">Invite</string>
     <string name="promotions_screen">Deals</string>
+    <string name="title_activity_login">MainActivity</string>
+
+
+
 </resources>

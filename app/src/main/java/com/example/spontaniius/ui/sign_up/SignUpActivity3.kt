@@ -1,14 +1,13 @@
 package com.example.spontaniius.ui.sign_up
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.*
-import com.example.spontaniius.R
 import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.example.spontaniius.R
 import com.example.spontaniius.ui.find_event.FindEventActivity
 
 
@@ -24,7 +23,7 @@ class SignUpActivity3 : AppCompatActivity() {
         val phone = intent.getStringExtra(PHONE_NUMBER)
         val greet = intent.getStringExtra(GREETING)
         val userid = intent.getStringExtra(USER_ID)
-        val greeting_card : CardView = findViewById(R.id.greeting_card)
+        val greeting_card: CardView = findViewById(R.id.greeting_card)
         val phone_s : String = getString(R.string.phone_string)
         val greet_s : String = getString(R.string.special_string)
 
@@ -125,16 +124,15 @@ class SignUpActivity3 : AppCompatActivity() {
             }
 
 
-
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // Another interface callback
             }
 
         }
 
-        done3.setOnClickListener{
+        done3.setOnClickListener {
 
-            val intent = Intent(this, FindEventActivity::class.java).apply{
+            val intent = Intent(this, FindEventActivity::class.java).apply {
 
             }
             startActivity(intent)

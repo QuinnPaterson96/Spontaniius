@@ -64,7 +64,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         createEventButton.setOnClickListener {
             val title = viewLayout.findViewById<EditText>(R.id.event_title)
             val description = viewLayout.findViewById<EditText>(R.id.event_description)
-//            TODO: Location
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
             val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
             val invitationType = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
@@ -81,12 +80,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         .show()
                 }
                 else -> {
-                    val startDate = Calendar.getInstance()
-                    startDate.set(Calendar.HOUR, startTime.hour)
-                    startDate.set(Calendar.MINUTE, startTime.minute)
-                    val endDate = Calendar.getInstance()
-                    endDate.set(Calendar.HOUR, endTime.hour)
-                    endDate.set(Calendar.MINUTE, endTime.minute)
+                    val currentDate = Calendar.getInstance(TimeZone.getDefault())
+                    val year = currentDate.get(Calendar.YEAR)
+                    val month = currentDate.get(Calendar.MONTH) + 1
+                    val day = currentDate.get(Calendar.DAY_OF_MONTH)
                     val selectedInvitationID = invitationType.checkedRadioButtonId
                     val selectedButton = viewLayout.findViewById<RadioButton>(selectedInvitationID)
                     val invitationPosition = invitationType.indexOfChild(selectedButton)
@@ -99,9 +96,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         title.text.toString(),
                         description.text.toString(),
                         eventIcon,
-                        startDate.timeInMillis,
-                        endDate.timeInMillis,
-                        1,
+                        getDateString(year, month, day, startTime.hour, startTime.minute),
+                        getDateString(year, month, day, endTime.hour, endTime.minute),
                         gender,
                         invitationPosition
                     )
@@ -136,6 +132,24 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         listenerCreateEvent = null
     }
 
+
+    private fun getDateString(year: Int, month: Int, day: Int, hour: Int, minute: Int): String {
+//      pattern = "yy-MM-dd hh:mm:00"
+        val dateStringBuilder = StringBuilder()
+        dateStringBuilder.append(year)
+        dateStringBuilder.append("-")
+        dateStringBuilder.append(month)
+        dateStringBuilder.append("-")
+        dateStringBuilder.append(day)
+        dateStringBuilder.append(" ")
+        dateStringBuilder.append(hour)
+        dateStringBuilder.append(":")
+        dateStringBuilder.append(minute)
+        dateStringBuilder.append(":")
+        dateStringBuilder.append("00")
+        return dateStringBuilder.toString()
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -153,9 +167,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             title: String,
             description: String,
             icon: String,
-            startTime: Long, //using unix timestamp
-            endTime: Long,
-            location: Any?,
+            startTime: String, //using unix timestamp
+            endTime: String,
             gender: String,
             invitation: Int
         )

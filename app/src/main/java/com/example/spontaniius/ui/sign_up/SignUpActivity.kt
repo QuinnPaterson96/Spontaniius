@@ -24,17 +24,19 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+
         supportFragmentManager.beginTransaction().add(
             R.id.sign_up_container,
             SignUpFragment.newInstance(),
-            "SIGNUP_FRAGMENT_TAG").commit()
+            "SIGNUP_FRAGMENT_TAG"
+        ).commit()
 
 
         //Variables for gender drop down
         lateinit var option: Spinner
 
 
-            val done = findViewById<Button>(R.id.done_button)
+        val done = findViewById<Button>(R.id.done_button)
 
 
         // Get a RequestQueue
@@ -43,18 +45,19 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
         // ...
 
         // Add a request (in this example, called stringRequest) to your RequestQueue.
-        val url = "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/postgresCreateUser"
+        val url =
+            "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/postgresCreateUser"
 
         done.setOnClickListener {
 
-                val user = findViewById<EditText>(R.id.userName)
-                val enter_phone = findViewById<EditText>(R.id.phoneNumber)
-                val enter_pass= findViewById<EditText>(R.id.password)
-                val enter_gender= findViewById<Spinner>(R.id.gender)
-                val put_name = user.text.toString()
-                val put_phone = enter_phone.text.toString()
-                val put_password = enter_pass.text.toString()
-                val put_gender = enter_gender.selectedItem.toString()
+            val user = findViewById<EditText>(R.id.userName)
+            val enter_phone = findViewById<EditText>(R.id.phoneNumber)
+            val enter_pass = findViewById<EditText>(R.id.password)
+            val enter_gender = findViewById<Spinner>(R.id.gender)
+            val put_name = user.text.toString()
+            val put_phone = enter_phone.text.toString()
+            val put_password = enter_pass.text.toString()
+            val put_gender = enter_gender.selectedItem.toString()
 
             val userObject = JSONObject()
             try {
@@ -69,10 +72,10 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
             }
 
             val createUserRequest = JsonObjectRequest(
-                Request.Method.PUT,url, userObject,
+                Request.Method.PUT, url, userObject,
                 Response.Listener { response ->
-                    val  userid =  JSONObject(response.toString()).getInt("userid")
-                    val intent = Intent(this, SignUpActivity2::class.java).apply{
+                    val userid = JSONObject(response.toString()).getInt("userid")
+                    val intent = Intent(this, SignUpActivity2::class.java).apply {
                         putExtra(USER_NAME, put_name)
                         putExtra(PHONE_NUMBER, put_phone)
                         putExtra(USER_ID, userid)
@@ -82,21 +85,20 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                     startActivity(intent)
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(this,"err"+error.toString(),Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "err" + error.toString(), Toast.LENGTH_LONG).show()
                 }
             )
             queue.add(createUserRequest)
         }
 
 
+        //sets varables to the item in the layout
+        option = findViewById<Spinner>(R.id.gender)
 
-            //sets varables to the item in the layout
-            option = findViewById(R.id.gender) as Spinner
-
-            val options = arrayOf("Male", "Female", "Other")
+        val options = arrayOf("Male", "Female", "Other")
 
 
-            option.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, options)
+        option.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, options)
 
 
 

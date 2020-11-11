@@ -2,16 +2,23 @@ package com.example.spontaniius.ui.sign_up
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
+import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.AuthUserAttribute
+import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.auth.options.AuthSignUpOptions
+import com.amplifyframework.core.Amplify
 import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
 import com.example.spontaniius.R
 import com.example.spontaniius.dependency_injection.VolleySingleton
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
 const val USER_NAME = "com.example.spontaniius.ui.sign_up.MESSAGE"
 const val PHONE_NUMBER = "com.example.spontaniius.ui.sign_up.MESSAGE2"
@@ -23,6 +30,19 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Amplify.addPlugin(AWSCognitoAuthPlugin())
+        try {
+            Amplify.configure(applicationContext)
+            Log.i("MyAmplifyApp", "Initialized Amplify")
+        } catch (error: AmplifyException) {
+            Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
+        }
+        /*
+        Amplify.Auth.fetchAuthSession(
+            { result -> Log.i("AmplifyQuickstart", result.toString()) },
+            { error -> Log.e("AmplifyQuickstart", error.toString()) }
+        )
+        */
         setContentView(R.layout.activity_sign_up)
 
         supportFragmentManager.beginTransaction().add(
@@ -71,6 +91,37 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                 // handle exception
             }
 
+            val rnd = Random()
+            rnd.setSeed(System.currentTimeMillis())
+
+            var attributeList: ArrayList<AuthUserAttribute> = ArrayList()
+            attributeList.add(AuthUserAttribute(AuthUserAttributeKey.name(), put_name))
+            attributeList.add(AuthUserAttribute(AuthUserAttributeKey.gender(), put_gender))
+            attributeList.add(AuthUserAttribute(AuthUserAttributeKey.phoneNumber(), "+1"+put_phone))
+
+
+            var username = put_name+rnd.nextInt(1000).toString()
+            Amplify.Auth.signUp(
+                username,
+                put_password,
+                AuthSignUpOptions.builder().userAttributes(
+                    attributeList
+                ).build(),
+                { result ->
+                    Log.i("AuthQuickStart", "Result: $result")
+                    val intent = Intent(this, SignUpConfirmActivity::class.java).apply {
+                        putExtra(USER_NAME, username)
+                        putExtra(PHONE_NUMBER, put_phone)
+                        putExtra(USER_ID, result.user?.userId)
+
+                    }
+
+                    startActivity(intent)
+
+                },
+                { error -> Log.e("AuthQuickStart", "Sign up failed", error) }
+            )
+/*
             val createUserRequest = JsonObjectRequest(
                 Request.Method.PUT, url, userObject,
                 Response.Listener { response ->
@@ -89,6 +140,8 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                 }
             )
             queue.add(createUserRequest)
+            */
+
         }
 
 

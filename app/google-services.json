@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "936564001493",
+    "firebase_url": "https://spontaniius-b37d5.firebaseio.com",
+    "project_id": "spontaniius-b37d5",
+    "storage_bucket": "spontaniius-b37d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936564001493:android:f04b06a186b591eb7ef05c",
+        "android_client_info": {
+          "package_name": "com.example.spontaniius"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936564001493-9pjmv7f7c82uq7uc173td7hal6uso6as.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.spontaniius",
+            "certificate_hash": "2f3498063f025f5cb141337f0686e89ead78ed56"
+          }
+        },
+        {
+          "client_id": "936564001493-m7ut58mipvoup7rdmn95v9f1acgptbcp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv9UNLkg06qtHJOR8iT5_-8cGCUb7eOuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936564001493-m7ut58mipvoup7rdmn95v9f1acgptbcp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -53,7 +53,11 @@ class BottomNavigationActivity : AppCompatActivity(),
         createEventFragment = CreateEventFragment.newInstance()
         findEventFragment = FindEventFragment.newInstance()
 
-        //TODO: change the fragment to represent what it actually needs to do
+        //TODO: when Cord is done with his promotion fragment, create that here
+//        TODO: Then, have this class (BottomNavigationActivity) implement all the methods that the fragment calls (probably want to define an interface for that)
+//            Note: the above can be accomplished with a lil copy-paste
+//        TODO: mark old classes as deprecated (see CreateEventActivity.kt for an example of how to do that)
+//        After the refactoring has been stable for a few commits, feel free to remove the old classes entirely (git has records of them, if they are really needed)
         promotionFragment = FindEventFragment.newInstance()
 
         supportFragmentManager.beginTransaction()

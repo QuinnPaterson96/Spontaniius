@@ -95,8 +95,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     override fun onLocationSelected(latLng: LatLng) {
         this.latLng = latLng
         val mapsFragment = supportFragmentManager.findFragmentByTag(mapsFragmentTag)
-        val createEventFragment = supportFragmentManager.findFragmentByTag(createEventFragmentTag)
-        if (mapsFragment != null && createEventFragment != null) {
+        if (mapsFragment != null) {
             supportFragmentManager.beginTransaction().remove(mapsFragment)
                 .show(createEventFragment).commit()
         }
@@ -110,8 +109,7 @@ class BottomNavigationActivity : AppCompatActivity(),
 
     override fun selectLocation() {
         supportFragmentManager.beginTransaction().hide(currentFragment)
-            .add(R.id.create_event_container, MapsFragment(), mapsFragmentTag).commit()
-//        TODO: Fix this, it no longer works
+            .add(R.id.fragment_container, MapsFragment(), mapsFragmentTag).commit()
     }
 
 

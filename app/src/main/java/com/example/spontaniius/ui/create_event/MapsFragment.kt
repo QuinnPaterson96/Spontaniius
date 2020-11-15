@@ -62,7 +62,6 @@ class MapsFragment : Fragment() {
                     c.onLocationSelected(latLng)
                 }
             }
-
         } else {
             throw RuntimeException("Base context must implement the MapsInteractionListener interface")
         }

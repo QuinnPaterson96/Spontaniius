@@ -51,8 +51,10 @@ class EventDatabaseTest {
             "all genders",
             "uvic's address",
             "flower icon",
-            100,
-            200,
+            "start time",
+            "end time",
+            100.0,
+            200.0,
             1
         )
         runBlocking {

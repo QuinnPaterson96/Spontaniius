@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "spontaniiuscf36249b": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}

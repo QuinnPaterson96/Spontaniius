@@ -23,6 +23,7 @@
         android:roundIcon="@drawable/spontaniiuslogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".ui.sign_up.SignUpConfirmActivity"
             android:label="@string/title_activity_confirm_signup"
@@ -30,15 +31,17 @@
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login">
+
+        <activity android:name=".ui.BottomNavigationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ui.find_event.FindEventActivity"
-            android:label="@string/title_activity_find_event" />
+
+            android:label="@string/title_activity_find_event"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -55,8 +58,10 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ui.sign_up.SignUpActivity3" />
         <activity android:name=".ui.sign_up.SignUpActivity2" />
+
         <activity android:name=".ui.sign_up.SignUpActivity">
         </activity>
+
         <activity android:name=".ui.promotions.PromotionTab" />
     </application>
 

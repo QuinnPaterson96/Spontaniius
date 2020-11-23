@@ -14,6 +14,7 @@ import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.example.spontaniius.R
 import com.example.spontaniius.dependency_injection.VolleySingleton
+import com.example.spontaniius.ui.login.LoginActivity
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -146,7 +147,11 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
         }
 
         login.setOnClickListener{
+            val intent2 = Intent(this, LoginActivity::class.java).apply {
 
+            }
+
+            startActivity(intent2)
         }
 
         //sets varables to the item in the layout

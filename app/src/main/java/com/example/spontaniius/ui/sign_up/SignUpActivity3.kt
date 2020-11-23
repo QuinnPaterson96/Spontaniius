@@ -16,6 +16,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.spontaniius.R
 import com.example.spontaniius.dependency_injection.VolleySingleton
+import com.example.spontaniius.ui.BottomNavigationActivity
 import com.example.spontaniius.ui.find_event.FindEventActivity
 import org.json.JSONException
 import org.json.JSONObject
@@ -168,7 +169,7 @@ class SignUpActivity3 : AppCompatActivity() {
                         { Log.i("AuthDemo", "Updated user attribute = $it") },
                         { Log.e("AuthDemo", "Failed to update user attribute =$it") }
                     )
-                    val intent = Intent(this, FindEventActivity::class.java).apply {
+                    val intent = Intent(this, BottomNavigationActivity::class.java).apply {
 
                     }
                     startActivity(intent)

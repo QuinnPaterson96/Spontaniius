@@ -1,6 +1,7 @@
 package com.example.spontaniius.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 
 import com.example.spontaniius.R
+import com.example.spontaniius.ui.BottomNavigationActivity
 
 class LoginActivity : AppCompatActivity() {
 
@@ -29,15 +31,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Amplify.addPlugin(AWSCognitoAuthPlugin())
-        try {
-            Amplify.configure(applicationContext)
-            Log.i("MyAmplifyApp", "Initialized Amplify")
-        } catch (error: AmplifyException) {
-            Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
-        }
-
         setContentView(R.layout.activity_login)
 
 
@@ -112,6 +105,11 @@ class LoginActivity : AppCompatActivity() {
                     password.text.toString(),
                     { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
                         loading.visibility = View.INVISIBLE
+
+                        val intent2 = Intent(this.context, BottomNavigationActivity::class.java).apply {
+
+                        }
+                        startActivity(intent2)
                     },
                     { error -> Log.e("AuthQuickstart", error.toString())
                         loading.visibility = View.INVISIBLE}

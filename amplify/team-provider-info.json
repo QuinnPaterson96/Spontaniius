@@ -1,0 +1,25 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-spontaniius-dev-172100-authRole",
+      "UnauthRoleArn": "arn:aws:iam::348355684418:role/amplify-spontaniius-dev-172100-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::348355684418:role/amplify-spontaniius-dev-172100-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-spontaniius-dev-172100-deployment",
+      "UnauthRoleName": "amplify-spontaniius-dev-172100-unauthRole",
+      "StackName": "amplify-spontaniius-dev-172100",
+      "StackId": "arn:aws:cloudformation:us-west-2:348355684418:stack/amplify-spontaniius-dev-172100/24182e90-126a-11eb-bfd4-067bcb97a926",
+      "AmplifyAppId": "d22y3clvkjya4l"
+    },
+    "categories": {
+      "auth": {
+        "spontaniiuscf36249b": {
+          "userPoolId": "us-west-2_qQgFXTjud",
+          "userPoolName": "SpontaniiusUsers",
+          "webClientId": "uqes3ma1re97ko7o5tf29khuv",
+          "nativeClientId": "c5uj4d5g76uoi7rl8341ethgr"
+        }
+      }
+    }
+  }
+}

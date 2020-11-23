@@ -29,7 +29,13 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.login.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.find_event.FindEventActivity"
             android:label="@string/title_activity_find_event" />
@@ -49,13 +55,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ui.sign_up.SignUpActivity3" />
         <activity android:name=".ui.sign_up.SignUpActivity2" />
-        <activity android:name=".ui.sign_up.SignUpConfirmActivity"></activity>
         <activity android:name=".ui.sign_up.SignUpActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.promotions.PromotionTab" />
     </application>

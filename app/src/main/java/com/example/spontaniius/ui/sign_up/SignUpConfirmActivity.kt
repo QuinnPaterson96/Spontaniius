@@ -35,6 +35,7 @@ class SignUpConfirmActivity : AppCompatActivity() {
         val name = intent.getStringExtra(USER_NAME)
         val phone = intent.getStringExtra(PHONE_NUMBER)
         val userid = intent.getStringExtra(USER_ID)
+        val password = intent.getStringExtra("Password")
 
 
 
@@ -46,14 +47,20 @@ class SignUpConfirmActivity : AppCompatActivity() {
 
                 { result ->
                     Log.i("AuthQuickstart", if (result.isSignUpComplete) "Confirm signUp succeeded" else "Confirm sign up not complete")
-                    val intent = Intent(this, SignUpActivity2::class.java).apply {
-                        putExtra(USER_NAME, name)
-                        putExtra(PHONE_NUMBER, phone)
-                        putExtra(USER_ID, userid)
+                    Amplify.Auth.signIn(
+                        name,
+                        password,
+                        { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
+                            val intent = Intent(this, SignUpActivity2::class.java).apply {
+                                putExtra(USER_NAME, name)
+                                putExtra(PHONE_NUMBER, phone)
+                                putExtra(USER_ID, userid)
 
-                    }
+                            }
 
-                    startActivity(intent)
+                            startActivity(intent)},
+                        { error -> Log.e("AuthQuickstart", error.toString()) }
+                    )
                 },
                 { error -> Log.e("AuthQuickstart", error.toString()) }
             )

@@ -12,7 +12,6 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
-import com.android.volley.Response
 import com.example.spontaniius.R
 import com.example.spontaniius.dependency_injection.VolleySingleton
 import org.json.JSONException
@@ -57,6 +56,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
 
         val done = findViewById<Button>(R.id.done_button)
+        val login = findViewById<Button>(R.id.login_button)
 
 
         // Get a RequestQueue
@@ -113,6 +113,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                         putExtra(USER_NAME, username)
                         putExtra(PHONE_NUMBER, put_phone)
                         putExtra(USER_ID, result.user?.userId)
+                        putExtra("Password", put_password)
 
                     }
 
@@ -144,6 +145,9 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
         }
 
+        login.setOnClickListener{
+
+        }
 
         //sets varables to the item in the layout
         option = findViewById<Spinner>(R.id.gender)

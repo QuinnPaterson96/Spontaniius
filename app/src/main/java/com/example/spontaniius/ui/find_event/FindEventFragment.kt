@@ -1,6 +1,7 @@
 package com.example.spontaniius.ui.find_event
 
 import android.content.pm.PackageManager
+import android.icu.util.UniversalTimeScale.toLong
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.Math.round
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -67,9 +69,10 @@ class FindEventFragment : Fragment() {
         recyclerView.setLayoutManager(LinearLayoutManager(view.context))
         recyclerView.setAdapter(viewAdapter)
 
+        /*
         streetName="909 Thistle Place, Britannia Beach, BC"
         getLocationFromAddress(streetName)
-
+        */
 
 
         // Setup refresh listener which triggers new data loading
@@ -153,6 +156,7 @@ class FindEventFragment : Fragment() {
 
 
     fun getEvents(userAddress:String){
+        swipeContainer.isRefreshing = true
         val queue = this.context?.let { VolleySingleton.getInstance(it).requestQueue }
 
         // ...
@@ -171,13 +175,24 @@ class FindEventFragment : Fragment() {
         val url =
             "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress"
             val getEventsRequest = StringRequest(Request.Method.GET, url,
-                Response.Listener<String> { response ->
+                { response ->
                     eventList.clear()
                     val newList: ArrayList<EventTile> = ArrayList()
                 val eventJSONArray= JSONArray(response.toString())
                     for (i in 0 until eventJSONArray.length()) {
+                        val currtime = Calendar.getInstance().time
+                        //currtime.
                         val event:JSONObject = eventJSONArray.getJSONObject(i)
-                        newList.add(EventTile(R.drawable.ic_cofee_24, event.get("eventtitle").toString(),event.get("eventtext").toString()))
+                        val endtime = event.get("eventends")
+
+
+                        newList.add(EventTile(R.drawable.ic_cofee_24, event.get("eventtitle").toString(),
+                            event.get("eventtext").toString(),
+                            event.get("distance").toString(),
+                            event.get("eventends").toString(),
+                            event.get("streetaddress").toString(),
+                            this.context
+                        ))
 
                         /*
                         * "cardids": null,
@@ -200,9 +215,10 @@ class FindEventFragment : Fragment() {
                     swipeContainer.isRefreshing = false
 
             },
-            Response.ErrorListener { error ->
-                error.printStackTrace()
-            }
+                { error ->
+                    error.printStackTrace()
+                    swipeContainer.isRefreshing = false
+                }
         )
         queue?.add(getEventsRequest)
         }

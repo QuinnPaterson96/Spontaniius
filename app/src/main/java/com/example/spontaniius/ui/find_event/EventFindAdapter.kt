@@ -1,12 +1,17 @@
 package com.example.spontaniius.ui.find_event
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spontaniius.R
+import org.json.JSONObject
+import kotlin.math.roundToInt
 
 
 class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
@@ -20,11 +25,17 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         var mImageView: ImageView
         var mTextView1: TextView
         var mTextView2: TextView
+        var mTextViewDistance: TextView
+        var mTextViewTime: TextView
+        var direction_button: ImageView
 
         init {
             mImageView = itemView.findViewById(R.id.imageView)
             mTextView1 = itemView.findViewById(R.id.textView)
             mTextView2 = itemView.findViewById(R.id.textView2)
+            mTextViewDistance = itemView.findViewById(R.id.textView3)
+            mTextViewTime = itemView.findViewById(R.id.textView4)
+            direction_button = itemView.findViewById(R.id.directionButton)
         }
     }
 
@@ -41,8 +52,33 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
     override fun onBindViewHolder(holder: EventCardViewHolder, position: Int) {
         val currentItem: EventTile = EventTileList!![position]
         holder.mImageView.setImageResource(currentItem.getImageResource())
-        holder.mTextView1.setText(currentItem.getDescription())
-        holder.mTextView2.setText(currentItem.getDistance_and_time_started())
+        holder.mTextView1.setText(currentItem.title)
+        holder.mTextView2.setText(currentItem.description)
+
+
+        var distance = currentItem.distance.toDoubleOrNull()
+        distance = distance?.div(100)
+        if (distance != null) {
+            distance = distance.roundToInt().toDouble()
+        }
+        distance = distance?.div(10)
+
+
+        var locationpointJSON = JSONObject(currentItem.location)
+        var locationPoint = locationpointJSON.get("x").toString() + ", "+locationpointJSON.get("y").toString()
+
+        holder.mTextViewDistance.setText(distance.toString() + " km")
+        holder.mTextViewTime.setText(currentItem.time_started)
+        holder.direction_button.setOnClickListener{
+
+            val url = "https://www.google.com/maps/dir/?api=1&destination=${locationPoint}"
+            startActivity(holder.direction_button.context, Intent(Intent.ACTION_VIEW, Uri.parse(url)),null)
+
+
+
+
+
+        }
     }
 
     override fun getItemCount(): Int {

@@ -99,7 +99,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         getDateString(year, month, day, startTime.hour, startTime.minute),
                         getDateString(year, month, day, endTime.hour, endTime.minute),
                         gender,
-                        invitationPosition
+                        invitation
                     )
                 }
             }

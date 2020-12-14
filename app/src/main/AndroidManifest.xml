@@ -33,6 +33,10 @@
             android:label="@string/title_activity_login"></activity>
 
         <activity android:name=".ui.BottomNavigationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".ui.find_event.FindEventActivity" android:label="@string/title_activity_find_event"></activity>
         <!--
@@ -53,10 +57,6 @@
         <activity android:name=".ui.sign_up.SignUpActivity2" />
 
         <activity android:name=".ui.sign_up.SignUpActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity android:name=".ui.promotions.PromotionTab" />

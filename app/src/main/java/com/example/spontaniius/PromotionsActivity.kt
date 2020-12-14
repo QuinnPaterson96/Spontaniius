@@ -38,7 +38,7 @@ var id: Int? = null
         this.content = content
     }
 }
-
+//TODO: See if Russell gave this activity an appropriate name
 class MainActivity : AppCompatActivity() { //So I have random notations pointing to a tutorial, we'll see what happens with that later
 
 //To do: get list view working

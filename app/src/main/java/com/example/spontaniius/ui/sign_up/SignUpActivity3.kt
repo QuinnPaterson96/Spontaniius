@@ -3,12 +3,23 @@ package com.example.spontaniius.ui.sign_up
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.amplifyframework.auth.AuthUserAttribute
+import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.core.Amplify
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
 import com.example.spontaniius.R
+import com.example.spontaniius.dependency_injection.VolleySingleton
+import com.example.spontaniius.ui.BottomNavigationActivity
 import com.example.spontaniius.ui.find_event.FindEventActivity
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class SignUpActivity3 : AppCompatActivity() {
@@ -29,13 +40,15 @@ class SignUpActivity3 : AppCompatActivity() {
 
         val phone_box : CheckBox = findViewById(R.id.include_phone)
         val greet_box : CheckBox = findViewById(R.id.include_greeting)
-
+        val queue = VolleySingleton.getInstance(this.applicationContext).requestQueue
 
         val enter_name = findViewById<TextView>(R.id.enter_name).apply{
             text = name
         }
 
         val done3 = findViewById<Button>(R.id.done_button3)
+
+        var background = ""
 
 
 
@@ -99,27 +112,30 @@ class SignUpActivity3 : AppCompatActivity() {
 
                 if (selectedItem.equals("Red")) {
                     greeting_card.setCardBackgroundColor(Color.parseColor("#FF8E8E"))
+                    background = "Red"
 
                 }else if(selectedItem.equals("Orange")){
                     greeting_card.setCardBackgroundColor(Color.parseColor("#FFB549"))
+                    background = "Orange"
 
                 }else if(selectedItem.equals("Yellow")){
                     greeting_card.setCardBackgroundColor(Color.parseColor("#FFF55C"))
-
+                    background = "Yellow"
                 }else if(selectedItem.equals("Green")){
                     greeting_card.setCardBackgroundColor(Color.parseColor("#8FFF7B"))
-
+                    background = "Green"
                 }else if(selectedItem.equals("Blue")){
                     greeting_card.setCardBackgroundColor(Color.parseColor("#7BE1FF"))
-
+                    background = "Blue"
                 }else if(selectedItem.equals("Purple")){
                     greeting_card.setCardBackgroundColor(Color.parseColor("#BB8BFF"))
-
+                    background = "Purple"
                 }else if(selectedItem.equals("Pink")){
                     greeting_card.setCardBackgroundColor(Color.parseColor("#FF8BED"))
-
+                    background = "Pink"
                 }else if(selectedItem.equals("White")){
                     greeting_card.setCardBackgroundColor(Color.WHITE)
+                    background = "White"
                 }
             }
 
@@ -131,11 +147,39 @@ class SignUpActivity3 : AppCompatActivity() {
         }
 
         done3.setOnClickListener {
+            val url = "https://1j8ss7fj13.execute-api.us-west-2.amazonaws.com/default/createCard"
+            val cardObject = JSONObject()
+            try {
+                cardObject.put("userid", userid)
+                cardObject.put("cardtext", name)
+                cardObject.put("background", background)
+                cardObject.put("backgroundAddress","")
+                cardObject.put("phone", phone)
+                cardObject.put("greeting", greet)
 
-            val intent = Intent(this, FindEventActivity::class.java).apply {
-
+            } catch (e: JSONException) {
+                // handle exception
             }
-            startActivity(intent)
+            val createUserRequest = JsonObjectRequest(
+                Request.Method.POST, url, cardObject,
+                { response ->
+                    val cardid = JSONObject(response.toString()).getInt("cardid")
+                    val cardAttribute= AuthUserAttribute(AuthUserAttributeKey.custom("cardid"), cardid.toString())
+                    Amplify.Auth.updateUserAttribute(cardAttribute,
+                        { Log.i("AuthDemo", "Updated user attribute = $it") },
+                        { Log.e("AuthDemo", "Failed to update user attribute =$it") }
+                    )
+                    val intent = Intent(this, BottomNavigationActivity::class.java).apply {
+
+                    }
+                    startActivity(intent)
+                },
+                { error ->
+                    Toast.makeText(this, "err" + error.toString(), Toast.LENGTH_LONG).show()
+                }
+            )
+            queue.add(createUserRequest)
+
         }
 
     }

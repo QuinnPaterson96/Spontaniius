@@ -86,6 +86,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/prompt_choose_location" />
+
+                <fragment
+                    android:id="@+id/autocomplete_fragment"
+                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                    android:layout_width="123dp"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </TableRow>
 

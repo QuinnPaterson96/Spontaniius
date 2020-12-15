@@ -31,6 +31,7 @@ import org.json.JSONObject
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
@@ -185,29 +186,29 @@ class FindEventFragment : Fragment() {
                 streetAddress=location.toString()
             }
 
-
+        val currtime = Calendar.getInstance().time
         val url =
-            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress"
+            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress&currentTime=$currtime";
             val getEventsRequest = StringRequest(Request.Method.GET, url,
                 { response ->
                     eventList.clear()
                     val newList: ArrayList<EventTile> = ArrayList()
                     val eventJSONArray = JSONArray(response.toString())
-                    val currtime = Calendar.getInstance().time
+
                     for (i in 0 until eventJSONArray.length()) {
 
                         val event: JSONObject = eventJSONArray.getJSONObject(i)
                         val endTimeString = event.get("eventends")
-                        val endTime = LocalDateTime.parse(
+                        val endTime = ZonedDateTime.parse(
                             endTimeString as CharSequence?, DateTimeFormatter.ofPattern(
-                                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+                                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
                             )
                         )
 
                         val currentTime = currtime.time/1000
-                        val eventTime = endTime.toEpochSecond(ZoneOffset.UTC)
+                        val eventTime = endTime.toEpochSecond()
                         val milliseconds = eventTime-currentTime
-                        val minutesFromEnd = milliseconds.toInt() / 600
+                        val minutesFromEnd = milliseconds.toInt() / 60
 
 
 

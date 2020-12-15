@@ -3,13 +3,26 @@ package com.example.spontaniius.ui.create_event
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
 import com.example.spontaniius.R
+import com.example.spontaniius.dependency_injection.VolleySingleton
+import com.google.android.gms.common.api.Status
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.*
 
 
@@ -28,9 +41,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private val radius1 = 100
     private val radius2 = 500
     private val radius3 = 1000
-
+    private val locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// Make this refeence google maps api key
     //    TODO: event icon with string implementation
     private var eventIcon: String = ""
+
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -99,12 +113,70 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         getDateString(year, month, day, startTime.hour, startTime.minute),
                         getDateString(year, month, day, endTime.hour, endTime.minute),
                         gender,
-                        invitationPosition
+                        invitation
                     )
                 }
             }
         }
+
+
+        val placesClient = view?.context?.let { Places.createClient(it) }
+        val autocompleteFragment: AutocompleteSupportFragment =
+            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+
+        autocompleteFragment.setPlaceFields(
+            Arrays.asList(
+                Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.LAT_LNG
+            )
+        )
+
+
+
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+
+                Log.i("AddLocationFragment.TAG", "Place: " + place.name)
+                val coords: LatLng? = place.latLng
+                if (coords != null) {
+                    getLocationFromAddress(coords.latitude.toString() + ", " + coords.longitude.toString())
+                }
+            }
+
+            override fun onError(p0: Status) {
+                Log.i("AddLocationFragment.TAG", p0.statusMessage)
+            }
+
+        })
+
         return viewLayout
+    }
+    fun getLocationFromAddress(strAddress: String?){
+
+        val url = "https://maps.googleapis.com/maps/api/geocode/json?address="+strAddress+"&key="+locationAPIKey
+        val getLocationRequest = StringRequest(
+            Request.Method.GET, url,
+            { response ->
+                val JSONResponse = JSONObject(response.toString())
+                val resultJSONArray: JSONArray = JSONResponse.get("results") as JSONArray
+                val resultJSON: JSONObject = resultJSONArray.getJSONObject(0)
+                val geometryJSON: JSONObject = resultJSON.get("geometry") as JSONObject
+                val locationJSON: JSONObject = geometryJSON.get("location") as JSONObject
+                var currLatLng:LatLng  = LatLng(locationJSON.get("lat").toString().toDouble(), locationJSON.get("lng").toString().toDouble())
+                locationJSON.get("lat").toString() + ", " + locationJSON.get("lng").toString()
+
+                listenerCreateEvent?.googleLocationSelect(currLatLng)
+
+
+            },
+            { error ->
+                error.printStackTrace()
+            }
+
+        )
+        val queue = this.context?.let { VolleySingleton.getInstance(it).requestQueue }
+        queue?.add(getLocationRequest)
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -147,6 +219,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         dateStringBuilder.append(minute)
         dateStringBuilder.append(":")
         dateStringBuilder.append("00")
+        // Possible future timezone insert
+        dateStringBuilder.append(TimeZone.getDefault().getDisplayName(TimeZone.getDefault().inDaylightTime(Calendar.getInstance().time), TimeZone.SHORT))
         return dateStringBuilder.toString()
     }
 
@@ -163,6 +237,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
      */
     interface OnCreateEventFragmentInteractionListener {
         fun selectLocation(): Any?
+        fun googleLocationSelect(latLng: LatLng):Any?
         fun createEvent(
             title: String,
             description: String,

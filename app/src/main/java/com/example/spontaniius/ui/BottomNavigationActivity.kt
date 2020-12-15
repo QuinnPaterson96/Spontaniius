@@ -111,9 +111,20 @@ class BottomNavigationActivity : AppCompatActivity(),
     }
 
 
+
+
     override fun selectLocation() {
         supportFragmentManager.beginTransaction().hide(currentFragment)
             .add(R.id.fragment_container, MapsFragment(), mapsFragmentTag).commit()
+    }
+
+    override fun googleLocationSelect(latLng: LatLng) {
+        this.latLng = latLng
+        Toast.makeText(
+            this,
+            "latitude is " + latLng.latitude + " and longitude is " + latLng.longitude,
+            Toast.LENGTH_LONG
+        ).show()
     }
 
 
@@ -146,6 +157,11 @@ class BottomNavigationActivity : AppCompatActivity(),
                     )
                 )
             }
+            Toast.makeText(
+                this,
+                "Event Created",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

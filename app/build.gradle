@@ -121,5 +121,7 @@ dependencies {
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     implementation 'com.amplifyframework:aws-auth-cognito:1.4.1'
+    implementation 'com.github.joielechong:countrycodepicker:2.4.2'
+
 
 }

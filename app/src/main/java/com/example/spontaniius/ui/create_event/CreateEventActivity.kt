@@ -50,6 +50,15 @@ class CreateEventActivity :
         }
     }
 
+    override fun googleLocationSelect(latLng: LatLng) {
+        this.latLng = latLng
+        Toast.makeText(
+            this,
+            "latitude is " + latLng.latitude + " and longitude is " + latLng.longitude,
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
     override fun onLocationSelected(latLng: LatLng) {
         this.latLng = latLng
         val mapsFragment = supportFragmentManager.findFragmentByTag(mapsFragmentTag)

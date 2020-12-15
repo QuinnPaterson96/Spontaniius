@@ -15,10 +15,12 @@ import com.amplifyframework.core.Amplify
 import com.example.spontaniius.R
 import com.example.spontaniius.dependency_injection.VolleySingleton
 import com.example.spontaniius.ui.login.LoginActivity
+import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 const val USER_NAME = "com.example.spontaniius.ui.sign_up.MESSAGE"
 const val PHONE_NUMBER = "com.example.spontaniius.ui.sign_up.MESSAGE2"
@@ -79,6 +81,8 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
             val put_phone = enter_phone.text.toString()
             val put_password = enter_pass.text.toString()
             val put_gender = enter_gender.selectedItem.toString()
+            var ccp: CountryCodePicker
+            ccp =  findViewById(R.id.ccp);
 
             val userObject = JSONObject()
             try {
@@ -98,7 +102,12 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
             var attributeList: ArrayList<AuthUserAttribute> = ArrayList()
             attributeList.add(AuthUserAttribute(AuthUserAttributeKey.name(), put_name))
             attributeList.add(AuthUserAttribute(AuthUserAttributeKey.gender(), put_gender))
-            attributeList.add(AuthUserAttribute(AuthUserAttributeKey.phoneNumber(), "+1"+put_phone))
+            attributeList.add(
+                AuthUserAttribute(
+                    AuthUserAttributeKey.phoneNumber(),
+                    ccp.selectedCountryCodeWithPlus +put_phone
+                )
+            )
 
 
             var username = put_name+rnd.nextInt(1000).toString()
@@ -112,7 +121,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                     Log.i("AuthQuickStart", "Result: $result")
                     val intent = Intent(this, SignUpConfirmActivity::class.java).apply {
                         putExtra(USER_NAME, username)
-                        putExtra(PHONE_NUMBER, put_phone)
+                        putExtra(PHONE_NUMBER, ccp.selectedCountryCodeWithPlus +put_phone)
                         putExtra(USER_ID, result.user?.userId)
                         putExtra("Password", put_password)
 
@@ -172,7 +181,12 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                 }
 
                 //selected item recieved
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
                 }
             }
 

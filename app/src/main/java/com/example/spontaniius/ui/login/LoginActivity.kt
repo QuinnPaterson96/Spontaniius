@@ -24,6 +24,7 @@ import com.amplifyframework.core.Amplify
 
 import com.example.spontaniius.R
 import com.example.spontaniius.ui.BottomNavigationActivity
+import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 
 class LoginActivity : AppCompatActivity() {
 
@@ -38,6 +39,8 @@ class LoginActivity : AppCompatActivity() {
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login_button)
         val loading = findViewById<ProgressBar>(R.id.loading)
+        var ccp: CountryCodePicker
+        ccp =  findViewById(R.id.ccp);
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
@@ -74,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
 
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
-                username.text.toString(),
+                ccp.selectedCountryCodeWithPlus +username.text.toString(),
                 password.text.toString()
             )
         }
@@ -82,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
         password.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(
-                    username.text.toString(),
+                    ccp.selectedCountryCodeWithPlus +username.text.toString(),
                     password.text.toString()
                 )
             }
@@ -91,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                            username.text.toString(),
+                            ccp.selectedCountryCodeWithPlus +username.text.toString(),
                             password.text.toString()
                         )
                 }
@@ -101,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 Amplify.Auth.signIn(
-                    username.text.toString(),
+                    ccp.selectedCountryCodeWithPlus +username.text.toString(),
                     password.text.toString(),
                     { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
                         loading.visibility = View.INVISIBLE

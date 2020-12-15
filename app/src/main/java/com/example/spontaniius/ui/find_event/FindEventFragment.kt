@@ -28,6 +28,11 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import org.json.JSONArray
 import org.json.JSONObject
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -67,9 +72,10 @@ class FindEventFragment : Fragment() {
         recyclerView.setLayoutManager(LinearLayoutManager(view.context))
         recyclerView.setAdapter(viewAdapter)
 
+        /*
         streetName="909 Thistle Place, Britannia Beach, BC"
         getLocationFromAddress(streetName)
-
+        */
 
 
         // Setup refresh listener which triggers new data loading
@@ -78,10 +84,12 @@ class FindEventFragment : Fragment() {
 
         }
         // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+        swipeContainer.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
             android.R.color.holo_green_light,
             android.R.color.holo_orange_light,
-            android.R.color.holo_red_light)
+            android.R.color.holo_red_light
+        )
 
         // Initialize Places.
 
@@ -95,7 +103,13 @@ class FindEventFragment : Fragment() {
         val autocompleteFragment: AutocompleteSupportFragment =
             childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
 
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
+        autocompleteFragment.setPlaceFields(
+            Arrays.asList(
+                Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.LAT_LNG
+            )
+        )
 
 
 
@@ -105,7 +119,7 @@ class FindEventFragment : Fragment() {
                 Log.i("AddLocationFragment.TAG", "Place: " + place.name)
                 val coords: LatLng? = place.latLng
                 if (coords != null) {
-                    getLocationFromAddress(coords.latitude.toString()+", "+coords.longitude.toString())
+                    getLocationFromAddress(coords.latitude.toString() + ", " + coords.longitude.toString())
                 }
             }
 
@@ -131,12 +145,13 @@ class FindEventFragment : Fragment() {
         val url = "https://maps.googleapis.com/maps/api/geocode/json?address="+strAddress+"&key="+locationAPIKey
         val getLocationRequest = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
-                val JSONResponse= JSONObject(response.toString())
-                val resultJSONArray:JSONArray = JSONResponse.get("results") as JSONArray
-                val resultJSON:JSONObject = resultJSONArray.getJSONObject(0)
-                val geometryJSON:JSONObject = resultJSON.get("geometry") as JSONObject
-                val locationJSON:JSONObject = geometryJSON.get("location") as JSONObject
-                currLatLng = locationJSON.get("lat").toString() + ", "+locationJSON.get("lng").toString()
+                val JSONResponse = JSONObject(response.toString())
+                val resultJSONArray: JSONArray = JSONResponse.get("results") as JSONArray
+                val resultJSON: JSONObject = resultJSONArray.getJSONObject(0)
+                val geometryJSON: JSONObject = resultJSON.get("geometry") as JSONObject
+                val locationJSON: JSONObject = geometryJSON.get("location") as JSONObject
+                currLatLng =
+                    locationJSON.get("lat").toString() + ", " + locationJSON.get("lng").toString()
 
                 getEvents(currLatLng)
 
@@ -152,7 +167,8 @@ class FindEventFragment : Fragment() {
     }
 
 
-    fun getEvents(userAddress:String){
+    fun getEvents(userAddress: String){
+        swipeContainer.isRefreshing = true
         val queue = this.context?.let { VolleySingleton.getInstance(it).requestQueue }
 
         // ...
@@ -160,24 +176,52 @@ class FindEventFragment : Fragment() {
         // Add a request (in this example, called stringRequest) to your RequestQueue.
 
              var streetAddress =userAddress // "49.627795, -123.199644"
-        if (this.getContext()?.let { ContextCompat.checkSelfPermission(it,android.Manifest.permission.ACCESS_COARSE_LOCATION ) } != PackageManager.PERMISSION_GRANTED )
+        if (this.getContext()?.let { ContextCompat.checkSelfPermission(
+                it,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) } != PackageManager.PERMISSION_GRANTED )
 
         fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
+            .addOnSuccessListener { location: Location? ->
                 streetAddress=location.toString()
             }
 
-
+        val currtime = Calendar.getInstance().time
         val url =
-            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress"
+            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress&currentTime=$currtime";
             val getEventsRequest = StringRequest(Request.Method.GET, url,
-                Response.Listener<String> { response ->
+                { response ->
                     eventList.clear()
                     val newList: ArrayList<EventTile> = ArrayList()
-                val eventJSONArray= JSONArray(response.toString())
+                    val eventJSONArray = JSONArray(response.toString())
+
                     for (i in 0 until eventJSONArray.length()) {
-                        val event:JSONObject = eventJSONArray.getJSONObject(i)
-                        newList.add(EventTile(R.drawable.ic_cofee_24, event.get("eventtitle").toString(),event.get("eventtext").toString()))
+
+                        val event: JSONObject = eventJSONArray.getJSONObject(i)
+                        val endTimeString = event.get("eventends")
+                        val endTime = ZonedDateTime.parse(
+                            endTimeString as CharSequence?, DateTimeFormatter.ofPattern(
+                                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+                            )
+                        )
+
+                        val currentTime = currtime.time/1000
+                        val eventTime = endTime.toEpochSecond()
+                        val milliseconds = eventTime-currentTime
+                        val minutesFromEnd = milliseconds.toInt() / 60
+
+
+
+                        newList.add(
+                            EventTile(
+                                R.drawable.ic_cofee_24, event.get("eventtitle").toString(),
+                                event.get("eventtext").toString(),
+                                event.get("distance").toString(),
+                                "ends in" + minutesFromEnd.toString()+ " mins",
+                                event.get("streetaddress").toString(),
+                                this.context
+                            )
+                        )
 
                         /*
                         * "cardids": null,
@@ -199,11 +243,12 @@ class FindEventFragment : Fragment() {
                     viewAdapter.notifyDataSetChanged()
                     swipeContainer.isRefreshing = false
 
-            },
-            Response.ErrorListener { error ->
-                error.printStackTrace()
-            }
-        )
+                },
+                { error ->
+                    error.printStackTrace()
+                    swipeContainer.isRefreshing = false
+                }
+            )
         queue?.add(getEventsRequest)
         }
     }

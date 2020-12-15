@@ -18,6 +18,7 @@ import com.example.spontaniius.ui.login.LoginActivity
 import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -32,13 +33,20 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Amplify.addPlugin(AWSCognitoAuthPlugin())
+
         try {
-            Amplify.configure(applicationContext)
-            Log.i("MyAmplifyApp", "Initialized Amplify")
-        } catch (error: AmplifyException) {
-            Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
+            Amplify.addPlugin(AWSCognitoAuthPlugin())
+            try {
+                Amplify.configure(applicationContext)
+                Log.i("MyAmplifyApp", "Initialized Amplify")
+            } catch (error: AmplifyException) {
+                Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
+            }
+
+        }catch (error: Exception){
+
         }
+
         /*
         Amplify.Auth.fetchAuthSession(
             { result -> Log.i("AmplifyQuickstart", result.toString()) },

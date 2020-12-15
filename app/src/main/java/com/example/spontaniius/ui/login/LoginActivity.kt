@@ -24,6 +24,7 @@ import com.amplifyframework.core.Amplify
 
 import com.example.spontaniius.R
 import com.example.spontaniius.ui.BottomNavigationActivity
+import com.example.spontaniius.ui.sign_up.SignUpActivity
 import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 
 class LoginActivity : AppCompatActivity() {
@@ -37,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
 
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
+        val signup = findViewById<Button>(R.id.signup_button)
         val login = findViewById<Button>(R.id.login_button)
         val loading = findViewById<ProgressBar>(R.id.loading)
         var ccp: CountryCodePicker
@@ -117,6 +119,13 @@ class LoginActivity : AppCompatActivity() {
                     { error -> Log.e("AuthQuickstart", error.toString())
                         loading.visibility = View.INVISIBLE}
                 )
+            }
+
+            signup.setOnClickListener {
+                val intent3 = Intent(this.context, SignUpActivity::class.java).apply {
+
+                }
+                startActivity(intent3)
             }
         }
     }

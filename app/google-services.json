@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:936564001493:android:f04b06a186b591eb7ef05c",
         "android_client_info": {
-          "package_name": "com.example.spontaniius"
+          "package_name": "com.spontaniius"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "936564001493-9pjmv7f7c82uq7uc173td7hal6uso6as.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.spontaniius",
+            "package_name": "com.spontaniius",
             "certificate_hash": "2f3498063f025f5cb141337f0686e89ead78ed56"
           }
         },

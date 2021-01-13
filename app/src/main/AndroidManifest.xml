@@ -15,7 +15,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
     <application
+
         android:name="spontaniius.SpontaniiusApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -34,7 +36,10 @@
 
         <activity android:name=".ui.BottomNavigationActivity">
         </activity>
-        <activity android:name=".ui.find_event.FindEventActivity" android:label="@string/title_activity_find_event"></activity>
+        <activity android:name=".ui.find_event.FindEventActivity" android:label="@string/title_activity_find_event">
+
+
+        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -60,6 +65,9 @@
         </activity>
 
         <activity android:name=".ui.promotions.PromotionTab" />
+
+        <!-- Any inner elements would go here. -->
+
     </application>
 
 </manifest>

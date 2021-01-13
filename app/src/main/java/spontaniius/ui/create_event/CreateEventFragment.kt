@@ -59,10 +59,13 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //            TODO: Select some icons from a set of chosen ones here
 //            TODO: Go through icons with quinn and select a few good ones to use
         }
+
+        /*
         val locationButton = viewLayout.findViewById<Button>(R.id.location_button)
         locationButton.setOnClickListener {
             listenerCreateEvent?.selectLocation()
         }
+         */
         val genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
         ArrayAdapter.createFromResource(
             listenerCreateEvent as Context,

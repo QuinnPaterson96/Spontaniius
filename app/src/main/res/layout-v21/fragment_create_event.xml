@@ -11,6 +11,7 @@
         android:orientation="vertical"
         android:layout_gravity="start">
 
+
         <TableRow>
 
             <LinearLayout
@@ -19,12 +20,12 @@
 
                 <ImageButton
                     android:id="@+id/event_icon"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_pin_drop_black_56dp"
+                    android:layout_width="62dp"
+                    android:layout_height="match_parent"
                     android:clickable="true"
+                    android:contentDescription="@string/content_description_event_icon"
                     android:focusable="true"
-                    android:contentDescription="@string/content_description_event_icon" />
+                    android:src="@drawable/ic_pin_drop_black_56dp" />
 
                 <TextView
                     android:id="@+id/prompt_select_icon"
@@ -78,20 +79,12 @@
                     android:layout_height="wrap_content"
                     android:text="@string/select_location_prompt" />
 
-                <Button
-                    android:id="@+id/location_button"
-                    style="@style/create_event_item_layout"
-                    android:textAlignment="center"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/prompt_choose_location" />
 
                 <fragment
                     android:id="@+id/autocomplete_fragment"
                     android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                    android:layout_width="123dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="304dp"
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </TableRow>
 
@@ -111,9 +104,9 @@
                 <TimePicker
                     android:id="@+id/event_start_time_picker"
                     style="@style/create_event_item_layout"
-                    android:timePickerMode="spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="150dp" />
+                    android:layout_height="70dp"
+                    android:timePickerMode="spinner" />
             </LinearLayout>
         </TableRow>
 
@@ -133,9 +126,9 @@
                 <TimePicker
                     android:id="@+id/event_end_time_picker"
                     style="@style/create_event_item_layout"
-                    android:timePickerMode="spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="150dp" />
+                    android:layout_width="272dp"
+                    android:layout_height="77dp"
+                    android:timePickerMode="spinner" />
             </LinearLayout>
         </TableRow>
 

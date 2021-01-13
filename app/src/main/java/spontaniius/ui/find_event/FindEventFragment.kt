@@ -1,5 +1,6 @@
 package spontaniius.ui.find_event
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -7,6 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -26,8 +30,10 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import kotlinx.android.synthetic.main.activity_bottom_navigation.*
 import org.json.JSONArray
 import org.json.JSONObject
+import spontaniius.ui.BottomNavigationActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -45,6 +51,10 @@ class FindEventFragment : Fragment() {
     lateinit var swipeContainer:SwipeRefreshLayout
     lateinit var streetName:String
     lateinit var currLatLng:String
+
+
+
+
     var locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// Make this refeence google maps api key
 
     companion object {
@@ -54,12 +64,17 @@ class FindEventFragment : Fragment() {
     private lateinit var viewModel: FindEventViewModel
     lateinit var fusedLocationClient: FusedLocationProviderClient
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         // Inflate the layout for this fragment
+
+
+
         val view: View = inflater.inflate(R.layout.fragment_find_event, container, false)
         swipeContainer = view.findViewById(R.id.swipeContainer)
         recyclerView = view.findViewById(R.id.recyclerview)
@@ -73,7 +88,10 @@ class FindEventFragment : Fragment() {
         streetName="909 Thistle Place, Britannia Beach, BC"
         getLocationFromAddress(streetName)
         */
-
+        val locateMeButton = view.findViewById<ImageView>(R.id.locate_me_button);
+        locateMeButton.setOnClickListener {
+            getCurrentLocation()
+            }
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener() {
@@ -135,6 +153,45 @@ class FindEventFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+
+    fun getCurrentLocation(){
+        if (this.context?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED && this.context?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2)
+
+
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                if (location != null) {
+                    currLatLng = (location.latitude.toString()+","+location.longitude.toString())
+                }
+                getEvents(currLatLng)
+            }
+
+    }
 
     // Not needed as google autocomplete returns coordinate, will keep if we ever want to move away from using google's api + fragment
     fun getLocationFromAddress(strAddress: String?){

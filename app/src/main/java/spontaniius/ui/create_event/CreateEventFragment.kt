@@ -1,6 +1,9 @@
 package spontaniius.ui.create_event
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,12 +12,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -22,6 +28,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import org.json.JSONArray
 import org.json.JSONObject
+import spontaniius.ui.BottomNavigationActivity
 import java.util.*
 
 
@@ -37,13 +44,14 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var listenerCreateEvent: OnCreateEventFragmentInteractionListener? = null
     private lateinit var eventIconView: ImageButton
     private lateinit var gender: String
+     private lateinit var autocompleteFragment: AutocompleteSupportFragment
     private val radius1 = 100
     private val radius2 = 500
     private val radius3 = 1000
     private val locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// Make this refeence google maps api key
     //    TODO: event icon with string implementation
     private var eventIcon: String = ""
-
+    lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -53,6 +61,13 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     ): View? {
         // Inflate the layout for this fragment
         val viewLayout = inflater.inflate(R.layout.fragment_create_event, container, false)
+
+
+        val locateMeButton = viewLayout.findViewById<ImageView>(R.id.locate_me_button_create);
+        locateMeButton.setOnClickListener {
+            getCurrentLocation()
+        }
+
         eventIconView = viewLayout.findViewById(R.id.event_icon)
         val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
         iconSelectButton.setOnClickListener {
@@ -66,6 +81,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             listenerCreateEvent?.selectLocation()
         }
          */
+
+
         val genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
         ArrayAdapter.createFromResource(
             listenerCreateEvent as Context,
@@ -123,8 +140,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
         val placesClient = view?.context?.let { Places.createClient(it) }
-        val autocompleteFragment: AutocompleteSupportFragment =
-            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+        autocompleteFragment= childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
 
         autocompleteFragment.setPlaceFields(
             Arrays.asList(
@@ -154,6 +170,42 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         return viewLayout
     }
+
+    private fun getCurrentLocation(){
+        if (this.context?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED && this.context?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2)
+
+            return
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireView().context)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+
+                var currLatLng:LatLng  = LatLng(location?.latitude.toString().toDouble(), location?.longitude.toString().toDouble())
+
+                listenerCreateEvent?.googleLocationSelect(currLatLng)
+                val etPlace = autocompleteFragment.view?.findViewById(R.id.places_autocomplete_search_input) as EditText
+                etPlace.hint = currLatLng.toString()
+            }
+
+    }
+
+
     fun getLocationFromAddress(strAddress: String?){
 
         val url = "https://maps.googleapis.com/maps/api/geocode/json?address="+strAddress+"&key="+locationAPIKey

@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,19 +19,24 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import kotlinx.android.synthetic.main.activity_bottom_navigation.*
 import org.json.JSONArray
 import org.json.JSONObject
+import spontaniius.R
+import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -51,8 +55,8 @@ class FindEventFragment : Fragment() {
     lateinit var swipeContainer:SwipeRefreshLayout
     lateinit var streetName:String
     lateinit var currLatLng:String
-
-
+    lateinit var mapFragment: SupportMapFragment
+    private var googleMap: GoogleMap? = null
 
 
     var locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// Make this refeence google maps api key
@@ -63,7 +67,33 @@ class FindEventFragment : Fragment() {
 
     private lateinit var viewModel: FindEventViewModel
     lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val callback = OnMapReadyCallback { googleMap ->
+        /**
+         * Manipulates the map once available.
+         * This callback is triggered when the map is ready to be used.
+         * This is where we can add markers or lines, add listeners or move the camera.
+         * In this case, we just add a marker near Sydney, Australia.
+         * If Google Play services is not installed on the device, the user will be prompted to
+         * install it inside the SupportMapFragment. This method will only be triggered once the
+         * user has installed Google Play services and returned to the app.
+         */
+        /**
+         * Manipulates the map once available.
+         * This callback is triggered when the map is ready to be used.
+         * This is where we can add markers or lines, add listeners or move the camera.
+         * In this case, we just add a marker near Sydney, Australia.
+         * If Google Play services is not installed on the device, the user will be prompted to
+         * install it inside the SupportMapFragment. This method will only be triggered once the
+         * user has installed Google Play services and returned to the app.
+         */
 
+
+
+        this.googleMap=googleMap
+        googleMap.setOnMapLongClickListener { latLng ->
+
+        }
+    }
 
 
     override fun onCreateView(
@@ -72,7 +102,6 @@ class FindEventFragment : Fragment() {
     ): View? {
 
         // Inflate the layout for this fragment
-
 
 
         val view: View = inflater.inflate(R.layout.fragment_find_event, container, false)
@@ -146,6 +175,12 @@ class FindEventFragment : Fragment() {
 
         return view
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
+        mapFragment?.getMapAsync(callback)
+    }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -168,30 +203,26 @@ class FindEventFragment : Fragment() {
             } != PackageManager.PERMISSION_GRANTED
         ) {
 
-            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2)
+            ActivityCompat.requestPermissions(
+                (activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
+            )
+            ActivityCompat.requestPermissions(
+                (activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2
+            )
 
-
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
         fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
+            .addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     currLatLng = (location.latitude.toString()+","+location.longitude.toString())
                 }
                 getEvents(currLatLng)
             }
 
-    }
+        }
 
     // Not needed as google autocomplete returns coordinate, will keep if we ever want to move away from using google's api + fragment
     fun getLocationFromAddress(strAddress: String?){
@@ -259,9 +290,9 @@ class FindEventFragment : Fragment() {
                             )
                         )
 
-                        val currentTime = currtime.time/1000
+                        val currentTime = currtime.time / 1000
                         val eventTime = endTime.toEpochSecond()
-                        val milliseconds = eventTime-currentTime
+                        val milliseconds = eventTime - currentTime
                         val minutesFromEnd = milliseconds.toInt() / 60
 
 
@@ -271,7 +302,7 @@ class FindEventFragment : Fragment() {
                                 R.drawable.ic_cofee_24, event.get("eventtitle").toString(),
                                 event.get("eventtext").toString(),
                                 event.get("distance").toString(),
-                                "ends in" + minutesFromEnd.toString()+ " mins",
+                                "ends in " + minutesFromEnd.toString() + " mins",
                                 event.get("streetaddress").toString(),
                                 this.context
                             )
@@ -295,7 +326,54 @@ class FindEventFragment : Fragment() {
 
                     eventList.addAll(newList)
                     viewAdapter.notifyDataSetChanged()
+
+                    for (i in 0 until eventList.size) {
+                        var event = eventList.get(i)
+                        val latlong = JSONObject(event.location)
+                        val location = LatLng(latlong.getDouble("x"), latlong.getDouble("y"))
+                        googleMap?.addMarker(
+                            MarkerOptions()
+                                .position(location)
+                                .title(event.title)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_cofee_24))
+
+                        )
+                    }
+
+
+
+/*
+                    mapFragment?.apply {
+                        val sydney = LatLng(-33.852, 151.211)
+                        mapFragment.addMarker(
+                            MarkerOptions()
+                                .position(sydney)
+                                .title("Marker in Sydney")
+                        )
+                    }
+
+ */
+                    if (mapFragment != null) {
+                        val latlong = streetAddress.split(",".toRegex()).toTypedArray()
+                        val latitude = latlong[0].toDouble()
+                        val longitude = latlong[1].toDouble()
+                        val location = LatLng(latitude, longitude)
+                        val zoomLevel = 6.0f
+
+                        if (googleMap != null) {
+                            googleMap!!.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                            googleMap!!.getUiSettings().setMyLocationButtonEnabled(false);
+                            googleMap!!.setMyLocationEnabled(false);
+                            googleMap!!.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    location,
+                                    zoomLevel
+                                )
+                            )
+                        }
+                    }
                     swipeContainer.isRefreshing = false
+
 
                 },
                 { error ->
@@ -305,4 +383,19 @@ class FindEventFragment : Fragment() {
             )
         queue?.add(getEventsRequest)
         }
+
+    /*
+     override fun onMapReady(googleMap: GoogleMap) {
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        val sydney = LatLng(-33.852, 151.211)
+        googleMap.addMarker(
+            MarkerOptions()
+                .position(sydney)
+                .title("Marker in Sydney")
+        )
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    }
+
+     */
     }

@@ -2,12 +2,14 @@ package spontaniius.ui.find_event
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,6 +35,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import kotlinx.android.synthetic.main.fragment_find_event.*
 import org.json.JSONArray
 import org.json.JSONObject
 import spontaniius.R
@@ -57,6 +60,9 @@ class FindEventFragment : Fragment() {
     lateinit var currLatLng:String
     lateinit var mapFragment: SupportMapFragment
     private var googleMap: GoogleMap? = null
+    lateinit var mapButton: Button
+    lateinit var listButton: Button
+    var ViewList=1 // either 1 for list mode or 0 for map mode
 
 
     var locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// Make this refeence google maps api key
@@ -107,6 +113,19 @@ class FindEventFragment : Fragment() {
         val view: View = inflater.inflate(R.layout.fragment_find_event, container, false)
         swipeContainer = view.findViewById(R.id.swipeContainer)
         recyclerView = view.findViewById(R.id.recyclerview)
+        swipeContainer = view.findViewById(R.id.swipeContainer)
+        listButton = view.findViewById(R.id.listButton)
+        mapButton = view.findViewById(R.id.mapButton)
+
+        listButton.setOnClickListener{
+            switchToList()
+        }
+
+        mapButton.setOnClickListener{
+            switchToMap()
+        }
+
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(view.context)
 
@@ -179,6 +198,7 @@ class FindEventFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
         mapFragment?.getMapAsync(callback)
+        mapFragment.view?.visibility = View.GONE
     }
 
 
@@ -335,9 +355,8 @@ class FindEventFragment : Fragment() {
                             MarkerOptions()
                                 .position(location)
                                 .title(event.title)
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_cofee_24))
-
-                        )
+                               // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
+                                )
                     }
 
 
@@ -383,6 +402,21 @@ class FindEventFragment : Fragment() {
             )
         queue?.add(getEventsRequest)
         }
+
+    fun switchToMap(){
+        mapFragment.view?.visibility = View.VISIBLE
+        swipeContainer.visibility=View.GONE
+        listButton.setBackgroundColor(Color.GRAY)
+        mapButton.setBackgroundColor(Color.YELLOW)
+    }
+
+    fun switchToList(){
+        mapFragment.view?.visibility = View.GONE
+        swipeContainer.visibility=View.VISIBLE
+        listButton.setBackgroundColor(Color.YELLOW)
+        mapButton.setBackgroundColor(Color.GRAY)
+
+    }
 
     /*
      override fun onMapReady(googleMap: GoogleMap) {

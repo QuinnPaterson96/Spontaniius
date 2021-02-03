@@ -13,6 +13,7 @@ import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
 import spontaniius.ui.find_event.FindEventFragment
+import com.example.spontaniius.ui.promotions.FindPromotionsFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.GlobalScope
@@ -58,7 +59,7 @@ class BottomNavigationActivity : AppCompatActivity(),
 //            Note: the above can be accomplished with a lil copy-paste
 //        TODO: mark old classes as deprecated (see CreateEventActivity.kt for an example of how to do that)
 //        After the refactoring has been stable for a few commits, feel free to remove the old classes entirely (git has records of them, if they are really needed)
-        promotionFragment = FindEventFragment.newInstance()
+        promotionFragment = FindPromotionsFragment.newInstance()
 
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, promotionFragment, null).hide(promotionFragment).commit()

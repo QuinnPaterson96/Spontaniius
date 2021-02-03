@@ -1,6 +1,8 @@
 package spontaniius.ui.sign_up
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,14 +14,13 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
-import spontaniius.ui.login.LoginActivity
 import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 import org.json.JSONException
 import org.json.JSONObject
+import spontaniius.R
+import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
-import java.lang.Exception
+import spontaniius.ui.login.LoginActivity
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -48,7 +49,28 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
         }
 
+/*
+        try{
+            val permissions = arrayOf<String>()
 
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            permissionsToRequest = permissionsToRequest(permissions);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (permissionsToRequest.size() > 0) {
+                    requestPermissions(
+                        permissionsToRequest.toArray(new String [permissionsToRequest.size()]),
+                        ALL_PERMISSIONS_RESULT
+                    );
+                }
+            }
+
+        }catch (error: Exception){
+
+        }
+*/
 
         Amplify.Auth.fetchAuthSession(
             { result ->
@@ -120,7 +142,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
             attributeList.add(
                 AuthUserAttribute(
                     AuthUserAttributeKey.phoneNumber(),
-                    ccp.selectedCountryCodeWithPlus +put_phone
+                    ccp.selectedCountryCodeWithPlus + put_phone
                 )
             )
 
@@ -136,7 +158,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                     Log.i("AuthQuickStart", "Result: $result")
                     val intent = Intent(this, SignUpConfirmActivity::class.java).apply {
                         putExtra(USER_NAME, username)
-                        putExtra(PHONE_NUMBER, ccp.selectedCountryCodeWithPlus +put_phone)
+                        putExtra(PHONE_NUMBER, ccp.selectedCountryCodeWithPlus + put_phone)
                         putExtra(USER_ID, result.user?.userId)
                         putExtra("Password", put_password)
 
@@ -207,5 +229,20 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
 
         }
+    private fun permissionsToRequest(wantedPermissions: ArrayList<String>): ArrayList<String>? {
+        val result: ArrayList<String> = ArrayList()
+        for (perm in wantedPermissions) {
+            if (!hasPermission(perm)) {
+                result.add(perm)
+            }
+        }
+        return result
+    }
+
+    private fun hasPermission(permission: String): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
+        } else true
+    }
     }
 

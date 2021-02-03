@@ -30,30 +30,62 @@
         android:name=".ui.login.LoginActivity"
         android:label="@string/title_activity_login"></activity>
 
-    <activity android:name=".ui.BottomNavigationActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-    <activity android:name=".ui.find_event.FindEventActivity" android:label="@string/title_activity_find_event"></activity>
-    <!--
-         The API key for Google Maps-based APIs is defined as a string resource.
-         (See the file "res/values/google_maps_api.xml").
-         Note that the API key is linked to the encryption key used to sign the APK.
-         You need a different API key for each encryption key, including the release key that is used to
-         sign the APK for publishing.
-         You can define the keys for the debug and release targets in src/debug/ and src/release/.
-    -->
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="@string/google_maps_key" />
-    <activity android:name=".ui.create_event.CreateEventActivity"></activity>
-    <activity android:name=".MainActivity" />
-    <activity android:name=".ui.sign_up.SignUpActivity3" />
-    <activity android:name=".ui.sign_up.SignUpActivity2" />
-    <activity android:name=".ui.sign_up.SignUpActivity">
-    </activity>
-    <activity android:name=".ui.promotions.PromotionTab" />
-</application>
-    </manifest>
+
+
+    <application
+
+        android:name="spontaniius.SpontaniiusApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".ui.sign_up.SignUpConfirmActivity"
+            android:label="@string/title_activity_confirm_signup"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/title_activity_login"></activity>
+
+        <activity android:name=".ui.BottomNavigationActivity">
+        </activity>
+        <activity android:name=".ui.find_event.FindEventActivity" android:label="@string/title_activity_find_event">
+
+
+        </activity>
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity android:name=".ui.create_event.CreateEventActivity"></activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".ui.sign_up.SignUpActivity3" />
+        <activity android:name=".ui.sign_up.SignUpActivity2" />
+
+        <activity android:name=".ui.sign_up.SignUpActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.promotions.PromotionTab" />
+
+        <!-- Any inner elements would go here. -->
+
+    </application>
+
+</manifest>
+
+

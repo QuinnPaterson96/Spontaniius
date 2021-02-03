@@ -79,20 +79,19 @@
                     android:layout_height="wrap_content"
                     android:text="@string/select_location_prompt" />
 
-                <Button
-                    android:id="@+id/location_button"
-                    style="@style/create_event_item_layout"
-                    android:textAlignment="center"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/prompt_choose_location" />
 
                 <fragment
                     android:id="@+id/autocomplete_fragment"
                     android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                    android:layout_width="123dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="253dp"
+                    android:layout_height="31dp" />
+
+                <ImageView
+                    android:id="@+id/locate_me_button_create"
+                    android:layout_width="47dp"
+                    android:layout_height="match_parent"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_baseline_my_location_24"></ImageView>
             </LinearLayout>
         </TableRow>
 

@@ -163,7 +163,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
 
             override fun onError(p0: Status) {
-                Log.i("AddLocationFragment.TAG", p0.statusMessage)
+                p0.statusMessage?.let { Log.i("AddLocationFragment.TAG", it) }
             }
 
         })

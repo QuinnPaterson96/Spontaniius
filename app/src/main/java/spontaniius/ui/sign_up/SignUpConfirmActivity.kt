@@ -29,7 +29,7 @@ class SignUpConfirmActivity : AppCompatActivity() {
 
         confirm.setOnClickListener{
             Amplify.Auth.confirmSignUp(
-                name,
+                name!!,
                 confirmationCodeEditText.text.toString(),
 
                 { result ->

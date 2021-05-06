@@ -77,8 +77,13 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                 val intent2 = Intent(this, BottomNavigationActivity::class.java).apply {
 
                 }
-                startActivity(intent2)
+
+                if (result.isSignedIn== true){
+                    startActivity(intent2)
+                }
+
                 Log.i("AmplifyQuickstart", result.toString())
+
             },
             { error -> Log.e("AmplifyQuickstart", error.toString()) }
         )

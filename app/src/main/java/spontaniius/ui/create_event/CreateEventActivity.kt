@@ -3,15 +3,13 @@ package spontaniius.ui.create_event
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import spontaniius.R
-import spontaniius.SpontaniiusApplication
-import spontaniius.data.EventEntity
-import spontaniius.data.Repository
-import spontaniius.dependency_injection.CreateEventComponent
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import spontaniius.R
+import spontaniius.data.EventEntity
+import spontaniius.data.Repository
+
 
 @Deprecated("This activity has been replaced by BottomNavigationActivity (Or MainActivity, if it has been renamed)")
 class CreateEventActivity :
@@ -23,16 +21,14 @@ class CreateEventActivity :
     private val mapsFragmentTag = "MAPS TAG"
     private var latLng: LatLng? = null
 
-    @Inject
+
     lateinit var repository: Repository
-    private lateinit var createEventComponent: CreateEventComponent
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createEventComponent =
-            (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
-                .create()
-//        createEventComponent.inject(this)
+
+
         setContentView(R.layout.activity_create_event)
         setTitle(R.string.create_event_title)
         supportFragmentManager.beginTransaction().add(

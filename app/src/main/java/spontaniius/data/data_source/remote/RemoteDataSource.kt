@@ -6,9 +6,8 @@ import spontaniius.data.data_source.DataSource
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
-import javax.inject.Inject
 
-class RemoteDataSource @Inject constructor() :
+class RemoteDataSource :
     DataSource {
 
     override suspend fun saveEvent(eventEntity: EventEntity) {

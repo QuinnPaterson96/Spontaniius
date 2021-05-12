@@ -5,20 +5,21 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import spontaniius.R
-import spontaniius.SpontaniiusApplication
-import spontaniius.data.EventEntity
-import spontaniius.data.Repository
-import spontaniius.dependency_injection.CreateEventComponent
-import spontaniius.ui.create_event.CreateEventFragment
-import spontaniius.ui.create_event.MapsFragment
-import spontaniius.ui.find_event.FindEventFragment
 import com.example.spontaniius.ui.promotions.FindPromotionsFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import spontaniius.R
+import spontaniius.data.DefaultRepository
+import spontaniius.data.EventEntity
+import spontaniius.data.Repository
+import spontaniius.data.data_source.local.EventDatabase
+import spontaniius.data.data_source.local.LocalDataSource
+import spontaniius.data.data_source.remote.RemoteDataSource
+import spontaniius.ui.create_event.CreateEventFragment
+import spontaniius.ui.create_event.MapsFragment
+import spontaniius.ui.find_event.FindEventFragment
 
 //TODO: rename to MainActivity
 class BottomNavigationActivity : AppCompatActivity(),
@@ -28,10 +29,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     private val createEventFragmentTag = "CREATE EVENT TAG"
     private val mapsFragmentTag = "MAPS TAG"
     private var latLng: LatLng? = null
-
-    @Inject
     lateinit var repository: Repository
-    private lateinit var createEventComponent: CreateEventComponent
 
     lateinit var bottomNavigation: BottomNavigationView
     lateinit var fragment_container: FrameLayout
@@ -44,11 +42,10 @@ class BottomNavigationActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_navigation)
 
-        createEventComponent =
-            (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
-                .create()
-        createEventComponent.inject(this)
-
+        repository = DefaultRepository(
+            LocalDataSource(EventDatabase.getDatabase(this).eventDao()),
+            RemoteDataSource()
+        )
         bottomNavigation = findViewById(R.id.bottom_navigation)
         fragment_container = findViewById(R.id.fragment_container)
         createEventFragment = CreateEventFragment.newInstance()
@@ -110,8 +107,6 @@ class BottomNavigationActivity : AppCompatActivity(),
             Toast.LENGTH_LONG
         ).show()
     }
-
-
 
 
     override fun selectLocation() {

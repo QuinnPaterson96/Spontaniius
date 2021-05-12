@@ -1,12 +1,11 @@
 package spontaniius.data
 
-import spontaniius.data.data_source.remote.RemoteDataSource
-import spontaniius.data.data_source.local.LocalDataSource
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import spontaniius.data.data_source.local.LocalDataSource
+import spontaniius.data.data_source.remote.RemoteDataSource
 
-class DefaultRepository @Inject constructor(
+class DefaultRepository constructor(
     private val localDataSource: LocalDataSource,
     private val remoteDataSource: RemoteDataSource
 ) : Repository {

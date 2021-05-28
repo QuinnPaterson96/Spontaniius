@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bike"
+        android:title="bike"
+        android:icon="@drawable/activity_bike"
+        />
+    <item
+        android:id="@+id/drinks"
+        android:title="drinks"
+        android:icon="@drawable/activity_drinks"
+        android:iconTint="#4CAF50"
+        android:iconTintMode="src_in"
+        />
+    <item
+        android:id="@+id/eating"
+        android:title="eating"
+        android:icon="@drawable/activity_eating"
+        android:iconTint="#FFEB3B"
+        android:iconTintMode="src_in"
+        />
+    <item
+        android:id="@+id/sports"
+        android:title="sports"
+        android:icon="@drawable/activity_sports"
+        android:iconTint="#707070"
+        android:iconTintMode="src_in"
+        />
+
+    <item
+        android:id="@+id/videogame"
+        android:title="videogames"
+        android:icon="@drawable/activity_videogame"
+        />
+
+    <item
+        android:id="@+id/walk"
+        android:title="walk"
+        android:icon="@drawable/activity_walk"
+        />
+    <item
+        android:id="@+id/coffee"
+        android:title="coffee"
+        android:icon="@drawable/activity_coffee"
+        />
+
+</menu>

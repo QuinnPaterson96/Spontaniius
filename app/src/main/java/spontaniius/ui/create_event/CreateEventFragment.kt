@@ -6,8 +6,11 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -16,8 +19,6 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -28,6 +29,8 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import org.json.JSONArray
 import org.json.JSONObject
+import spontaniius.R
+import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
 import java.util.*
 
@@ -45,6 +48,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var eventIconView: ImageButton
     private lateinit var gender: String
      private lateinit var autocompleteFragment: AutocompleteSupportFragment
+    private lateinit var iconSelectButton: ImageButton
+    lateinit var eventIconValue: String
     private val radius1 = 100
     private val radius2 = 500
     private val radius3 = 1000
@@ -52,6 +57,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     //    TODO: event icon with string implementation
     private var eventIcon: String = ""
     lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var titleField: EditText
+    lateinit var descriptionField:EditText
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -67,12 +74,17 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         locateMeButton.setOnClickListener {
             getCurrentLocation()
         }
+        titleField = viewLayout.findViewById(R.id.event_title)
+        descriptionField = viewLayout.findViewById(R.id.event_description)
 
         eventIconView = viewLayout.findViewById(R.id.event_icon)
-        val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
+        iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
         iconSelectButton.setOnClickListener {
 //            TODO: Select some icons from a set of chosen ones here
 //            TODO: Go through icons with quinn and select a few good ones to use
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                IconSelectPopup()
+            }
         }
 
         /*
@@ -100,6 +112,9 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
             val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
             val invitationType = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
+
+            val debugIcon = eventIcon;
+
             when {
                 title.text.toString() == "" -> {
                     Toast.makeText(
@@ -168,6 +183,38 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         })
 
+        titleField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+               var currentTitle = s.toString()
+                if (currentTitle.contains("coffee")||currentTitle.contains("tea")) {
+                    iconSelectButton.setImageResource(R.drawable.activity_coffee)
+                    eventIcon = R.drawable.activity_coffee.toString()
+                }
+                if (currentTitle.contains("walk")) {
+                    iconSelectButton.setImageResource(R.drawable.activity_walk)
+                    eventIcon = R.drawable.activity_walk.toString()
+                }
+                if (currentTitle.contains("food")) {
+                    iconSelectButton.setImageResource(R.drawable.activity_eating)
+                    eventIcon = R.drawable.activity_eating.toString()
+                }
+                if (currentTitle.contains("bike")) {
+                    iconSelectButton.setImageResource(R.drawable.activity_bike)
+                    eventIcon = R.drawable.activity_bike.toString()
+                }
+                if (currentTitle.contains("beer")||currentTitle.contains("wine")) {
+                    iconSelectButton.setImageResource(R.drawable.activity_drinks)
+                    eventIcon = R.drawable.activity_drinks.toString()
+                }
+
+            }
+        })
+
+
         return viewLayout
     }
 
@@ -185,18 +232,25 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             } != PackageManager.PERMISSION_GRANTED
         ) {
 
-            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            ActivityCompat.requestPermissions((activity as BottomNavigationActivity),
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2)
+            ActivityCompat.requestPermissions(
+                (activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
+            )
+            ActivityCompat.requestPermissions(
+                (activity as BottomNavigationActivity),
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2
+            )
 
             return
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireView().context)
         fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
+            .addOnSuccessListener { location: Location? ->
 
-                var currLatLng:LatLng  = LatLng(location?.latitude.toString().toDouble(), location?.longitude.toString().toDouble())
+                var currLatLng:LatLng  = LatLng(
+                    location?.latitude.toString().toDouble(),
+                    location?.longitude.toString().toDouble()
+                )
 
                 listenerCreateEvent?.googleLocationSelect(currLatLng)
                 val etPlace = autocompleteFragment.view?.findViewById(R.id.places_autocomplete_search_input) as EditText
@@ -217,7 +271,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 val resultJSON: JSONObject = resultJSONArray.getJSONObject(0)
                 val geometryJSON: JSONObject = resultJSON.get("geometry") as JSONObject
                 val locationJSON: JSONObject = geometryJSON.get("location") as JSONObject
-                var currLatLng:LatLng  = LatLng(locationJSON.get("lat").toString().toDouble(), locationJSON.get("lng").toString().toDouble())
+                var currLatLng: LatLng = LatLng(
+                    locationJSON.get("lat").toString().toDouble(), locationJSON.get(
+                        "lng"
+                    ).toString().toDouble()
+                )
                 locationJSON.get("lat").toString() + ", " + locationJSON.get("lng").toString()
 
                 listenerCreateEvent?.googleLocationSelect(currLatLng)
@@ -274,9 +332,108 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         dateStringBuilder.append(":")
         dateStringBuilder.append("00")
         // Possible future timezone insert
-        dateStringBuilder.append(TimeZone.getDefault().getDisplayName(TimeZone.getDefault().inDaylightTime(Calendar.getInstance().time), TimeZone.SHORT))
+        dateStringBuilder.append(
+            TimeZone.getDefault().getDisplayName(
+                TimeZone.getDefault().inDaylightTime(
+                    Calendar.getInstance().time
+                ), TimeZone.SHORT
+            )
+        )
         return dateStringBuilder.toString()
     }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun IconSelectPopup(){
+        val popup = PopupMenu(context, iconSelectButton)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.event_icon_menu, popup.menu)
+        popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+            override fun onMenuItemClick(item: MenuItem): Boolean {
+                return when (item.getItemId()) {
+                    R.id.drinks -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_drinks)
+                        eventIcon = R.drawable.activity_drinks.toString()
+
+                        if (titleField.text.toString() == "") {
+                            titleField.setText("Let's go have some drinks")
+                        }
+
+
+                        return true
+                    }
+                    R.id.bike -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_bike)
+                        eventIcon = R.drawable.activity_bike.toString()
+
+                        if (titleField.text.toString() == "") {
+                            titleField.setText("Let's go for a bike ride")
+                        }
+
+                        return true
+                    }
+                    R.id.eating -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_eating)
+                        eventIcon = R.drawable.activity_eating.toString()
+                        if (titleField.text.toString() == "") {
+                            titleField.setText("Let's grab some food together")
+                        }
+
+
+                        return true
+
+                    }
+                    R.id.sports -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_sports)
+                        eventIcon = R.drawable.activity_sports.toString()
+
+                        if (titleField.text.toString() == "") {
+                            titleField.setText("Let's go play")
+                        }
+
+                        return true
+
+                    }
+                    R.id.walk -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_walk)
+                        eventIcon = R.drawable.activity_walk.toString()
+                        if (titleField.text.toString() == "") {
+                            titleField.setText("Let's go for a walk")
+                        }
+
+
+                        return true
+                    }
+                    R.id.videogame -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_videogame)
+                        eventIcon = R.drawable.activity_videogame.toString()
+                        if (titleField.text.toString() == "") {
+                            titleField.setText("Let's play some ")
+                        }
+
+                        return true
+
+                    }
+                    R.id.coffee -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_coffee)
+                        eventIcon = R.drawable.activity_coffee.toString()
+                        if (titleField.text.toString() == "") {
+                            titleField.setText("Meet me for coffee")
+                        }
+
+                        return true
+
+                    }
+
+
+                    else -> false
+                }
+            }
+        })
+        popup.setForceShowIcon(true)
+        popup.show()
+    }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -318,3 +475,5 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
     }
 }
+
+

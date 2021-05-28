@@ -14,6 +14,7 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.AmplifyConfiguration
 import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 import org.json.JSONException
 import org.json.JSONObject
@@ -39,7 +40,10 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
         try {
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             try {
-                Amplify.configure(applicationContext)
+                val config = AmplifyConfiguration.builder(applicationContext)
+                    .devMenuEnabled(false)
+                    .build()
+                Amplify.configure(config, applicationContext)
                 Log.i("MyAmplifyApp", "Initialized Amplify")
             } catch (error: AmplifyException) {
                 Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
@@ -78,7 +82,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
                 }
 
-                if (result.isSignedIn== true){
+                if (result.isSignedIn == true) {
                     startActivity(intent2)
                 }
 

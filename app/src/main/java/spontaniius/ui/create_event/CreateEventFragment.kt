@@ -59,7 +59,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var titleField: EditText
     lateinit var descriptionField:EditText
-
+    // tracks if using stock title
+    var stockTitle = false
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -210,7 +211,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     iconSelectButton.setImageResource(R.drawable.activity_drinks)
                     eventIcon = R.drawable.activity_drinks.toString()
                 }
-
+            stockTitle = false
             }
         })
 
@@ -349,13 +350,16 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         inflater.inflate(R.menu.event_icon_menu, popup.menu)
         popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
             override fun onMenuItemClick(item: MenuItem): Boolean {
+                val titleTextEmpty = titleField.text.toString() == ""
+                val emptyOrStock = titleTextEmpty||stockTitle // If title is empty, or if its a stock title then a new stock title will be populated
                 return when (item.getItemId()) {
                     R.id.drinks -> {
                         iconSelectButton.setImageResource(R.drawable.activity_drinks)
                         eventIcon = R.drawable.activity_drinks.toString()
 
-                        if (titleField.text.toString() == "") {
+                        if (emptyOrStock) {
                             titleField.setText("Let's go have some drinks")
+                            stockTitle = true
                         }
 
 
@@ -365,8 +369,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         iconSelectButton.setImageResource(R.drawable.activity_bike)
                         eventIcon = R.drawable.activity_bike.toString()
 
-                        if (titleField.text.toString() == "") {
+                        if (emptyOrStock) {
                             titleField.setText("Let's go for a bike ride")
+                            stockTitle = true
+
                         }
 
                         return true
@@ -374,8 +380,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     R.id.eating -> {
                         iconSelectButton.setImageResource(R.drawable.activity_eating)
                         eventIcon = R.drawable.activity_eating.toString()
-                        if (titleField.text.toString() == "") {
+                        if (emptyOrStock) {
                             titleField.setText("Let's grab some food together")
+                            stockTitle = true
+
                         }
 
 
@@ -386,8 +394,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         iconSelectButton.setImageResource(R.drawable.activity_sports)
                         eventIcon = R.drawable.activity_sports.toString()
 
-                        if (titleField.text.toString() == "") {
+                        if (emptyOrStock) {
                             titleField.setText("Let's go play")
+                            stockTitle = true
+
                         }
 
                         return true
@@ -396,8 +406,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     R.id.walk -> {
                         iconSelectButton.setImageResource(R.drawable.activity_walk)
                         eventIcon = R.drawable.activity_walk.toString()
-                        if (titleField.text.toString() == "") {
+                        if (emptyOrStock) {
                             titleField.setText("Let's go for a walk")
+                            stockTitle = true
+
                         }
 
 
@@ -406,8 +418,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     R.id.videogame -> {
                         iconSelectButton.setImageResource(R.drawable.activity_videogame)
                         eventIcon = R.drawable.activity_videogame.toString()
-                        if (titleField.text.toString() == "") {
+                        if (emptyOrStock) {
                             titleField.setText("Let's play some ")
+                            stockTitle = true
+
                         }
 
                         return true
@@ -416,8 +430,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     R.id.coffee -> {
                         iconSelectButton.setImageResource(R.drawable.activity_coffee)
                         eventIcon = R.drawable.activity_coffee.toString()
-                        if (titleField.text.toString() == "") {
+                        if (emptyOrStock) {
                             titleField.setText("Meet me for coffee")
+                            stockTitle = true
+
                         }
 
                         return true

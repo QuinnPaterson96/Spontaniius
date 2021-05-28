@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -45,6 +46,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var eventIconView: ImageButton
     private lateinit var gender: String
      private lateinit var autocompleteFragment: AutocompleteSupportFragment
+    private lateinit var iconSelectButton: ImageButton
+    lateinit var eventIconValue: String
     private val radius1 = 100
     private val radius2 = 500
     private val radius3 = 1000
@@ -69,10 +72,13 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         eventIconView = viewLayout.findViewById(R.id.event_icon)
-        val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
+        iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
         iconSelectButton.setOnClickListener {
 //            TODO: Select some icons from a set of chosen ones here
 //            TODO: Go through icons with quinn and select a few good ones to use
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                IconSelectPopup()
+            }
         }
 
         /*
@@ -100,6 +106,9 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
             val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
             val invitationType = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
+
+            val debugIcon = eventIcon;
+
             when {
                 title.text.toString() == "" -> {
                     Toast.makeText(
@@ -278,6 +287,69 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         return dateStringBuilder.toString()
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun IconSelectPopup(){
+        val popup = PopupMenu(context, iconSelectButton)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.event_icon_menu, popup.menu)
+        popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+            override fun onMenuItemClick(item: MenuItem): Boolean {
+                return when (item.getItemId()) {
+                    R.id.drinks -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_drinks)
+                        eventIcon= R.drawable.activity_drinks.toString()
+                        return true
+                    }
+                    R.id.bike -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_bike)
+                        eventIcon= R.drawable.activity_bike.toString()
+
+                        return true
+                    }
+                    R.id.eating -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_eating)
+                        eventIcon= R.drawable.activity_eating.toString()
+
+                        return true
+
+                    }
+                    R.id.sports -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_sports)
+                        eventIcon= R.drawable.activity_sports.toString()
+                        return true
+
+                    }
+                    R.id.walk -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_walk)
+                        eventIcon= R.drawable.activity_walk.toString()
+
+                        return true
+                    }
+                    R.id.videogame -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_videogame)
+                        eventIcon= R.drawable.activity_videogame.toString()
+
+                        return true
+
+                    }
+                    R.id.coffee -> {
+                        iconSelectButton.setImageResource(R.drawable.activity_coffee)
+                        eventIcon= R.drawable.activity_coffee.toString()
+                        return true
+
+                    }
+
+
+                    else -> false
+                }
+            }
+        })
+        popup.setForceShowIcon(true)
+        popup.show()
+    }
+
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -318,3 +390,5 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
     }
 }
+
+

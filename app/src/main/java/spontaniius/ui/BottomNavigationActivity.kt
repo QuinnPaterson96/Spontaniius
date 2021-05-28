@@ -1,10 +1,20 @@
 package spontaniius.ui
 
+import android.os.Build
 import android.os.Bundle
-import android.widget.FrameLayout
-import android.widget.Toast
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.fragment.app.Fragment
+import com.example.spontaniius.ui.promotions.FindPromotionsFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import spontaniius.R
 import spontaniius.SpontaniiusApplication
 import spontaniius.data.EventEntity
@@ -13,12 +23,8 @@ import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
 import spontaniius.ui.find_event.FindEventFragment
-import com.example.spontaniius.ui.promotions.FindPromotionsFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 //TODO: rename to MainActivity
 class BottomNavigationActivity : AppCompatActivity(),
@@ -39,6 +45,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     lateinit var createEventFragment: CreateEventFragment
     lateinit var promotionFragment: Fragment
     lateinit var findEventFragment: FindEventFragment
+    lateinit var iconSelectButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,7 +156,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                         description,
                         gender,
                         "Null address",
-                        "null icon",
+                        icon,
                         startTime,
                         endTime,
                         latLong.latitude,

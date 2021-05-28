@@ -28,14 +28,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import kotlinx.android.synthetic.main.fragment_find_event.*
 import org.json.JSONArray
 import org.json.JSONObject
 import spontaniius.R
@@ -271,6 +269,13 @@ class FindEventFragment : Fragment() {
         queue?.add(getLocationRequest)
     }
 
+    /*
+    fun getIconFromString(iconName:String){
+        if(iconName=="bike"){}
+
+
+    }
+*/
 
     fun getEvents(userAddress: String){
         swipeContainer.isRefreshing = true
@@ -315,18 +320,21 @@ class FindEventFragment : Fragment() {
                         val milliseconds = eventTime - currentTime
                         val minutesFromEnd = milliseconds.toInt() / 60
 
-
-
-                        newList.add(
-                            EventTile(
-                                R.drawable.ic_cofee_24, event.get("eventtitle").toString(),
-                                event.get("eventtext").toString(),
-                                event.get("distance").toString(),
-                                "ends in " + minutesFromEnd.toString() + " mins",
-                                event.get("streetaddress").toString(),
-                                this.context
+                        try {
+                            newList.add(
+                                EventTile(
+                                    event.get("icon").toString().toInt(),
+                                    event.get("eventtitle").toString(),
+                                    event.get("eventtext").toString(),
+                                    event.get("distance").toString(),
+                                    "ends in " + minutesFromEnd.toString() + " mins",
+                                    event.get("streetaddress").toString(),
+                                    this.context
+                                )
                             )
-                        )
+                        } finally {
+
+                        }
 
                         /*
                         * "cardids": null,

@@ -198,7 +198,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     iconSelectButton.setImageResource(R.drawable.activity_walk)
                     eventIcon = R.drawable.activity_walk.toString()
                 }
-                if (currentTitle.contains("food")) {
+                if (currentTitle.contains("food")||currentTitle.contains("dinner")||currentTitle.contains("lunch")||currentTitle.contains("breakfast")) {
                     iconSelectButton.setImageResource(R.drawable.activity_eating)
                     eventIcon = R.drawable.activity_eating.toString()
                 }

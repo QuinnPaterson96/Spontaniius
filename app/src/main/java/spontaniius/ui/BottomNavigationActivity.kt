@@ -1,5 +1,6 @@
 package spontaniius.ui
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuInflater
@@ -22,7 +23,9 @@ import spontaniius.data.Repository
 import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
+import spontaniius.ui.event_management.EventManagementActivity
 import spontaniius.ui.find_event.FindEventFragment
+import spontaniius.ui.login.LoginActivity
 import javax.inject.Inject
 
 
@@ -170,6 +173,12 @@ class BottomNavigationActivity : AppCompatActivity(),
                 "Event Created",
                 Toast.LENGTH_LONG
             ).show()
+
+            val intentEventManagement = Intent(this, EventManagementActivity::class.java).apply {
+
+            }
+
+            startActivity(intentEventManagement)
         }
     }
 

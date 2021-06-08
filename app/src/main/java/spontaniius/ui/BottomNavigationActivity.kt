@@ -138,7 +138,6 @@ class BottomNavigationActivity : AppCompatActivity(),
         ).show()
     }
 
-
     override fun createEvent(
         title: String,
         description: String,

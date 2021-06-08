@@ -21,7 +21,8 @@
         android:layout_alignParentEnd="true"
         app:fabSize="mini" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/fab"
@@ -34,7 +35,8 @@
             android:hint="Input"
             android:id="@+id/input"
             />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout
+        >
 
     <ListView
         android:layout_width="match_parent"

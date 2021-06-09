@@ -14,7 +14,7 @@ class UserOptionsActivity : AppCompatActivity() {
         val phoneNumberTextView = findViewById<EditText>(R.id.phone_number_edittext)
         val nameEditText = findViewById<EditText>(R.id.name_edittext)
         val genderRadioGroup = findViewById<RadioGroup>(R.id.gender_selection_radioGroup)
-
+        initializeUserData(nameEditText, phoneNumberTextView, genderRadioGroup)
         val saveButton = this.findViewById<FloatingActionButton>(R.id.save_user_details)
         val cancelButton = this.findViewById<FloatingActionButton>(R.id.cancel_user_details)
         saveButton.setOnClickListener {

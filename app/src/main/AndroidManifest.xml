@@ -1,23 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="spontaniius">
-    <!--
+<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
+package="spontaniius">
+<!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <application
+<application
     android:name="spontaniius.SpontaniiusApplication"
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
@@ -26,8 +25,6 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
     >
-
-
 
 
     <activity
@@ -39,15 +36,10 @@
         android:label="@string/title_activity_login"></activity>
 
 
-
-
-
-
-
-
-    <activity android:name=".ui.BottomNavigationActivity">
-    </activity>
-    <activity android:name=".ui.find_event.FindEventActivity" android:label="@string/title_activity_find_event">
+    <activity android:name=".ui.BottomNavigationActivity"></activity>
+    <activity
+        android:name=".ui.find_event.FindEventActivity"
+        android:label="@string/title_activity_find_event">
 
 
     </activity>
@@ -67,6 +59,7 @@
     <activity android:name=".MainActivity" />
     <activity android:name=".ui.sign_up.SignUpActivity3" />
     <activity android:name=".ui.sign_up.SignUpActivity2" />
+    <activity android:name=".ui.event_management.EventManagementActivity"></activity>
 
     <activity android:name=".ui.sign_up.SignUpActivity">
         <intent-filter>
@@ -78,7 +71,7 @@
     <activity android:name=".ui.promotions.PromotionTab" />
 
     <!-- Any inner elements would go here. -->
-
+    <activity android:name="spontaniius.ui.event_management.EventMgmtActivity"></activity>
 </application>
 
 </manifest>

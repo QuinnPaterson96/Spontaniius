@@ -92,7 +92,9 @@ class EventManagementFragment : Fragment() {
         }
 
         add15MinsButton = fragmentView?.findViewById<View>(R.id.addButton) as Button
-
+        add15MinsButton.setOnClickListener{
+            listenerManageEvent?.add15Mins()
+        }
         // Load chat room contents
         displayChatMessages();
         return fragmentView
@@ -143,5 +145,6 @@ class EventManagementFragment : Fragment() {
 
     interface OnEventManagementFragmentInteractionListener {
         fun endEvent()
+        fun add15Mins()
     }
 }

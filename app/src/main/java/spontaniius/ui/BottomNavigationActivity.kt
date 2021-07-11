@@ -66,6 +66,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     lateinit var iconSelectButton: ImageButton
     var meetupOwner = false
     var eventid = 0
+    var eventEnds = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,7 +182,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     ) {
 
 
-
+        eventEnds = endTime
         val latLong = latLng
         if (latLong == null) {
             Toast.makeText(this, R.string.warning_no_location, Toast.LENGTH_LONG).show()
@@ -249,7 +250,7 @@ class BottomNavigationActivity : AppCompatActivity(),
         val currtime = Calendar.getInstance().time
         val url =
             "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+currtime;
-        val getEventsRequest = StringRequest(Request.Method.PUT, url,
+        val endEventRequest = StringRequest(Request.Method.PUT, url,
             { response ->
                 meetupOwner = false
                 eventid = 0
@@ -262,7 +263,42 @@ class BottomNavigationActivity : AppCompatActivity(),
             }
         )
         val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
-        queue?.add(getEventsRequest)
+        queue?.add(endEventRequest)
     }
+
+    override fun add15Mins(){
+        var newEndTime = ZonedDateTime.parse(
+            eventEnds as CharSequence?, DateTimeFormatter.ofPattern(
+                "yyyy-M-dd HH:mm:ssz"
+            )
+        )
+
+        var eventEndsTime = newEndTime.plusMinutes(15)
+
+
+        eventEnds = eventEndsTime.format(DateTimeFormatter.ofPattern(
+            "yyyy-M-dd HH:mm:ssz"
+        )).toString()
+
+
+
+
+
+        val url ="https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+eventEnds;
+        val extendEventRequest = StringRequest(Request.Method.PUT, url,
+            { response ->
+                meetupOwner = false
+                eventid = 0
+                supportFragmentManager.beginTransaction().hide(currentFragment)
+                    .show(createEventFragment).commit()
+                currentFragment = createEventFragment
+            },
+            { error ->
+                error.printStackTrace()
+            }
+        )
+        val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
+        queue?.add(extendEventRequest)
+        }
     }
 

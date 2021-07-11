@@ -282,16 +282,10 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
 
-
-
         val url ="https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+eventEnds;
         val extendEventRequest = StringRequest(Request.Method.PUT, url,
             { response ->
-                meetupOwner = false
-                eventid = 0
-                supportFragmentManager.beginTransaction().hide(currentFragment)
-                    .show(createEventFragment).commit()
-                currentFragment = createEventFragment
+
             },
             { error ->
                 error.printStackTrace()

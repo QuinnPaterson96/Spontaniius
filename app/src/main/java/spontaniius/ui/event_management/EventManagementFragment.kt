@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.firebase.ui.database.FirebaseListAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import spontaniius.R
 import java.text.SimpleDateFormat
@@ -20,8 +21,8 @@ import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val ARG_PARAM1 = "eventid"
+private const val ARG_PARAM2 = "role"
 
 /**
  * A simple [Fragment] subclass.
@@ -31,11 +32,15 @@ private const val ARG_PARAM2 = "param2"
 class EventManagementFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var listenerManageEvent: EventManagementFragment.OnEventManagementFragmentInteractionListener? = null
-    var database = FirebaseDatabase.getInstance()
-    var myRef = database.getReference(ARG_PARAM1)
+
+
+
+    lateinit var myRef: DatabaseReference
+
+
     lateinit var listOfMessages: ListView
     private var adapter: FirebaseListAdapter<ChatMessage>? = null
-    lateinit var eventID: String
+
     lateinit var fab: FloatingActionButton
     lateinit var input: EditText
     lateinit var fragmentView: View
@@ -44,16 +49,14 @@ class EventManagementFragment : Fragment() {
 
 
     companion object {
-        fun newInstance(param1: String, param2: String): EventManagementFragment {
+        fun newInstance(param1: String, param2: Boolean): EventManagementFragment {
             return EventManagementFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putBoolean(ARG_PARAM2, param2)
                 }
             }
         }
-
-        fun newInstance() = EventManagementFragment()
     }
 
     override fun onCreateView(
@@ -63,6 +66,11 @@ class EventManagementFragment : Fragment() {
         // Inflate the layout for this fragment
         super.onCreate(savedInstanceState)
         fragmentView = inflater.inflate(R.layout.fragment_event_management, container, false)
+
+        var args = arguments
+        var eventID = args!!.getString(ARG_PARAM1, "0")
+        var role = args!!.getBoolean(ARG_PARAM2, false)
+        myRef = FirebaseDatabase.getInstance().getReference(eventID)
 
 
         listOfMessages = fragmentView?.findViewById<View>(R.id.list_of_messages) as ListView
@@ -85,6 +93,7 @@ class EventManagementFragment : Fragment() {
 
             // Clear the input
             input.setText("")
+
         }
         endEventButton = fragmentView?.findViewById<View>(R.id.endButton) as Button
         endEventButton.setOnClickListener{
@@ -106,7 +115,7 @@ class EventManagementFragment : Fragment() {
 
         adapter = object : FirebaseListAdapter<ChatMessage>(
             activity, ChatMessage::class.java,
-            R.layout.message, FirebaseDatabase.getInstance().reference
+            R.layout.message, myRef
         ) {
             override fun populateView(v: View, model: ChatMessage, position: Int) {
                 // Get references to the views of message.xml

@@ -236,8 +236,9 @@ class FindEventFragment : Fragment() {
             .addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     currLatLng = (location.latitude.toString()+","+location.longitude.toString())
+                    getEvents(currLatLng)
                 }
-                getEvents(currLatLng)
+
             }
 
         }

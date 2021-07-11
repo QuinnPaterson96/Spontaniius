@@ -247,7 +247,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireView().context)
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-
+                if(location!=null){
                 var currLatLng:LatLng  = LatLng(
                     location?.latitude.toString().toDouble(),
                     location?.longitude.toString().toDouble()
@@ -256,6 +256,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 listenerCreateEvent?.googleLocationSelect(currLatLng)
                 val etPlace = autocompleteFragment.view?.findViewById(R.id.places_autocomplete_search_input) as EditText
                 etPlace.hint = currLatLng.toString()
+            }
             }
 
     }

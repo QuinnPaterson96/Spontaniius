@@ -258,7 +258,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     override fun add15Mins(){
         var newEndTime = ZonedDateTime.parse(
             eventEnds as CharSequence?, DateTimeFormatter.ofPattern(
-                "yyyy-M-dd HH:mm:ssz"
+                "yyyy-M-dd HH:m:ssz"
             )
         )
 
@@ -303,6 +303,8 @@ class BottomNavigationActivity : AppCompatActivity(),
             .show(findEventFragment).remove(eventManagementFragment).commitNow()
         currentFragment = findEventFragment
     }
+
+
 
     }
 

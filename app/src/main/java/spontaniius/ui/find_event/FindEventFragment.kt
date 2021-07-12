@@ -143,8 +143,8 @@ class FindEventFragment : Fragment() {
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener() {
+            if(::currLatLng.isInitialized)
             getEvents(currLatLng)
-
         }
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(
@@ -398,17 +398,6 @@ class FindEventFragment : Fragment() {
                 }
 
 
-/*
-                    mapFragment?.apply {
-                        val sydney = LatLng(-33.852, 151.211)
-                        mapFragment.addMarker(
-                            MarkerOptions()
-                                .position(sydney)
-                                .title("Marker in Sydney")
-                        )
-                    }
-
- */
                 if (mapFragment != null) {
                     val latlong = streetAddress.split(",".toRegex()).toTypedArray()
                     val latitude = latlong[0].toDouble()

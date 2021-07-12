@@ -1,6 +1,7 @@
 package spontaniius.ui.find_event
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -46,6 +47,7 @@ import kotlin.collections.ArrayList
 
 
 class FindEventFragment : Fragment() {
+    private var listenerFindEvent: FindEventFragment.OnFindEventFragmentInteractionListener? = null
 
 
 
@@ -137,7 +139,7 @@ class FindEventFragment : Fragment() {
         val locateMeButton = view.findViewById<ImageView>(R.id.locate_me_button);
         locateMeButton.setOnClickListener {
             getCurrentLocation()
-            }
+        }
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener() {
@@ -241,7 +243,7 @@ class FindEventFragment : Fragment() {
 
             }
 
-        }
+    }
 
     // Not needed as google autocomplete returns coordinate, will keep if we ever want to move away from using google's api + fragment
     fun getLocationFromAddress(strAddress: String?){
@@ -286,88 +288,114 @@ class FindEventFragment : Fragment() {
 
         // Add a request (in this example, called stringRequest) to your RequestQueue.
 
-             var streetAddress =userAddress // "49.627795, -123.199644"
+        var streetAddress =userAddress // "49.627795, -123.199644"
         if (this.getContext()?.let { ContextCompat.checkSelfPermission(
                 it,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
             ) } != PackageManager.PERMISSION_GRANTED )
 
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                streetAddress=location.toString()
-            }
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    streetAddress=location.toString()
+                }
 
         val currtime = Calendar.getInstance().time
         val url =
             "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress&currentTime=$currtime";
-            val getEventsRequest = StringRequest(Request.Method.GET, url,
-                { response ->
-                    eventList.clear()
-                    val newList: ArrayList<EventTile> = ArrayList()
-                    val eventJSONArray = JSONArray(response.toString())
+        val getEventsRequest = StringRequest(Request.Method.GET, url,
+            { response ->
+                eventList.clear()
+                val newList: ArrayList<EventTile> = ArrayList()
+                val eventJSONArray = JSONArray(response.toString())
 
-                    for (i in 0 until eventJSONArray.length()) {
+                for (i in 0 until eventJSONArray.length()) {
 
-                        val event: JSONObject = eventJSONArray.getJSONObject(i)
-                        val endTimeString = event.get("eventends")
-                        val endTime = ZonedDateTime.parse(
-                            endTimeString as CharSequence?, DateTimeFormatter.ofPattern(
-                                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-                            )
+                    val event: JSONObject = eventJSONArray.getJSONObject(i)
+                    val endTimeString = event.get("eventends")
+                    val endTime = ZonedDateTime.parse(
+                        endTimeString as CharSequence?, DateTimeFormatter.ofPattern(
+                            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+                        )
+                    )
+
+                    val currentTime = currtime.time / 1000
+                    val eventTime = endTime.toEpochSecond()
+                    val milliseconds = eventTime - currentTime
+                    val minutesFromEnd = milliseconds.toInt() / 60
+
+                    try {
+                        var hangout = EventTile(
+                            event.get("icon").toString().toInt(),
+                            event.get("eventtitle").toString(),
+                            event.get("eventtext").toString(),
+                            event.get("distance").toString(),
+                            "ends in " + minutesFromEnd.toString() + " mins",
+                            event.get("streetaddress").toString(),
+                            event.get("eventid").toString(),
+                            this.context
                         )
 
-                        val currentTime = currtime.time / 1000
-                        val eventTime = endTime.toEpochSecond()
-                        val milliseconds = eventTime - currentTime
-                        val minutesFromEnd = milliseconds.toInt() / 60
+                        newList.add(hangout)
+                    } finally {
 
-                        try {
-                            newList.add(
-                                EventTile(
-                                    event.get("icon").toString().toInt(),
-                                    event.get("eventtitle").toString(),
-                                    event.get("eventtext").toString(),
-                                    event.get("distance").toString(),
-                                    "ends in " + minutesFromEnd.toString() + " mins",
-                                    event.get("streetaddress").toString(),
-                                    this.context
-                                )
-                            )
-                        } finally {
+                    }
+
+                    /*
+                    * "cardids": null,
+                      "eventid": 1,
+                      "eventtitle": "Lamb party",
+                      "eventtext": "Test from Lambda",
+                      "genderrestrict": "any",
+                      "streetaddress": {
+                        "x": 48.4335854,
+                        "y": -123.3371036
+                      },
+                      "icon": "01.jpg",
+                      "maxradius": 100,
+                      "eventstarts": "11:39:27.331481",
+                      "eventends": "11:39:27.331481"*/
+                }
+
+                eventList.addAll(newList)
+                recyclerView.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                    override fun onLayoutChange(
+                        v: View,
+                        left: Int,
+                        top: Int,
+                        right: Int,
+                        bottom: Int,
+                        oldLeft: Int,
+                        oldTop: Int,
+                        oldRight: Int,
+                        oldBottom: Int
+                    ) {
+                        for (i in 0 until recyclerView.getChildCount()) {
+                            val holder = recyclerView.findViewHolderForAdapterPosition(i)
+                            if (holder != null) {
+                                val cardView = holder as EventFindAdapter.EventCardViewHolder
+                                cardView.details.setOnClickListener {
+                                    listenerFindEvent?.openEventChatroom(holder.eventid)
+                                }
+                            }
 
                         }
-
-                        /*
-                        * "cardids": null,
-                          "eventid": 1,
-                          "eventtitle": "Lamb party",
-                          "eventtext": "Test from Lambda",
-                          "genderrestrict": "any",
-                          "streetaddress": {
-                            "x": 48.4335854,
-                            "y": -123.3371036
-                          },
-                          "icon": "01.jpg",
-                          "maxradius": 100,
-                          "eventstarts": "11:39:27.331481",
-                          "eventends": "11:39:27.331481"*/
                     }
+                })
 
-                    eventList.addAll(newList)
-                    viewAdapter.notifyDataSetChanged()
+                viewAdapter.notifyDataSetChanged()
 
-                    for (i in 0 until eventList.size) {
-                        var event = eventList.get(i)
-                        val latlong = JSONObject(event.location)
-                        val location = LatLng(latlong.getDouble("x"), latlong.getDouble("y"))
-                        googleMap?.addMarker(
-                            MarkerOptions()
-                                .position(location)
-                                .title(event.title)
-                               // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
-                                )
-                    }
+                for (i in 0 until eventList.size) {
+                    var event = eventList.get(i)
 
+                    val latlong = JSONObject(event.location)
+                    val location = LatLng(latlong.getDouble("x"), latlong.getDouble("y"))
+                    googleMap?.addMarker(
+                        MarkerOptions()
+                            .position(location)
+                            .title(event.title)
+                        // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
+                    )
+                }
 
 
 /*
@@ -381,36 +409,38 @@ class FindEventFragment : Fragment() {
                     }
 
  */
-                    if (mapFragment != null) {
-                        val latlong = streetAddress.split(",".toRegex()).toTypedArray()
-                        val latitude = latlong[0].toDouble()
-                        val longitude = latlong[1].toDouble()
-                        val location = LatLng(latitude, longitude)
-                        val zoomLevel = 6.0f
+                if (mapFragment != null) {
+                    val latlong = streetAddress.split(",".toRegex()).toTypedArray()
+                    val latitude = latlong[0].toDouble()
+                    val longitude = latlong[1].toDouble()
+                    val location = LatLng(latitude, longitude)
+                    val zoomLevel = 6.0f
 
-                        if (googleMap != null) {
-                            googleMap!!.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                            googleMap!!.getUiSettings().setMyLocationButtonEnabled(false);
-                            googleMap!!.setMyLocationEnabled(false);
-                            googleMap!!.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    location,
-                                    zoomLevel
-                                )
+                    if (googleMap != null) {
+                        googleMap!!.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        googleMap!!.getUiSettings().setMyLocationButtonEnabled(false);
+                        googleMap!!.setMyLocationEnabled(false);
+                        googleMap!!.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                location,
+                                zoomLevel
                             )
-                        }
+                        )
                     }
-                    swipeContainer.isRefreshing = false
-
-
-                },
-                { error ->
-                    error.printStackTrace()
-                    swipeContainer.isRefreshing = false
                 }
-            )
+
+
+                swipeContainer.isRefreshing = false
+
+
+            },
+            { error ->
+                error.printStackTrace()
+                swipeContainer.isRefreshing = false
+            }
+        )
         queue?.add(getEventsRequest)
-        }
+    }
 
     fun switchToMap(){
         mapFragment.view?.visibility = View.VISIBLE
@@ -427,6 +457,19 @@ class FindEventFragment : Fragment() {
 
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is FindEventFragment.OnFindEventFragmentInteractionListener) {
+            listenerFindEvent = context
+        } else {
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
+        }
+    }
+
+    interface OnFindEventFragmentInteractionListener {
+        fun openEventChatroom(eventid: String)
+    }
+
     /*
      override fun onMapReady(googleMap: GoogleMap) {
         // Add a marker in Sydney, Australia,
@@ -441,4 +484,4 @@ class FindEventFragment : Fragment() {
     }
 
      */
-    }
+}

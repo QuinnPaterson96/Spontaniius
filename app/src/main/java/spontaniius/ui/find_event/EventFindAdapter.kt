@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +29,8 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         var mTextViewDistance: TextView
         var mTextViewTime: TextView
         var direction_button: ImageView
+        var details: RelativeLayout
+        lateinit var eventid: String
 
         init {
             mImageView = itemView.findViewById(R.id.imageView)
@@ -36,6 +39,8 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
             mTextViewDistance = itemView.findViewById(R.id.textView3)
             mTextViewTime = itemView.findViewById(R.id.textView4)
             direction_button = itemView.findViewById(R.id.directionButton)
+            details=itemView.findViewById(R.id.details)
+
         }
     }
 
@@ -54,6 +59,7 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         holder.mImageView.setImageResource(currentItem.getImageResource())
         holder.mTextView1.setText(currentItem.title)
         holder.mTextView2.setText(currentItem.description)
+        holder.eventid=currentItem.eventId
 
 
         var distance = currentItem.distance.toDoubleOrNull()
@@ -73,12 +79,9 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
 
             val url = "https://www.google.com/maps/dir/?api=1&destination=${locationPoint}"
             startActivity(holder.direction_button.context, Intent(Intent.ACTION_VIEW, Uri.parse(url)),null)
-
-
-
-
-
         }
+
+
     }
 
     override fun getItemCount(): Int {

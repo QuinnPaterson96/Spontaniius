@@ -32,6 +32,7 @@ import javax.inject.Inject
 class BottomNavigationActivity : AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener,
     EventManagementFragment.OnEventManagementFragmentInteractionListener,
+    FindEventFragment.OnFindEventFragmentInteractionListener,
     MapsFragment.MapsInteractionListener {
 
     private val createEventFragmentTag = "CREATE EVENT TAG"
@@ -196,17 +197,10 @@ class BottomNavigationActivity : AppCompatActivity(),
                     val JSONResponse = JSONObject(response.toString())
                     eventid = JSONResponse.get("eventid") as Int
                     meetupOwner = true
-
-
                     eventManagementFragment = EventManagementFragment.newInstance(eventid.toString(), meetupOwner)
-
-
                     supportFragmentManager.beginTransaction()
                         .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
-
                     currentFragment = eventManagementFragment
-                    meetupOwner = true
-
                 },
                 Response.ErrorListener { error ->
                     error.printStackTrace()
@@ -251,6 +245,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                 supportFragmentManager.beginTransaction().hide(currentFragment)
                     .show(createEventFragment).remove(eventManagementFragment).commitNow()
                 currentFragment = createEventFragment
+                meetupOwner = false
             },
             { error ->
                 error.printStackTrace()
@@ -292,5 +287,23 @@ class BottomNavigationActivity : AppCompatActivity(),
         val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
         queue?.add(extendEventRequest)
         }
+
+
+
+    override fun openEventChatroom(eventid: String){
+        meetupOwner = false
+        eventManagementFragment = EventManagementFragment.newInstance(eventid, meetupOwner)
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
+        currentFragment = eventManagementFragment
     }
+
+    override fun exitEvent(){
+        supportFragmentManager.beginTransaction().hide(currentFragment)
+            .show(findEventFragment).remove(eventManagementFragment).commitNow()
+        currentFragment = findEventFragment
+    }
+
+    }
+
 

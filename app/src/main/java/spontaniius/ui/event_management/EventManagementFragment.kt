@@ -69,7 +69,7 @@ class EventManagementFragment : Fragment() {
 
         var args = arguments
         var eventID = args!!.getString(ARG_PARAM1, "0")
-        var role = args!!.getBoolean(ARG_PARAM2, false)
+        var manager = args!!.getBoolean(ARG_PARAM2, false)
         myRef = FirebaseDatabase.getInstance().getReference(eventID)
 
 
@@ -95,15 +95,31 @@ class EventManagementFragment : Fragment() {
             input.setText("")
 
         }
-        endEventButton = fragmentView?.findViewById<View>(R.id.endButton) as Button
-        endEventButton.setOnClickListener{
-            listenerManageEvent?.endEvent()
+
+        if(manager){ // if you created this event you have control options
+            endEventButton = fragmentView?.findViewById<View>(R.id.endButton) as Button
+            endEventButton.setOnClickListener{
+                listenerManageEvent?.endEvent()
+            }
+
+            add15MinsButton = fragmentView?.findViewById<View>(R.id.addButton) as Button
+            add15MinsButton.setOnClickListener{
+                listenerManageEvent?.add15Mins()
+            }
+        }else{ // if you're joining somebody else's event
+            endEventButton = fragmentView?.findViewById<View>(R.id.endButton) as Button
+            endEventButton.text = "Exit Event"
+            endEventButton.setOnClickListener{
+                listenerManageEvent?.exitEvent()
+            }
+
+            add15MinsButton = fragmentView?.findViewById<View>(R.id.addButton) as Button
+            add15MinsButton.text = "Send Card"
+            add15MinsButton.setOnClickListener{
+                sendCard()
+            }
         }
 
-        add15MinsButton = fragmentView?.findViewById<View>(R.id.addButton) as Button
-        add15MinsButton.setOnClickListener{
-            listenerManageEvent?.add15Mins()
-        }
         // Load chat room contents
         displayChatMessages();
         return fragmentView
@@ -151,9 +167,14 @@ class EventManagementFragment : Fragment() {
         }
     }
 
+    fun sendCard(){
+
+    }
+
 
     interface OnEventManagementFragmentInteractionListener {
         fun endEvent()
         fun add15Mins()
+        fun exitEvent()
     }
 }

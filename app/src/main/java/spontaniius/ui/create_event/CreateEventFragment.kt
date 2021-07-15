@@ -327,8 +327,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
     private fun getDateString(year: Int, month: Int, day: Int, hour: Int, minute: Int): String {
-        var monthFormat = SimpleDateFormat("MM");
-        var dateFormat = SimpleDateFormat("DD")
         // If we ever need to format for years, this app will have been successful beyond my wildest imagination
 
         val dateStringBuilder = StringBuilder()

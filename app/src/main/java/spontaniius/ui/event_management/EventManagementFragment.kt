@@ -160,7 +160,9 @@ class EventManagementFragment : Fragment() {
                 listenerManageEvent?.add15Mins()
             }
             viewingDetails=false
-        }else{ // if you're joining somebody else's event
+        }
+        else // if you're joining somebody else's event
+        {
             endEventButton = fragmentView?.findViewById<View>(R.id.endButton) as Button
             endEventButton.text = "Exit Event"
             endEventButton.setOnClickListener{
@@ -173,6 +175,8 @@ class EventManagementFragment : Fragment() {
                 joinIn()
             }
         }
+
+        // Both joinees and mangers go through here to initialize some details
         detailsToggleButton = fragmentView?.findViewById<View>(R.id.detailsButton) as Button
         detailsToggleButton.setOnClickListener{
             chatDetailsToggle()
@@ -180,6 +184,8 @@ class EventManagementFragment : Fragment() {
         input = fragmentView?.findViewById<View>(R.id.input) as EditText
         chatRoomView = fragmentView?.findViewById(R.id.chatroomView) as Group
         detailsView = fragmentView?.findViewById(R.id.detailsView) as LinearLayout
+
+
 
         if(viewingDetails){ // We start event managers at chatroom, and event joinees to event details
             setGroupVisibility(fragmentView, chatRoomView, GONE)
@@ -283,6 +289,8 @@ class EventManagementFragment : Fragment() {
     fun sendCard(){
 
     }
+
+    // Meant to alert users when event has ended
     private fun sayGoodbye(){
         input.setText("Hope everyone had a good time, this event has ended")
         sendMessage()
@@ -317,6 +325,7 @@ class EventManagementFragment : Fragment() {
         }
     }
 
+    // Basically fills the details screen
     private fun populateDetails(fragmentView: View) {
         var currentEvent = listenerManageEvent?.whatIsCurrentEvent()
         var eventTitle = fragmentView?.findViewById<View>(R.id.event_title) as TextView
@@ -329,8 +338,7 @@ class EventManagementFragment : Fragment() {
 
         val endTimeString = currentEvent?.get("eventends")
         val startTimeString = currentEvent?.get("eventstarts")
-        val zone: TimeZone = (Calendar.getInstance().timeZone)
-        val zoneOff = (Calendar.ZONE_OFFSET)
+
 
 
 
@@ -343,13 +351,14 @@ class EventManagementFragment : Fragment() {
 
         var startTime = ZonedDateTime.parse(
             startTimeString as CharSequence?, DateTimeFormatter.ofPattern(
-                "yyyy-[M][MM]-[dd][d]['T'][ ][HH][H]:[mm][m]:[ss][s][.][SSSSSS][SSSSS][SSSS][SSS][XXX][XX][X][z]"
+                "yyyy-[M][MM]-[dd][d]['T'][ ][HH][H]:[mm][m]:[ss][s][.][SSSSSS][SSSSS][SSSS][SSS][XXX][XX][X][z]" // Pattern is meant to be robust to any possible changes in database
             )
         )
 
-        var dst = Calendar.getInstance().timeZone.dstSavings
+        var dst = Calendar.getInstance().timeZone.dstSavings // Checks to see if daylight savings
 
-        // Because postgres doesn't store timestamp we need to offset to local time
+        // Because postgres doesn't store timestamp we need to offset to local time. Currently manager keeps data from event creation, whereas fields are populated by api
+        // For event joinees
 
         if(!manager){
             startTime = startTime.plusHours((Calendar.getInstance().timeZone.rawOffset.toLong() + dst) / 3600000)

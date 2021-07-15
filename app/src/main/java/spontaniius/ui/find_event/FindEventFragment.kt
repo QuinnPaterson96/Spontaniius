@@ -250,7 +250,7 @@ class FindEventFragment : Fragment() {
 
         val url = "https://maps.googleapis.com/maps/api/geocode/json?address="+strAddress+"&key="+locationAPIKey
         val getLocationRequest = StringRequest(Request.Method.GET, url,
-            Response.Listener<String> { response ->
+            { response ->
                 val JSONResponse = JSONObject(response.toString())
                 val resultJSONArray: JSONArray = JSONResponse.get("results") as JSONArray
                 val resultJSON: JSONObject = resultJSONArray.getJSONObject(0)
@@ -263,7 +263,7 @@ class FindEventFragment : Fragment() {
 
 
             },
-            Response.ErrorListener { error ->
+            { error ->
                 error.printStackTrace()
             }
 
@@ -332,6 +332,7 @@ class FindEventFragment : Fragment() {
                             "ends in " + minutesFromEnd.toString() + " mins",
                             event.get("streetaddress").toString(),
                             event.get("eventid").toString(),
+                            event,
                             this.context
                         )
 
@@ -374,7 +375,7 @@ class FindEventFragment : Fragment() {
                             if (holder != null) {
                                 val cardView = holder as EventFindAdapter.EventCardViewHolder
                                 cardView.details.setOnClickListener {
-                                    listenerFindEvent?.openEventChatroom(holder.eventid)
+                                    listenerFindEvent?.openEventChatroom(holder.eventid, holder.event)
                                 }
                             }
 
@@ -403,7 +404,7 @@ class FindEventFragment : Fragment() {
                     val latitude = latlong[0].toDouble()
                     val longitude = latlong[1].toDouble()
                     val location = LatLng(latitude, longitude)
-                    val zoomLevel = 6.0f
+                    val zoomLevel = 10.0f
 
                     if (googleMap != null) {
                         googleMap!!.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -456,7 +457,7 @@ class FindEventFragment : Fragment() {
     }
 
     interface OnFindEventFragmentInteractionListener {
-        fun openEventChatroom(eventid: String)
+        fun openEventChatroom(eventid: String, event: JSONObject)
     }
 
     /*

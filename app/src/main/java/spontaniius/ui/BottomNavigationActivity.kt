@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest
 import com.example.spontaniius.ui.promotions.FindPromotionsFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.JsonObject
 import org.json.JSONObject
 import spontaniius.R
 import spontaniius.SpontaniiusApplication
@@ -53,6 +54,7 @@ class BottomNavigationActivity : AppCompatActivity(),
 
     lateinit var findEventFragment: FindEventFragment
     lateinit var iconSelectButton: ImageButton
+    lateinit var currentEvent: JSONObject
     var meetupOwner = false
     var eventid = 0
     var eventEnds = ""
@@ -190,6 +192,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                 invitation
             )
 
+            currentEvent = thisEvent.toJSON()
             val url = "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent"
             val getLocationRequest = JsonObjectRequest(
                 Request.Method.POST, url, thisEvent.toJSON(),
@@ -197,6 +200,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                     val JSONResponse = JSONObject(response.toString())
                     eventid = JSONResponse.get("eventid") as Int
                     meetupOwner = true
+
                     eventManagementFragment = EventManagementFragment.newInstance(eventid.toString(), meetupOwner)
                     supportFragmentManager.beginTransaction()
                         .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
@@ -290,8 +294,9 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
 
-    override fun openEventChatroom(eventid: String){
+    override fun openEventChatroom(eventid: String, event: JSONObject){
         meetupOwner = false
+        currentEvent = event
         eventManagementFragment = EventManagementFragment.newInstance(eventid, meetupOwner)
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
@@ -304,6 +309,9 @@ class BottomNavigationActivity : AppCompatActivity(),
         currentFragment = findEventFragment
     }
 
+    override fun whatIsCurrentEvent():JSONObject{
+        return currentEvent
+    }
 
 
     }

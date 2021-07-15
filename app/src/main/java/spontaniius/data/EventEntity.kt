@@ -25,15 +25,15 @@ data class EventEntity(
 
     fun toJSON(): JSONObject {
         val jsonObject = JSONObject()
-        jsonObject.put("eventTitle", this.title)
-        jsonObject.put("eventText", this.description)
-        jsonObject.put("genderRestrict", this.gender)
+        jsonObject.put("eventtitle", this.title)
+        jsonObject.put("eventtext", this.description)
+        jsonObject.put("genderrestrict", this.gender)
         jsonObject.put("icon", this.icon)
 //        TODO: test actual addresses
-        jsonObject.put("streetAddress", "(${this.latitude},${this.longitude})")
-        jsonObject.put("maxRadius", this.invitation)
-        jsonObject.put("eventStarts", this.startTime)
-        jsonObject.put("eventEnds", this.endTime)
+        jsonObject.put("streetaddress", "${this.latitude},${this.longitude}")
+        jsonObject.put("maxradius", this.invitation)
+        jsonObject.put("eventstarts", this.startTime)
+        jsonObject.put("eventends", this.endTime)
         return jsonObject
     }
 }

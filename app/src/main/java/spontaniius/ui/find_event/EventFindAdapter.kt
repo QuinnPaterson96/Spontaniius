@@ -31,6 +31,7 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         var direction_button: ImageView
         var details: RelativeLayout
         lateinit var eventid: String
+        lateinit var event: JSONObject
 
         init {
             mImageView = itemView.findViewById(R.id.imageView)
@@ -60,6 +61,7 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         holder.mTextView1.setText(currentItem.title)
         holder.mTextView2.setText(currentItem.description)
         holder.eventid=currentItem.eventId
+        holder.event=currentItem.event
 
 
         var distance = currentItem.distance.toDoubleOrNull()

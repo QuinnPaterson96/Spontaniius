@@ -2,6 +2,10 @@ package spontaniius.ui.find_event;
 
 import android.content.Context;
 
+import org.json.JSONObject;
+
+import java.util.function.Function;
+
 public class EventTile {
     private int mImageResource;
     private String description;
@@ -10,18 +14,32 @@ public class EventTile {
     private String distance;
     private String timeStarted="";
     private String location;
+    private String eventId;
+    private JSONObject event;
     private Context context;
 
 
-    public EventTile(int imageResource, String text1, String text2, String text3, String text4, String eventlocation, Context context) {
+    public EventTile(int imageResource, String text1, String text2, String text3, String text4, String eventlocation, String eventid, Context context) {
         mImageResource = imageResource;
         title = text1;
         description = text2;
         distance=text3;
         timeStarted=text4;
         location=eventlocation;
+        eventId=eventid;
     }
 
+    public EventTile(int imageResource, String text1, String text2, String text3, String text4, String eventlocation, String eventid, JSONObject thisEvent, Context context) {
+        mImageResource = imageResource;
+        title = text1;
+        description = text2;
+        distance=text3;
+        timeStarted=text4;
+        location=eventlocation;
+        eventId=eventid;
+        event=thisEvent;
+
+    }
     public int getImageResource() {
         return mImageResource;
     }
@@ -44,8 +62,13 @@ public class EventTile {
     public String getLocation() {
         return location;
     }
+    public String getEventId() {
+        return eventId;
+    }
     public Context getContext() {
         return context;
     }
+    public JSONObject getEvent(){return event;}
+
 
 }

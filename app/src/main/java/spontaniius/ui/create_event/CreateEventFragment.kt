@@ -32,6 +32,10 @@ import org.json.JSONObject
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 
 
@@ -190,8 +194,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-               var currentTitle = s.toString()
-                if (currentTitle.contains("coffee")||currentTitle.contains("tea")) {
+                var currentTitle = s.toString()
+                if (currentTitle.contains("coffee") || currentTitle.contains("tea")) {
                     iconSelectButton.setImageResource(R.drawable.activity_coffee)
                     eventIcon = R.drawable.activity_coffee.toString()
                 }
@@ -199,7 +203,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     iconSelectButton.setImageResource(R.drawable.activity_walk)
                     eventIcon = R.drawable.activity_walk.toString()
                 }
-                if (currentTitle.contains("food")||currentTitle.contains("dinner")||currentTitle.contains("lunch")||currentTitle.contains("breakfast")) {
+                if (currentTitle.contains("food") || currentTitle.contains("dinner") || currentTitle.contains(
+                        "lunch"
+                    ) || currentTitle.contains("breakfast")
+                ) {
                     iconSelectButton.setImageResource(R.drawable.activity_eating)
                     eventIcon = R.drawable.activity_eating.toString()
                 }
@@ -207,11 +214,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     iconSelectButton.setImageResource(R.drawable.activity_bike)
                     eventIcon = R.drawable.activity_bike.toString()
                 }
-                if (currentTitle.contains("beer")||currentTitle.contains("wine")) {
+                if (currentTitle.contains("beer") || currentTitle.contains("wine")) {
                     iconSelectButton.setImageResource(R.drawable.activity_drinks)
                     eventIcon = R.drawable.activity_drinks.toString()
                 }
-            stockTitle = false
+                stockTitle = false
             }
         })
 
@@ -247,7 +254,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireView().context)
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-
+                if(location!=null){
                 var currLatLng:LatLng  = LatLng(
                     location?.latitude.toString().toDouble(),
                     location?.longitude.toString().toDouble()
@@ -256,6 +263,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 listenerCreateEvent?.googleLocationSelect(currLatLng)
                 val etPlace = autocompleteFragment.view?.findViewById(R.id.places_autocomplete_search_input) as EditText
                 etPlace.hint = currLatLng.toString()
+            }
             }
 
     }
@@ -319,14 +327,15 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
     private fun getDateString(year: Int, month: Int, day: Int, hour: Int, minute: Int): String {
-//      pattern = "yy-MM-dd hh:mm:00"
+        // If we ever need to format for years, this app will have been successful beyond my wildest imagination
+
         val dateStringBuilder = StringBuilder()
         dateStringBuilder.append(year)
         dateStringBuilder.append("-")
         dateStringBuilder.append(month)
         dateStringBuilder.append("-")
-        dateStringBuilder.append(day)
-        dateStringBuilder.append(" ")
+        dateStringBuilder.append((day))
+        dateStringBuilder.append("T")
         dateStringBuilder.append(hour)
         dateStringBuilder.append(":")
         dateStringBuilder.append(minute)
@@ -341,7 +350,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             )
         )
         return dateStringBuilder.toString()
-    }
+
+
+
+
+}
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun IconSelectPopup(){
@@ -351,7 +364,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
             override fun onMenuItemClick(item: MenuItem): Boolean {
                 val titleTextEmpty = titleField.text.toString() == ""
-                val emptyOrStock = titleTextEmpty||stockTitle // If title is empty, or if its a stock title then a new stock title will be populated
+                val emptyOrStock =
+                    titleTextEmpty || stockTitle // If title is empty, or if its a stock title then a new stock title will be populated
                 return when (item.getItemId()) {
                     R.id.drinks -> {
                         iconSelectButton.setImageResource(R.drawable.activity_drinks)

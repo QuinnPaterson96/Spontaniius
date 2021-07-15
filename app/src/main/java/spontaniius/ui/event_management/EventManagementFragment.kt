@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONObject
 import spontaniius.R
 import java.text.SimpleDateFormat
-import java.time.ZoneOffset
+import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -350,16 +350,24 @@ class EventManagementFragment : Fragment() {
         var dst = Calendar.getInstance().timeZone.dstSavings
 
         // Because postgres doesn't store timestamp we need to offset to local time
-        startTime = startTime.plusHours((Calendar.getInstance().timeZone.rawOffset.toLong()+dst)/3600000)
-        endTime = endTime.plusHours((Calendar.getInstance().timeZone.rawOffset.toLong()+dst)/3600000)
+
+        if(!manager){
+            startTime = startTime.plusHours((Calendar.getInstance().timeZone.rawOffset.toLong() + dst) / 3600000)
+            endTime = endTime.plusHours((Calendar.getInstance().timeZone.rawOffset.toLong() + dst) / 3600000)
+        }
+
 
 
         var localEndTime = endTime.toLocalTime()
         var localStartTime = startTime.toLocalTime()
 
 
-        eventStarts.text = localStartTime.toString()
-        eventEnds.text = localEndTime.toString()
+        eventStarts.text = LocalTime.parse(localStartTime.toString(), DateTimeFormatter.ofPattern("HH:mm")).format(
+            DateTimeFormatter.ofPattern("hh:mm a"))
+        eventEnds.text =
+            LocalTime.parse(localEndTime.toString(), DateTimeFormatter.ofPattern("HH:mm")).format(
+                DateTimeFormatter.ofPattern("hh:mm a"))
+
 
         // There's slight differences between how street address is stored in local object vs when retrieved from database, this handles that differece.
 

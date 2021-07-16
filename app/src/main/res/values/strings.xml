@@ -59,6 +59,7 @@
     <string name="find_screen">Join In</string>
     <string name="create_screen">Invite</string>
     <string name="promotions_screen">Deals</string>
+    <string name="cards_screen">Cards</string>
     <string name="title_activity_login">MainActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

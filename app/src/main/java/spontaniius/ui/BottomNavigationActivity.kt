@@ -1,17 +1,10 @@
 package spontaniius.ui
 
 import android.os.Bundle
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.spontaniius.ui.promotions.FindPromotionsFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import spontaniius.R
 import spontaniius.SpontaniiusApplication
 import spontaniius.data.EventEntity
@@ -20,8 +13,12 @@ import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
 import spontaniius.ui.find_event.FindEventFragment
+import com.example.spontaniius.ui.promotions.FindPromotionsFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 //TODO: rename to MainActivity
 class BottomNavigationActivity : AppCompatActivity(),
@@ -46,10 +43,6 @@ class BottomNavigationActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_navigation)
-        supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        supportActionBar!!.setDisplayShowCustomEnabled(true)
-        supportActionBar!!.setCustomView(R.layout.spontaniius_action_bar)
-        val view: View = supportActionBar!!.customView
 
         createEventComponent =
             (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()

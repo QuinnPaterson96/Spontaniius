@@ -59,7 +59,6 @@
     <string name="find_screen">Join In</string>
     <string name="create_screen">Invite</string>
     <string name="promotions_screen">Deals</string>
-    <string name="cards_screen">Deals</string>
     <string name="title_activity_login">MainActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -86,7 +85,4 @@
     <string name="gender_female">Female</string>
     <string name="gender_nonbinary">Non-Binary</string>
     <string name="gender_other">Other/Prefer not to say</string>
-    <string name="about">about</string>
-    <string name="reset">reset</string>
-    <string name="exit">exit</string>
 </resources>

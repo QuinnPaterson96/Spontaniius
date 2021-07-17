@@ -1,10 +1,26 @@
 package spontaniius.ui
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
+import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.amplifyframework.auth.options.AuthSignOutOptions
+import com.amplifyframework.core.Amplify
+import com.example.spontaniius.ui.promotions.FindPromotionsFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import spontaniius.R
 import spontaniius.SpontaniiusApplication
 import spontaniius.data.EventEntity
@@ -13,12 +29,11 @@ import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
 import spontaniius.ui.find_event.FindEventFragment
-import com.example.spontaniius.ui.promotions.FindPromotionsFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import spontaniius.ui.login.LoginActivity
+import spontaniius.ui.sign_up.SignUpActivity
+import spontaniius.ui.user_menu.UserOptionsActivity
 import javax.inject.Inject
+
 
 //TODO: rename to MainActivity
 class BottomNavigationActivity : AppCompatActivity(),
@@ -39,10 +54,76 @@ class BottomNavigationActivity : AppCompatActivity(),
     lateinit var createEventFragment: CreateEventFragment
     lateinit var promotionFragment: Fragment
     lateinit var findEventFragment: FindEventFragment
+    lateinit var optionsMenu: ImageView
+    lateinit var actionBarView:View
+    lateinit var appContext: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_navigation)
+        supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar!!.setDisplayShowCustomEnabled(true)
+        supportActionBar!!.setCustomView(R.layout.spontaniius_action_bar)
+        supportActionBar!!.setBackgroundDrawable(ColorDrawable(0))
+        actionBarView = supportActionBar!!.customView
+        optionsMenu = actionBarView.findViewById(R.id.main_menu)
+        appContext = this
+
+        optionsMenu.setOnClickListener {
+            val popup = PopupMenu(this, optionsMenu)
+            val inflater = popup.menuInflater
+            inflater.inflate(R.menu.main_menu, popup.menu)
+            popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+                override fun onMenuItemClick(item: MenuItem): Boolean {
+
+                    return when (item.getItemId()) {
+                        R.id.user_details -> {
+                            val intentUserDetails = Intent(appContext, UserOptionsActivity::class.java).apply {
+
+                            }
+                            startActivity(intentUserDetails)
+                            return true
+                        }
+                        R.id.edit_card -> {
+                            return true
+                        }
+                        R.id.about_us -> {
+                            return true
+                        }
+                        R.id.sign_out -> {
+                            Amplify.Auth.signOut(
+                                AuthSignOutOptions.builder().globalSignOut(true).build(),
+                                {
+                                    Log.i(
+                                        "AuthQuickstart",
+                                        "Signed out globally"
+                                    )
+                                }
+                            ) { error: com.amplifyframework.auth.AuthException ->
+                                Log.e(
+                                    "AuthQuickstart",
+                                    error.toString()
+                                )
+                            }
+                            val intentSignout = Intent(appContext, SignUpActivity::class.java).apply {
+
+                            }
+                                startActivity(intentSignout)
+                            return true
+                        }
+                        R.id.delete_account -> {
+                            return true
+                        }
+
+
+                        else -> false
+                    }
+                }
+            })
+            popup.show()
+        }
+
+
 
         createEventComponent =
             (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()

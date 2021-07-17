@@ -17,13 +17,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <Button
                     android:id="@+id/listButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.5"
                     android:text="List"
                     android:background="@color/quantum_yellow"/>
 
@@ -31,7 +32,7 @@
                     android:id="@+id/mapButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.5"
                     android:text="Map"
                     android:background="@color/quantum_grey"/>
             </LinearLayout>
@@ -60,7 +61,8 @@
                     android:layout_width="47dp"
                     android:layout_height="match_parent"
                     android:padding="2dp"
-                    android:src="@drawable/ic_baseline_my_location_24"></ImageView>
+                    android:src="@drawable/ic_baseline_my_location_24"
+                    tools:ignore="VectorDrawableCompat"></ImageView>
 
             </LinearLayout>
         </TableRow>

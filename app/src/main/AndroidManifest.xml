@@ -29,6 +29,11 @@
 
 
         <activity
+            android:name=".ui.user_menu.UserOptionsActivity"
+            android:label="@string/title_activity_user_details"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity
             android:name=".ui.sign_up.SignUpConfirmActivity"
             android:label="@string/title_activity_confirm_signup"
             android:theme="@style/AppTheme.NoActionBar"></activity>

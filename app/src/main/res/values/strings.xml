@@ -70,6 +70,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_confirm_signup">ConfirmSignupActivity</string>
+    <string name="title_activity_user_details">User Details Activity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -77,6 +78,13 @@
     <string name="previous">Previous</string>
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-
-
+    <string name="name">Name: </string>
+    <string name="gender">Gender: </string>
+    <string name="phone">Phone: </string>
+    <string name="change_password">Change Password: </string>
+    <string name="confirm_change_password">Confirm Changed Password: </string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_nonbinary">Non-Binary</string>
+    <string name="gender_other">Other/Prefer not to say</string>
 </resources>

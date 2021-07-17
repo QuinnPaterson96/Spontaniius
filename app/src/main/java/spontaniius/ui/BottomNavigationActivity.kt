@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -21,23 +22,45 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.example.spontaniius.ui.promotions.FindPromotionsFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.JsonObject
+import org.json.JSONObject
 import spontaniius.R
 import spontaniius.SpontaniiusApplication
 import spontaniius.data.EventEntity
 import spontaniius.data.Repository
 import spontaniius.dependency_injection.CreateEventComponent
+import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
+import spontaniius.ui.event_management.EventManagementFragment
 import spontaniius.ui.find_event.FindEventFragment
+
 import spontaniius.ui.login.LoginActivity
 import spontaniius.ui.sign_up.SignUpActivity
 import spontaniius.ui.user_menu.UserOptionsActivity
+
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+
 import javax.inject.Inject
 
 
 //TODO: rename to MainActivity
 class BottomNavigationActivity : AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener,
+    EventManagementFragment.OnEventManagementFragmentInteractionListener,
+    FindEventFragment.OnFindEventFragmentInteractionListener,
     MapsFragment.MapsInteractionListener {
 
     private val createEventFragmentTag = "CREATE EVENT TAG"
@@ -53,10 +76,20 @@ class BottomNavigationActivity : AppCompatActivity(),
     lateinit var currentFragment: Fragment
     lateinit var createEventFragment: CreateEventFragment
     lateinit var promotionFragment: Fragment
+    lateinit var eventManagementFragment: EventManagementFragment
+    lateinit var eventJoinFragment: EventManagementFragment
+
     lateinit var findEventFragment: FindEventFragment
+
     lateinit var optionsMenu: ImageView
     lateinit var actionBarView:View
     lateinit var appContext: Context
+
+    lateinit var iconSelectButton: ImageButton
+    lateinit var currentEvent: JSONObject
+    var meetupOwner = false
+    var eventid = 0
+    var eventEnds = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,12 +168,15 @@ class BottomNavigationActivity : AppCompatActivity(),
         createEventFragment = CreateEventFragment.newInstance()
         findEventFragment = FindEventFragment.newInstance()
 
+
         //TODO: when Cord is done with his promotion fragment, create that here
 //        TODO: Then, have this class (BottomNavigationActivity) implement all the methods that the fragment calls (probably want to define an interface for that)
 //            Note: the above can be accomplished with a lil copy-paste
 //        TODO: mark old classes as deprecated (see CreateEventActivity.kt for an example of how to do that)
 //        After the refactoring has been stable for a few commits, feel free to remove the old classes entirely (git has records of them, if they are really needed)
         promotionFragment = FindPromotionsFragment.newInstance()
+
+
 
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, promotionFragment, null).hide(promotionFragment).commit()
@@ -149,6 +185,9 @@ class BottomNavigationActivity : AppCompatActivity(),
             .commit()
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, findEventFragment, null).commit()
+
+
+
         currentFragment = findEventFragment
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -159,10 +198,19 @@ class BottomNavigationActivity : AppCompatActivity(),
                     true
                 }
                 R.id.create_event -> {
-                    supportFragmentManager.beginTransaction().hide(currentFragment)
-                        .show(createEventFragment).commit()
-                    currentFragment = createEventFragment
-                    true
+                    if(meetupOwner){
+                        supportFragmentManager.beginTransaction().hide(currentFragment)
+                            .show(eventManagementFragment).commit()
+                        currentFragment = eventManagementFragment
+                        true
+                    }else{
+                        supportFragmentManager.beginTransaction().hide(currentFragment)
+                            .show(createEventFragment).commit()
+                        currentFragment = createEventFragment
+                        true
+                    }
+
+
                 }
                 R.id.promotions -> {
                     supportFragmentManager.beginTransaction().hide(currentFragment)
@@ -219,18 +267,56 @@ class BottomNavigationActivity : AppCompatActivity(),
         gender: String,
         invitation: Int
     ) {
+
+
+        eventEnds = endTime
         val latLong = latLng
         if (latLong == null) {
             Toast.makeText(this, R.string.warning_no_location, Toast.LENGTH_LONG).show()
         } else {
-            GlobalScope.launch {
+            var thisEvent = EventEntity(
+                title,
+                description,
+                gender,
+                "Null address",
+                icon,
+                startTime,
+                endTime,
+                latLong.latitude,
+                latLong.longitude,
+                invitation
+            )
+
+            currentEvent = thisEvent.toJSON()
+            val url = "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent"
+            val getLocationRequest = JsonObjectRequest(
+                Request.Method.POST, url, thisEvent.toJSON(),
+                Response.Listener<JSONObject> { response ->
+                    val JSONResponse = JSONObject(response.toString())
+                    eventid = JSONResponse.get("eventid") as Int
+                    meetupOwner = true
+
+                    eventManagementFragment = EventManagementFragment.newInstance(eventid.toString(), meetupOwner)
+                    supportFragmentManager.beginTransaction()
+                        .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
+                    currentFragment = eventManagementFragment
+                },
+                Response.ErrorListener { error ->
+                    error.printStackTrace()
+                }
+
+            )
+            val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
+            queue?.add(getLocationRequest)
+            /*
+           GlobalScope.launch {
                 repository.saveEvent(
                     EventEntity(
                         title,
                         description,
                         gender,
                         "Null address",
-                        "null icon",
+                        icon,
                         startTime,
                         endTime,
                         latLong.latitude,
@@ -238,13 +324,91 @@ class BottomNavigationActivity : AppCompatActivity(),
                         invitation
                     )
                 )
-            }
+           }
             Toast.makeText(
                 this,
                 "Event Created",
                 Toast.LENGTH_LONG
             ).show()
+            */
+
+
         }
     }
+    override fun endEvent(){
+        val currtime = Calendar.getInstance().time
+        val url =
+            "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+currtime;
+        val endEventRequest = StringRequest(Request.Method.PUT, url,
+            { response ->
+                supportFragmentManager.beginTransaction().hide(currentFragment)
+                    .show(createEventFragment).remove(eventManagementFragment).commitNow()
+                currentFragment = createEventFragment
+                meetupOwner = false
+            },
+            { error ->
+                error.printStackTrace()
+            }
+        )
+        val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
+        queue?.add(endEventRequest)
+    }
 
-}
+    override fun add15Mins(){
+        var newEndTime = ZonedDateTime.parse(
+            eventEnds as CharSequence?, DateTimeFormatter.ofPattern(
+                "yyyy-M-dd HH:m:ssz"
+            )
+        )
+
+        var eventEndsTime = newEndTime.plusMinutes(15)
+
+
+        eventEnds = eventEndsTime.format(DateTimeFormatter.ofPattern(
+            "yyyy-M-dd HH:mm:ssz"
+        )).toString()
+
+
+
+        val url ="https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+eventEnds;
+        val extendEventRequest = StringRequest(Request.Method.PUT, url,
+            { response ->
+                Toast.makeText(
+                    this,
+                    "Event extended by 15 mins",
+                    Toast.LENGTH_LONG
+                ).show()
+            },
+            { error ->
+                error.printStackTrace()
+            }
+        )
+        val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
+        queue?.add(extendEventRequest)
+        }
+
+
+
+    override fun openEventChatroom(eventid: String, event: JSONObject){
+        meetupOwner = false
+        currentEvent = event
+        eventManagementFragment = EventManagementFragment.newInstance(eventid, meetupOwner)
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
+        currentFragment = eventManagementFragment
+    }
+
+    override fun exitEvent(){
+        supportFragmentManager.beginTransaction().hide(currentFragment)
+            .show(findEventFragment).remove(eventManagementFragment).commitNow()
+        currentFragment = findEventFragment
+    }
+
+    override fun whatIsCurrentEvent():JSONObject{
+        return currentEvent
+    }
+
+
+    }
+
+

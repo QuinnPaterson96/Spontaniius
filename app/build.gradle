@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-database:20.0.0'
     def multidex_version = "2.0.1"
     implementation "androidx.multidex:multidex:$multidex_version"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -73,6 +74,7 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     // Amplify core dependency
     implementation 'com.amplifyframework:core:1.4.1'
+    implementation 'com.firebaseui:firebase-ui:0.6.2'
 
     // Support for Java 8 features
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'

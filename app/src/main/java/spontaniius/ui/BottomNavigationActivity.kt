@@ -13,13 +13,8 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
-import com.example.spontaniius.ui.promotions.FindPromotionsFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import android.widget.*
@@ -357,7 +352,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     override fun add15Mins(){
         var newEndTime = ZonedDateTime.parse(
             eventEnds as CharSequence?, DateTimeFormatter.ofPattern(
-                "yyyy-M-dd HH:m:ssz"
+                "yyyy-[M][MM]-[d][dd]['T'][ ][HH][H]:[m][mm]:ssz"
             )
         )
 

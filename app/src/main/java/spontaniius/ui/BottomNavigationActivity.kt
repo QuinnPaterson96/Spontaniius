@@ -23,15 +23,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
-import com.example.spontaniius.ui.promotions.FindPromotionsFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.JsonObject
 import org.json.JSONObject
 import spontaniius.R

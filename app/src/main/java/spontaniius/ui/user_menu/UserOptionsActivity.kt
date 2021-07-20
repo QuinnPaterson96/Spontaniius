@@ -68,7 +68,7 @@ class UserOptionsActivity : AppCompatActivity() {
 
         var currUser = Amplify.Auth.currentUser
 
-        var str_result= Amplify.Auth.fetchUserAttributes(
+        Amplify.Auth.fetchUserAttributes(
             { attributes: List<AuthUserAttribute?> ->
                 Log.e(
                     "AuthDemo",

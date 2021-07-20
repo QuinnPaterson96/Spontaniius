@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -12,6 +13,12 @@ import android.widget.*
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.AuthUserAttribute
+import com.amplifyframework.core.Amplify
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
 import com.firebase.ui.database.FirebaseListAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -25,6 +32,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONObject
 import spontaniius.R
+import spontaniius.dependency_injection.VolleySingleton
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZonedDateTime
@@ -220,7 +228,8 @@ class EventManagementFragment : Fragment() {
     }
 
     fun joinIn(){
-        sendCard() // Adds card to event register
+        sendCardgetCards() // Adds card to event register
+
         if(input.text.toString()==""){
             input.setText("Hey, I'm coming to join in")
             sendMessage()
@@ -286,7 +295,58 @@ class EventManagementFragment : Fragment() {
         }
     }
 
-    fun sendCard(){
+    fun sendCardgetCards(){
+
+        var userAttributes: List<AuthUserAttribute?>? = null
+        val cardExchangeDetails = JSONObject()
+        Amplify.Auth.fetchUserAttributes(
+            { attributes: List<AuthUserAttribute?> ->
+                Log.e(
+                    "AuthDemo",
+                    attributes.toString()
+                )
+                userAttributes = attributes
+                //     initializeUserData(nameEditText, phoneNumberTextView, genderRadioGroup, userAttributes)
+            }
+        ) { error: AuthException? ->
+            Log.e(
+                "AuthDemo",
+                "Failed to fetch user attributes.",
+                error
+            )
+        }
+
+        var startTime = Calendar.getInstance().timeInMillis
+        while (userAttributes==null){
+            // waiting for attributes before moving forward
+            if((Calendar.getInstance().timeInMillis - startTime > 5000)){
+                Toast.makeText(
+                    this.context,
+                    "We weren't able to get your user data, please try again later",
+                    Toast.LENGTH_LONG
+                ).show()
+                break
+            }
+        }
+
+
+        cardExchangeDetails.put("eventid", "")
+        cardExchangeDetails.put("cardid", "")
+        cardExchangeDetails.put("userid", "")
+
+        val url = "https://1outrf3pp4.execute-api.us-west-2.amazonaws.com/default/joinEvent"
+        val getLocationRequest = JsonObjectRequest(
+            Request.Method.POST, url, cardExchangeDetails,
+            { response ->
+
+            },
+            { error ->
+                error.printStackTrace()
+            }
+
+        )
+        val queue = this?.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
+        queue?.add(getLocationRequest)
 
     }
 

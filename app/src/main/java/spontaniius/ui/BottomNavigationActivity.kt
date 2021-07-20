@@ -42,7 +42,7 @@ import spontaniius.ui.event_management.EventManagementFragment
 import spontaniius.ui.find_event.FindEventFragment
 
 import spontaniius.ui.login.LoginActivity
-import spontaniius.ui.sign_up.SignUpActivity
+import spontaniius.ui.sign_up.*
 import spontaniius.ui.user_menu.UserOptionsActivity
 
 import java.time.ZonedDateTime
@@ -114,6 +114,13 @@ class BottomNavigationActivity : AppCompatActivity(),
                             return true
                         }
                         R.id.edit_card -> {
+                            val intentUserDetails = Intent(appContext, SignUpActivity3::class.java).apply {
+                                putExtra(USER_NAME, "Quinn")
+                                putExtra(PHONE_NUMBER, "+17782660158")
+                                putExtra(GREETING, "Hello world")
+                                putExtra(USER_ID, "userid")
+                            }
+                            startActivity(intentUserDetails)
                             return true
                         }
                         R.id.about_us -> {

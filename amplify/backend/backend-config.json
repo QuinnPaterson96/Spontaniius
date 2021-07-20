@@ -1,6 +1,6 @@
 {
   "auth": {
-    "spontaniiuscf36249b": {
+    "spontaniius16acfee6": {
       "service": "Cognito",
       "serviceType": "imported",
       "providerPlugin": "awscloudformation",

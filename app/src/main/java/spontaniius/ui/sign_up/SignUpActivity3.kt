@@ -162,7 +162,7 @@ class SignUpActivity3 : AppCompatActivity() {
                 Request.Method.POST, url, cardObject,
                 { response ->
                     val cardid = JSONObject(response.toString()).getInt("cardid")
-                    val cardAttribute= AuthUserAttribute(AuthUserAttributeKey.custom("cardid"), cardid.toString())
+                    val cardAttribute= AuthUserAttribute(AuthUserAttributeKey.custom("custom:cardid"), cardid.toString())
                     Amplify.Auth.updateUserAttribute(cardAttribute,
                         { Log.i("AuthDemo", "Updated user attribute = $it") },
                         { Log.e("AuthDemo", "Failed to update user attribute =$it") }

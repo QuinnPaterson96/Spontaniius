@@ -228,7 +228,7 @@ class EventManagementFragment : Fragment() {
     }
 
     fun joinIn(){
-        sendCardgetCards() // Adds card to event register
+        sendCardGetCards() // Adds card to event register
 
         if(input.text.toString()==""){
             input.setText("Hey, I'm coming to join in")
@@ -295,44 +295,16 @@ class EventManagementFragment : Fragment() {
         }
     }
 
-    fun sendCardgetCards(){
+    fun sendCardGetCards(){
 
         var userAttributes: List<AuthUserAttribute?>? = null
         val cardExchangeDetails = JSONObject()
-        Amplify.Auth.fetchUserAttributes(
-            { attributes: List<AuthUserAttribute?> ->
-                Log.e(
-                    "AuthDemo",
-                    attributes.toString()
-                )
-                userAttributes = attributes
-                //     initializeUserData(nameEditText, phoneNumberTextView, genderRadioGroup, userAttributes)
-            }
-        ) { error: AuthException? ->
-            Log.e(
-                "AuthDemo",
-                "Failed to fetch user attributes.",
-                error
-            )
-        }
+        var aboutUser = listenerManageEvent?.getCurrentUserAttributes()
 
-        var startTime = Calendar.getInstance().timeInMillis
-        while (userAttributes==null){
-            // waiting for attributes before moving forward
-            if((Calendar.getInstance().timeInMillis - startTime > 5000)){
-                Toast.makeText(
-                    this.context,
-                    "We weren't able to get your user data, please try again later",
-                    Toast.LENGTH_LONG
-                ).show()
-                break
-            }
-        }
-
-
-        cardExchangeDetails.put("eventid", "")
-        cardExchangeDetails.put("cardid", "")
-        cardExchangeDetails.put("userid", "")
+        var eventID = requireArguments().getString(ARG_PARAM1)
+        cardExchangeDetails.put("eventid", eventID)
+        cardExchangeDetails.put("cardid", aboutUser?.getString("cardid"))
+        cardExchangeDetails.put("userid", Amplify.Auth.currentUser.userId)
 
         val url = "https://1outrf3pp4.execute-api.us-west-2.amazonaws.com/default/joinEvent"
         val getLocationRequest = JsonObjectRequest(
@@ -495,5 +467,6 @@ class EventManagementFragment : Fragment() {
         fun add15Mins()
         fun exitEvent()
         fun whatIsCurrentEvent():JSONObject
+        fun getCurrentUserAttributes():JSONObject
     }
 }

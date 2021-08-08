@@ -23,12 +23,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import android.widget.*
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.AuthUserAttribute
 
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.JsonObject
+import kotlinx.android.synthetic.main.activity_sign_up.*
+import org.json.JSONException
 import org.json.JSONObject
 import spontaniius.R
 import spontaniius.SpontaniiusApplication
@@ -86,6 +90,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     var meetupOwner = false
     var eventid = 0
     var eventEnds = ""
+    lateinit var userDetails: JSONObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -268,7 +273,8 @@ class BottomNavigationActivity : AppCompatActivity(),
         startTime: String,
         endTime: String,
         gender: String,
-        invitation: Int
+        invitation: Int,
+        cardId: Int
     ) {
 
 
@@ -287,7 +293,8 @@ class BottomNavigationActivity : AppCompatActivity(),
                 endTime,
                 latLong.latitude,
                 latLong.longitude,
-                invitation
+                invitation,
+                cardId
             )
 
             currentEvent = thisEvent.toJSON()
@@ -410,6 +417,77 @@ class BottomNavigationActivity : AppCompatActivity(),
     override fun whatIsCurrentEvent():JSONObject{
         return currentEvent
     }
+
+
+    // This was created to streamline the process of accessing user attributes and to reduce code
+    // duplication across program. It fetches the user attributes and returns them as a JSON object
+    // If the details have already been fetched it avoids calling AWS Auth again
+
+    override fun getCurrentUserAttributes():JSONObject{
+        // We check to see if user details have already been initialized or not, if not then prepares to
+        // collect details
+        if(!this::userDetails.isInitialized) {
+            var userAttributes: List<AuthUserAttribute?>? = null
+            val cardExchangeDetails = JSONObject()
+            Amplify.Auth.fetchUserAttributes(
+                { attributes: List<AuthUserAttribute?> ->
+                    Log.e(
+                        "AuthDemo",
+                        attributes.toString()
+                    )
+                    userAttributes = attributes
+                    //     initializeUserData(nameEditText, phoneNumberTextView, genderRadioGroup, userAttributes)
+                }
+            ) { error: AuthException? ->
+                Log.e(
+                    "AuthDemo",
+                    "Failed to fetch user attributes.",
+                    error
+                )
+            }
+
+            var startTime = Calendar.getInstance().timeInMillis
+
+            while (userAttributes == null) {
+                // waiting for attributes before moving forward
+                if ((Calendar.getInstance().timeInMillis - startTime > 5000)) {
+                    Toast.makeText(
+                        this,
+                        "We weren't able to get your user data, please try again later",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    break
+                }
+
+            }
+
+            val currentUserAttributeObject = JSONObject()
+            try {
+                currentUserAttributeObject.put("userid", Amplify.Auth.currentUser.userId)
+                for (attribute in userAttributes!!) {
+                    var arributeName = attribute?.key?.keyString
+                    if (arributeName == "custom:cardid") {
+                        currentUserAttributeObject.put("cardid", attribute?.value)
+                    }
+                    if (arributeName == "phone_number") {
+                        currentUserAttributeObject.put("phone_number", attribute?.value)
+                    }
+                    if (arributeName == "gender") {
+                        currentUserAttributeObject.put("gender", attribute?.value)
+                    }
+                    if (arributeName == "name") {
+                        currentUserAttributeObject.put("name", attribute?.value)
+                    }
+                }
+
+            } catch (e: JSONException) {
+                // handle exception
+            }
+            userDetails = currentUserAttributeObject
+        }
+
+        return userDetails
+       }
 
 
     }

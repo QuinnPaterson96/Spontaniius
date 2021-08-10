@@ -270,17 +270,25 @@ class EventManagementFragment : Fragment() {
             override fun populateView(v: View, model: ChatMessage, position: Int) {
                 // Get references to the views of message.xml
                 val messageText = v.findViewById<View>(R.id.message_text) as TextView
+
+
                 val messageUser = v.findViewById<View>(R.id.message_user) as TextView
                 val messageTime = v.findViewById<View>(R.id.message_time) as TextView
 
                 // Set their text
                 messageText.text = model.messageText
+
+                // A few select phrases that accompany app actions trigger a refreshing of data.
+                if(model.messageText.toString().contains("Hey, I'm coming to join in")||model.messageText.toString().contains("Hope everyone had a good time, this event has ended")){
+                    eventUpdate()
+                }
                 messageUser.text = model.messageUser
 
                 // Format the date before showing it
                 messageTime.setText(
                     convertLongToTime(model.messageTime)
                 )
+
             }
         }
         listOfMessages.adapter = adapter;

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -13,12 +12,11 @@ import android.widget.*
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.core.Amplify
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.firebase.ui.database.FirebaseListAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -30,9 +28,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import org.json.JSONArray
 import org.json.JSONObject
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
+import java.lang.Exception
+import java.lang.System.console
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZonedDateTime
@@ -74,6 +75,7 @@ class EventManagementFragment : Fragment() {
     lateinit var getDirectionsButton: Button
     lateinit var chatRoomView: Group
     lateinit var detailsView: LinearLayout
+    lateinit var eventMemberCards: JSONArray
     var manager = false
 
     private var googleMap: GoogleMap? = null
@@ -168,6 +170,7 @@ class EventManagementFragment : Fragment() {
                 listenerManageEvent?.add15Mins()
             }
             viewingDetails=false
+
         }
         else // if you're joining somebody else's event
         {
@@ -224,6 +227,11 @@ class EventManagementFragment : Fragment() {
             chatDetailsToggle()
         }
 
+        // makes it so you have your own card already collected.
+
+        var ownCardJsonArray = JSONArray()
+        ownCardJsonArray.put(0, listenerManageEvent!!.getCurrentUserAttributes().get("cardid"))
+        eventMemberCards = ownCardJsonArray
         return fragmentView
     }
 
@@ -242,6 +250,7 @@ class EventManagementFragment : Fragment() {
             setGroupVisibility(fragmentView, chatRoomView, GONE)
             detailsView.visibility=VISIBLE
             detailsToggleButton.text = "Event Chat"
+            eventUpdate()
 
             //  setGroupVisibility(fragmentView,chatRoomView, VISIBLE)
         }else{
@@ -310,6 +319,13 @@ class EventManagementFragment : Fragment() {
         val getLocationRequest = JsonObjectRequest(
             Request.Method.POST, url, cardExchangeDetails,
             { response ->
+                val JSONResponse = JSONObject(response.toString())
+
+                // We keep track of what cards are available when you join the event
+                eventMemberCards = JSONResponse.get("cardids") as JSONArray
+
+
+                alertCardReceived()
 
             },
             { error ->
@@ -403,7 +419,8 @@ class EventManagementFragment : Fragment() {
         var localStartTime = startTime.toLocalTime()
 
 
-        eventStarts.text = LocalTime.parse(localStartTime.toString(), DateTimeFormatter.ofPattern("HH:mm")).format(
+        eventStarts.text = LocalTime.parse(localStartTime.toString(),
+            DateTimeFormatter.ofPattern("HH:mm")).format(
             DateTimeFormatter.ofPattern("hh:mm a"))
         eventEnds.text =
             LocalTime.parse(localEndTime.toString(), DateTimeFormatter.ofPattern("HH:mm")).format(
@@ -462,11 +479,85 @@ class EventManagementFragment : Fragment() {
 
     }
 
+    // Refreshes event details for event in Event Management Section
+    fun eventUpdate(){
+        var currEvent = listenerManageEvent?.whatIsCurrentEvent()
+        val url = "https://i3ykarzwd5.execute-api.us-west-2.amazonaws.com/default/GetEventFromId?eventid="+requireArguments().getString(ARG_PARAM1);
+        val getEventDetailsRequest = StringRequest(Request.Method.GET, url,
+            { response ->
+                val JSONResponse = JSONObject(response.toString())
+                val potentialCards = JSONResponse.get("cardids") as JSONArray
+
+                // Because you can't remove cards from an event, the number can only A) stay the same, so no new cards or B) increase meaning check and add missing cards
+                if (eventMemberCards.length() != potentialCards.length()) {
+
+                    var newCards = "array["
+                    var commaBefore = false
+                    // If there is a difference then we iterate through cards and find out what doesn't match
+                    for (i in 0 until potentialCards.length()) {
+                        val card  = potentialCards.get(i)
+                        val new = true
+                        for (j in 0 until eventMemberCards.length()){
+                            val oldCard  = potentialCards.get(j)
+                            if(oldCard.equals(card)) {
+                                val new = false
+                            }
+                        }
+                        if(new){
+                            // We add the card id to the insertion string if its new
+                            if (commaBefore == false){
+                                commaBefore = true
+                            }else{
+                                newCards += ","
+                            }
+                            newCards += card.toString()
+                        }
+                    }
+                    newCards +="]"
+
+
+                    var cardUpdateDetails = JSONObject()
+                    cardUpdateDetails.put("userid", Amplify.Auth.currentUser.userId)
+                    cardUpdateDetails.put("cardids", newCards)
+
+                    var url = "https://0cfxpfaiy7.execute-api.us-west-2.amazonaws.com/default/addCardsToCollection"
+                    val updateCardCollectionRequest = JsonObjectRequest(
+                        Request.Method.POST, url, cardUpdateDetails,
+                        { response ->
+                            alertCardReceived()
+                        },
+                        { error ->
+                            error.printStackTrace()
+                        })
+
+                    val queue = this?.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
+                    queue?.add(updateCardCollectionRequest)
+                }
+                // We keep track of what cards are available when you join the event
+
+            },
+            { error ->
+                error.printStackTrace()
+            }
+
+        )
+        val queue = this?.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
+        queue?.add(getEventDetailsRequest)
+
+    }
+
+    fun alertCardReceived(){
+
+    }
+
+
     interface OnEventManagementFragmentInteractionListener {
         fun endEvent()
         fun add15Mins()
         fun exitEvent()
+        fun getEventID():Int
         fun whatIsCurrentEvent():JSONObject
         fun getCurrentUserAttributes():JSONObject
+        fun refreshEventDetails():JSONObject
     }
 }

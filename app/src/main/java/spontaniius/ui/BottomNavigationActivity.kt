@@ -414,6 +414,13 @@ class BottomNavigationActivity : AppCompatActivity(),
         currentFragment = findEventFragment
     }
 
+    override fun getEventID(): Int {
+        return eventid
+    }
+
+
+
+
     override fun whatIsCurrentEvent():JSONObject{
         return currentEvent
     }
@@ -490,6 +497,11 @@ class BottomNavigationActivity : AppCompatActivity(),
        }
 
 
+    override  fun refreshEventDetails():JSONObject {
+
+        return JSONObject()
+
+        }
     }
 
 

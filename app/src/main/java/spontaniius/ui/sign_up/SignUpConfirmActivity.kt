@@ -38,7 +38,7 @@ class SignUpConfirmActivity : AppCompatActivity() {
                         name,
                         password,
                         { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
-                            val intent = Intent(this, SignUpActivity2::class.java).apply {
+                            val intent = Intent(this, SignUpActivity3::class.java).apply {
                                 putExtra(USER_NAME, name)
                                 putExtra(PHONE_NUMBER, phone)
                                 putExtra(USER_ID, userid)

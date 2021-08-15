@@ -30,7 +30,6 @@ class SignUpActivity3 : AppCompatActivity() {
         val back2 = findViewById<Button>(R.id.back_button2)
         val name = intent.getStringExtra(USER_NAME)
         val phone = intent.getStringExtra(PHONE_NUMBER)
-        val greet = intent.getStringExtra(GREETING)
         val userid = intent.getStringExtra(USER_ID)
         val greeting_card: CardView = findViewById(R.id.greeting_card)
         val phone_s : String = getString(R.string.phone_string)
@@ -75,9 +74,6 @@ class SignUpActivity3 : AppCompatActivity() {
 
                 findViewById<TextView>(R.id.special_greeting).apply{
                     text = greet_s
-                }
-                findViewById<TextView>(R.id.display_greeting).apply{
-                    text = greet
                 }
             }else{
 
@@ -153,7 +149,7 @@ class SignUpActivity3 : AppCompatActivity() {
                 cardObject.put("background", background)
                 cardObject.put("backgroundAddress","")
                 cardObject.put("phone", phone)
-                cardObject.put("greeting", greet)
+                cardObject.put("greeting", "This is a temporary placeholder")
 
             } catch (e: JSONException) {
                 // handle exception

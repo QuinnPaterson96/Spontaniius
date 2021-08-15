@@ -130,7 +130,7 @@ class FindEventFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(view.context)
 
         recyclerView.setLayoutManager(LinearLayoutManager(view.context))
-        recyclerView.setAdapter(viewAdapter)
+        recyclerView.adapter = viewAdapter
 
         /*
         streetName="909 Thistle Place, Britannia Beach, BC"

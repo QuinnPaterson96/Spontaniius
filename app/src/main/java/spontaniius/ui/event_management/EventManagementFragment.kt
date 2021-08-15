@@ -316,12 +316,16 @@ class EventManagementFragment : Fragment() {
 
         var userAttributes: List<AuthUserAttribute?>? = null
         val cardExchangeDetails = JSONObject()
+        val format = SimpleDateFormat("yyyy.MM.dd")
+        var currDate = format.format(Calendar.getInstance().time)
+
         var aboutUser = listenerManageEvent?.getCurrentUserAttributes()
 
         var eventID = requireArguments().getString(ARG_PARAM1)
         cardExchangeDetails.put("eventid", eventID)
         cardExchangeDetails.put("cardid", aboutUser?.getString("cardid"))
         cardExchangeDetails.put("userid", Amplify.Auth.currentUser.userId)
+        cardExchangeDetails.put("meetingdate", currDate)
 
         val url = "https://1outrf3pp4.execute-api.us-west-2.amazonaws.com/default/joinEvent"
         val getLocationRequest = JsonObjectRequest(
@@ -523,10 +527,13 @@ class EventManagementFragment : Fragment() {
                     }
                     newCards +="]"
 
-
+                    val format = SimpleDateFormat("yyyy.MM.dd")
+                    var currDate = format.format(Calendar.getInstance().time)
                     var cardUpdateDetails = JSONObject()
                     cardUpdateDetails.put("userid", Amplify.Auth.currentUser.userId)
                     cardUpdateDetails.put("cardids", newCards)
+                    cardUpdateDetails.put("meetingdate", currDate)
+
 
                     var url = "https://0cfxpfaiy7.execute-api.us-west-2.amazonaws.com/default/addCardsToCollection"
                     val updateCardCollectionRequest = JsonObjectRequest(

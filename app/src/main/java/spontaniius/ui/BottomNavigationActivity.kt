@@ -48,6 +48,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener,
     EventManagementFragment.OnEventManagementFragmentInteractionListener,
     FindEventFragment.OnFindEventFragmentInteractionListener,
+    CardCollectionFragment.OnCardCollectionFragmentInteractionListener,
     MapsFragment.MapsInteractionListener {
 
     private val createEventFragmentTag = "CREATE EVENT TAG"

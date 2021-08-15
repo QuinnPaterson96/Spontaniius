@@ -1,15 +1,17 @@
 package spontaniius.ui.card_collection
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.GridView
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
@@ -17,6 +19,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
+import spontaniius.ui.event_management.EventManagementFragment
+import spontaniius.ui.report_user.CARD_ID
+import spontaniius.ui.report_user.ReportUserActivity
+import spontaniius.ui.sign_up.*
+import spontaniius.ui.user_menu.UserOptionsActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -40,6 +47,8 @@ class CardCollectionFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    var listenerCardCollection:CardCollectionFragment.OnCardCollectionFragmentInteractionListener? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +62,8 @@ class CardCollectionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
         val view: View = inflater.inflate(R.layout.fragment_card_collection, container, false)
         selectedCardBackground=view.findViewById(R.id.selected_card_background)
         selectedCardGreeting=view.findViewById(R.id.selected_card_greeting)
@@ -184,9 +195,32 @@ class CardCollectionFragment : Fragment() {
             }
 
 
+        var cardOptionsMenu = view.findViewById<TextView>(R.id.card_user_menu_button)
 
-        view.findViewById<TextView>(R.id.card_user_menu_button).setOnClickListener {
+        cardOptionsMenu.setOnClickListener {
 
+            val popup = PopupMenu(this.context, cardOptionsMenu)
+            val inflater = popup.menuInflater
+            inflater.inflate(R.menu.user_card_menu, popup.menu)
+            var currentContext = this.context
+            popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+                override fun onMenuItemClick(item: MenuItem): Boolean {
+
+                    return when (item.getItemId()) {
+                        R.id.report_user -> {
+                            val intentReportUser =
+                                Intent(currentContext, ReportUserActivity::class.java).apply {
+                                    putExtra(CARD_ID, selectedCardId)
+                                }
+
+                            startActivity(intentReportUser)
+                            return true
+                        }
+                        else -> false
+                    }
+                }
+            })
+            popup.show()
         }
         // Inflate the layout for this fragment
         return view
@@ -215,5 +249,18 @@ class CardCollectionFragment : Fragment() {
                 arguments = Bundle().apply {
                 }
             }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is CardCollectionFragment.OnCardCollectionFragmentInteractionListener) {
+            listenerCardCollection = context
+        } else {
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
+        }
+    }
+
+    interface OnCardCollectionFragmentInteractionListener {
+        fun getCurrentUserAttributes():JSONObject
     }
 }

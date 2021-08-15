@@ -27,12 +27,12 @@ package="spontaniius">
     >
 
 
-        <activity
-            android:name=".ui.user_menu.UserOptionsActivity"
-            android:label="@string/title_activity_user_details"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+    <activity
+        android:name=".ui.user_menu.UserOptionsActivity"
+        android:label="@string/title_activity_user_details"
+        android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <!--
+    <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
              Note that the API key is linked to the encryption key used to sign the APK.
@@ -49,6 +49,7 @@ package="spontaniius">
         android:name=".ui.login.LoginActivity"
         android:label="@string/title_activity_login"></activity>
 
+    <activity android:name="spontaniius.ui.report_user.ReportUserActivity"></activity>
 
     <activity android:name=".ui.BottomNavigationActivity"></activity>
     <activity
@@ -70,7 +71,7 @@ package="spontaniius">
         android:name="com.google.android.geo.API_KEY"
         android:value="@string/google_maps_key" />
 
-    <activity android:name=".ui.create_event.CreateEventActivity"></activity>
+
     <activity android:name=".MainActivity" />
     <activity android:name=".ui.sign_up.SignUpActivity3" />
     <activity android:name=".ui.sign_up.SignUpActivity2" />
@@ -86,7 +87,6 @@ package="spontaniius">
     <activity android:name=".ui.promotions.PromotionTab" />
 
     <!-- Any inner elements would go here. -->
-    <activity android:name="spontaniius.ui.event_management.EventMgmtActivity"></activity>
 </application>
-
 </manifest>
+

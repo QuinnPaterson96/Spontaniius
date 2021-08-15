@@ -54,7 +54,7 @@ class CardAdapter(books: List<UserCard>) :
         userName.text = (userCard.getCardOwnerName())
 
         // Might choose to add this in later, for now plan to keep greeting blank unless card is clicked on and expanded.
-        userGreeting.text = ""
+        userGreeting.text = userCard.getGreeting()
 
         return view!!
         // 2

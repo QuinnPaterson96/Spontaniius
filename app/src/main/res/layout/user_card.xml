@@ -13,7 +13,9 @@
             android:id="@+id/card_background"
             android:layout_width="90dp"
             android:layout_height="50dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
         <TextView
             android:id="@+id/textview_user_name"
             android:layout_width="wrap_content"
@@ -40,6 +42,7 @@
             tools:text="Hi"
             android:gravity="center_horizontal"
             android:layout_alignBottom="@+id/textview_user_name"
+            android:visibility="gone"
             />
 
     </RelativeLayout>

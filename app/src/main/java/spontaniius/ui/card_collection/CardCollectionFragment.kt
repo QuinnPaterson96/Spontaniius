@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.amplifyframework.core.Amplify
 import com.android.volley.Request
@@ -15,9 +17,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
-import spontaniius.ui.find_event.EventFindAdapter
-import spontaniius.ui.find_event.EventTile
-import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -29,6 +28,7 @@ private const val ARG_PARAM2 = "param2"
 lateinit var selectedCardBackground: ImageView
 lateinit var selectedCardName: TextView
 lateinit var selectedCardGreeting: TextView
+lateinit var selectedCardId: String
 
 
 /**
@@ -100,27 +100,27 @@ class CardCollectionFragment : Fragment() {
                     var debugDate = meetingDate.toLocalDate()
                     var thisDate = debugDate
 
-                        //LocalTime.parse(meetingDate.toLocalDate().toString(),
-                       // DateTimeFormatter.ofPattern("yyyy-MMM-dd"))
+                    //LocalTime.parse(meetingDate.toLocalDate().toString(),
+                    // DateTimeFormatter.ofPattern("yyyy-MMM-dd"))
 
                     // This is the way we break up gridview by date, using fake tiles to take advantage of automatic formatting
-                    if(thisDate.toString()!=currentDate){
-                        currentDate=thisDate.toString() // Update date, so as to clarify between sections
+                    if (thisDate.toString() != currentDate) {
+                        currentDate =
+                            thisDate.toString() // Update date, so as to clarify between sections
 
 
-                            var emptyblocks = (userCardCollection.size)%3 // This finishes off current row with blanks to create some space between dates
-                            for (k in 0 until emptyblocks)
-                            {
-                                var blanks = UserCard(
-                                    "",
-                                    0,
-                                    "",
-                                    ""
-                                )
+                        var emptyblocks =
+                            (userCardCollection.size) % 3 // This finishes off current row with blanks to create some space between dates
+                        for (k in 0 until emptyblocks) {
+                            var blanks = UserCard(
+                                "",
+                                0,
+                                "",
+                                ""
+                            )
 
-                                userCardCollection.add(blanks)
-                            }
-
+                            userCardCollection.add(blanks)
+                        }
 
 
                         // Now we add in the date card
@@ -150,12 +150,13 @@ class CardCollectionFragment : Fragment() {
 
                     }
                 }
-                if(userCardCollection.size!=0){
-                    var selectedCard = userCardCollection.get(1) // We start at 1 because 0th position will be a date card
+                if (userCardCollection.size != 0) {
+                    var selectedCard =
+                        userCardCollection.get(1) // We start at 1 because 0th position will be a date card
                     selectedCardBackground.setImageResource(selectedCard.getBackground())
-                    selectedCardGreeting.text=selectedCard.getGreeting()
+                    selectedCardGreeting.text = selectedCard.getGreeting()
                     selectedCardName.text = selectedCard.getCardOwnerName()
-
+                    selectedCardId= selectedCard.getCardUserID()!! // This is for reporting mechanism
                 }
 
             },
@@ -173,10 +174,20 @@ class CardCollectionFragment : Fragment() {
         val gridView = view.findViewById(R.id.gridview) as GridView
         val cardAdapter = this.context?.let { CardAdapter(userCardCollection) }
         gridView.adapter = cardAdapter
+        gridView.onItemClickListener =
+            OnItemClickListener { adapterView, view, position, l ->
+                var selectedCard = userCardCollection.get(position) // We get the newly selected card
+                selectedCardBackground.setImageResource(selectedCard.getBackground())
+                selectedCardGreeting.text = selectedCard.getGreeting()
+                selectedCardName.text = selectedCard.getCardOwnerName()
+                selectedCardId= selectedCard.getCardUserID()!!
+            }
 
 
 
+        view.findViewById<TextView>(R.id.card_user_menu_button).setOnClickListener {
 
+        }
         // Inflate the layout for this fragment
         return view
     }

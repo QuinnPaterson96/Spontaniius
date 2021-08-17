@@ -9,12 +9,22 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.ActionBar
+
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
+
+import com.amplifyframework.auth.options.AuthSignOutOptions
+import com.amplifyframework.core.Amplify
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
@@ -387,7 +397,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     override fun add15Mins(){
         var newEndTime = ZonedDateTime.parse(
             eventEnds as CharSequence?, DateTimeFormatter.ofPattern(
-                "yyyy-M-dd HH:m:ssz"
+                "yyyy-[M][MM]-[d][dd]['T'][ ][HH][H]:[m][mm]:ssz"
             )
         )
 

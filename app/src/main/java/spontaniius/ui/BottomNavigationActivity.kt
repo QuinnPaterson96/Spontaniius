@@ -4,15 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBar
+
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.AuthUserAttribute
+import com.amplifyframework.auth.options.AuthSignOutOptions
+import com.amplifyframework.core.Amplify
+
 import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
 import kotlinx.coroutines.GlobalScope
@@ -20,6 +24,7 @@ import kotlinx.coroutines.launch
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
@@ -27,7 +32,7 @@ import com.android.volley.toolbox.StringRequest
 import com.example.spontaniius.ui.promotions.FindPromotionsFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.JsonObject
+import org.json.JSONException
 import org.json.JSONObject
 import spontaniius.R
 import spontaniius.SpontaniiusApplication
@@ -35,19 +40,17 @@ import spontaniius.data.EventEntity
 import spontaniius.data.Repository
 import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.dependency_injection.VolleySingleton
+import spontaniius.ui.card_collection.CardCollectionFragment
+import spontaniius.ui.card_editing.CardEditingActivity
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
 import spontaniius.ui.event_management.EventManagementFragment
 import spontaniius.ui.find_event.FindEventFragment
-
-import spontaniius.ui.login.LoginActivity
-import spontaniius.ui.sign_up.SignUpActivity
+import spontaniius.ui.sign_up.*
 import spontaniius.ui.user_menu.UserOptionsActivity
-
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-
 import javax.inject.Inject
 
 
@@ -56,6 +59,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener,
     EventManagementFragment.OnEventManagementFragmentInteractionListener,
     FindEventFragment.OnFindEventFragmentInteractionListener,
+    CardCollectionFragment.OnCardCollectionFragmentInteractionListener,
     MapsFragment.MapsInteractionListener {
 
     private val createEventFragmentTag = "CREATE EVENT TAG"
@@ -69,8 +73,10 @@ class BottomNavigationActivity : AppCompatActivity(),
     lateinit var bottomNavigation: BottomNavigationView
     lateinit var fragment_container: FrameLayout
     lateinit var currentFragment: Fragment
+    lateinit var previousFragment: Fragment
     lateinit var createEventFragment: CreateEventFragment
     lateinit var promotionFragment: Fragment
+    lateinit var cardCollectionFragment: Fragment
     lateinit var eventManagementFragment: EventManagementFragment
     lateinit var eventJoinFragment: EventManagementFragment
 
@@ -85,6 +91,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     var meetupOwner = false
     var eventid = 0
     var eventEnds = ""
+    lateinit var userDetails: JSONObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,13 +113,25 @@ class BottomNavigationActivity : AppCompatActivity(),
 
                     return when (item.getItemId()) {
                         R.id.user_details -> {
-                            val intentUserDetails = Intent(appContext, UserOptionsActivity::class.java).apply {
+                            val intentUserDetails = Intent(appContext,
+                                UserOptionsActivity::class.java).apply {
 
                             }
                             startActivity(intentUserDetails)
                             return true
                         }
                         R.id.edit_card -> {
+
+                            var CurrUserAttributes = getCurrentUserAttributes()
+                            val intentUserDetails =
+                                Intent(appContext, CardEditingActivity::class.java).apply {
+                                    putExtra(USER_NAME, CurrUserAttributes.get("name").toString())
+                                    putExtra(PHONE_NUMBER,
+                                        CurrUserAttributes.get("phone_number").toString())
+                                    putExtra(USER_ID, Amplify.Auth.currentUser.userId)
+                                }
+
+                            startActivity(intentUserDetails)
                             return true
                         }
                         R.id.about_us -> {
@@ -133,10 +152,11 @@ class BottomNavigationActivity : AppCompatActivity(),
                                     error.toString()
                                 )
                             }
-                            val intentSignout = Intent(appContext, SignUpActivity::class.java).apply {
+                            val intentSignout =
+                                Intent(appContext, SignUpActivity::class.java).apply {
 
-                            }
-                                startActivity(intentSignout)
+                                }
+                            startActivity(intentSignout)
                             return true
                         }
                         R.id.delete_account -> {
@@ -153,16 +173,13 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
 
-        createEventComponent =
-            (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
-                .create()
-        createEventComponent.inject(this)
+
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         fragment_container = findViewById(R.id.fragment_container)
         createEventFragment = CreateEventFragment.newInstance()
         findEventFragment = FindEventFragment.newInstance()
-
+        cardCollectionFragment = CardCollectionFragment.newInstance()
 
         //TODO: when Cord is done with his promotion fragment, create that here
 //        TODO: Then, have this class (BottomNavigationActivity) implement all the methods that the fragment calls (probably want to define an interface for that)
@@ -181,6 +198,8 @@ class BottomNavigationActivity : AppCompatActivity(),
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, findEventFragment, null).commit()
 
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, cardCollectionFragment, null).hide(cardCollectionFragment).commit()
 
 
         currentFragment = findEventFragment
@@ -189,18 +208,21 @@ class BottomNavigationActivity : AppCompatActivity(),
                 R.id.find_event -> {
                     supportFragmentManager.beginTransaction().hide(currentFragment)
                         .show(findEventFragment).commit()
+                    previousFragment = currentFragment
                     currentFragment = findEventFragment
                     true
                 }
                 R.id.create_event -> {
-                    if(meetupOwner){
+                    if (meetupOwner) {
                         supportFragmentManager.beginTransaction().hide(currentFragment)
                             .show(eventManagementFragment).commit()
+                        previousFragment = currentFragment
                         currentFragment = eventManagementFragment
                         true
-                    }else{
+                    } else {
                         supportFragmentManager.beginTransaction().hide(currentFragment)
                             .show(createEventFragment).commit()
+                        previousFragment = currentFragment
                         currentFragment = createEventFragment
                         true
                     }
@@ -210,9 +232,19 @@ class BottomNavigationActivity : AppCompatActivity(),
                 R.id.promotions -> {
                     supportFragmentManager.beginTransaction().hide(currentFragment)
                         .show(promotionFragment).commit()
+                    previousFragment = currentFragment
                     currentFragment = promotionFragment
                     true
                 }
+
+                R.id.card_collection -> {
+                    supportFragmentManager.beginTransaction().hide(currentFragment)
+                        .show(cardCollectionFragment).commit()
+                    previousFragment = currentFragment
+                    currentFragment = cardCollectionFragment
+                    true
+                }
+
                 else -> {
                     false
                 }
@@ -220,6 +252,14 @@ class BottomNavigationActivity : AppCompatActivity(),
         }
     }
 
+    override fun onBackPressed() {
+        if(this::userDetails.isInitialized)
+        supportFragmentManager.beginTransaction().hide(currentFragment)
+            .show(previousFragment).commit()
+        previousFragment = currentFragment
+        currentFragment = previousFragment
+        return
+    }
 
     override fun onLocationSelected(latLng: LatLng) {
         this.latLng = latLng
@@ -260,7 +300,8 @@ class BottomNavigationActivity : AppCompatActivity(),
         startTime: String,
         endTime: String,
         gender: String,
-        invitation: Int
+        invitation: Int,
+        cardId: Int
     ) {
 
 
@@ -279,7 +320,8 @@ class BottomNavigationActivity : AppCompatActivity(),
                 endTime,
                 latLong.latitude,
                 latLong.longitude,
-                invitation
+                invitation,
+                cardId
             )
 
             currentEvent = thisEvent.toJSON()
@@ -291,9 +333,12 @@ class BottomNavigationActivity : AppCompatActivity(),
                     eventid = JSONResponse.get("eventid") as Int
                     meetupOwner = true
 
-                    eventManagementFragment = EventManagementFragment.newInstance(eventid.toString(), meetupOwner)
+                    eventManagementFragment =
+                        EventManagementFragment.newInstance(eventid.toString(),
+                            meetupOwner)
                     supportFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
+                        .add(R.id.fragment_container, eventManagementFragment, null).hide(
+                            currentFragment).commitNow()
                     currentFragment = eventManagementFragment
                 },
                 Response.ErrorListener { error ->
@@ -399,11 +444,94 @@ class BottomNavigationActivity : AppCompatActivity(),
         currentFragment = findEventFragment
     }
 
+    override fun getEventID(): Int {
+        return eventid
+    }
+
+
+
+
     override fun whatIsCurrentEvent():JSONObject{
         return currentEvent
     }
 
 
+    // This was created to streamline the process of accessing user attributes and to reduce code
+    // duplication across program. It fetches the user attributes and returns them as a JSON object
+    // If the details have already been fetched it avoids calling AWS Auth again
+
+    override fun getCurrentUserAttributes():JSONObject{
+        // We check to see if user details have already been initialized or not, if not then prepares to
+        // collect details
+        if(!this::userDetails.isInitialized) {
+            var userAttributes: List<AuthUserAttribute?>? = null
+            val cardExchangeDetails = JSONObject()
+            Amplify.Auth.fetchUserAttributes(
+                { attributes: List<AuthUserAttribute?> ->
+                    Log.e(
+                        "AuthDemo",
+                        attributes.toString()
+                    )
+                    userAttributes = attributes
+                    //     initializeUserData(nameEditText, phoneNumberTextView, genderRadioGroup, userAttributes)
+                }
+            ) { error: AuthException? ->
+                Log.e(
+                    "AuthDemo",
+                    "Failed to fetch user attributes.",
+                    error
+                )
+            }
+
+            var startTime = Calendar.getInstance().timeInMillis
+
+            while (userAttributes == null) {
+                // waiting for attributes before moving forward
+                if ((Calendar.getInstance().timeInMillis - startTime > 5000)) {
+                    Toast.makeText(
+                        this,
+                        "We weren't able to get your user data, please try again later",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    break
+                }
+
+            }
+
+            val currentUserAttributeObject = JSONObject()
+            try {
+                currentUserAttributeObject.put("userid", Amplify.Auth.currentUser.userId)
+                for (attribute in userAttributes!!) {
+                    var arributeName = attribute?.key?.keyString
+                    if (arributeName == "custom:cardid") {
+                        currentUserAttributeObject.put("cardid", attribute?.value)
+                    }
+                    if (arributeName == "phone_number") {
+                        currentUserAttributeObject.put("phone_number", attribute?.value)
+                    }
+                    if (arributeName == "gender") {
+                        currentUserAttributeObject.put("gender", attribute?.value)
+                    }
+                    if (arributeName == "name") {
+                        currentUserAttributeObject.put("name", attribute?.value)
+                    }
+                }
+
+            } catch (e: JSONException) {
+                // handle exception
+            }
+            userDetails = currentUserAttributeObject
+        }
+
+        return userDetails
+       }
+
+
+    override  fun refreshEventDetails():JSONObject {
+
+        return JSONObject()
+
+        }
     }
 
 

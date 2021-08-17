@@ -16,7 +16,8 @@ data class EventEntity(
     val endTime: String,
     val latitude: Double,
     val longitude: Double,
-    val invitation: Int
+    val invitation: Int,
+    val cardId: Int
 ) {
 
 
@@ -34,6 +35,7 @@ data class EventEntity(
         jsonObject.put("maxradius", this.invitation)
         jsonObject.put("eventstarts", this.startTime)
         jsonObject.put("eventends", this.endTime)
+        jsonObject.put("cardid", this.cardId)
         return jsonObject
     }
 }

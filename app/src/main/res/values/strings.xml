@@ -87,4 +87,5 @@
     <string name="gender_female">Female</string>
     <string name="gender_nonbinary">Non-Binary</string>
     <string name="gender_other">Other/Prefer not to say</string>
+    <string name="apology_message">Our deepest apologies that you\'ve had a bad experience,and thank you for taking the time to report this. Can you tell us about what happened?</string>
 </resources>

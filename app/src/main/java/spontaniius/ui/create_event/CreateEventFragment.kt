@@ -145,15 +145,24 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         invitationPosition == 1 -> radius2
                         else -> radius3
                     }
-                    listenerCreateEvent?.createEvent(
-                        title.text.toString(),
-                        description.text.toString(),
-                        eventIcon,
-                        getDateString(year, month, day, startTime.hour, startTime.minute),
-                        getDateString(year, month, day, endTime.hour, endTime.minute),
-                        gender,
-                        invitation
-                    )
+
+                    var startDateString = getDateString(year, month, day, startTime.hour, startTime.minute)
+                    var endDateString = getDateString(year, month, day, endTime.hour, endTime.minute)
+
+                    val cardId = listenerCreateEvent?.getCurrentUserAttributes()?.getString("cardid")?.toInt()
+                    if (cardId != null) {
+                        listenerCreateEvent?.createEvent(
+                            title.text.toString(),
+                            description.text.toString(),
+                            eventIcon,
+                            startDateString,
+                            endDateString,
+                            gender,
+                            invitation,
+                            cardId
+
+                        )
+                    }
                 }
             }
         }
@@ -194,7 +203,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                var currentTitle = s.toString()
+                var currentTitle = s.toString().toLowerCase()
                 if (currentTitle.contains("coffee") || currentTitle.contains("tea")) {
                     iconSelectButton.setImageResource(R.drawable.activity_coffee)
                     eventIcon = R.drawable.activity_coffee.toString()
@@ -203,9 +212,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     iconSelectButton.setImageResource(R.drawable.activity_walk)
                     eventIcon = R.drawable.activity_walk.toString()
                 }
-                if (currentTitle.contains("food") || currentTitle.contains("dinner") || currentTitle.contains(
-                        "lunch"
-                    ) || currentTitle.contains("breakfast")
+                if (currentTitle.contains("food") ||
+                    currentTitle.contains("dinner") ||
+                    currentTitle.contains("lunch")||
+                    currentTitle.contains("breakfast")||
+                    currentTitle.contains("eat")
                 ) {
                     iconSelectButton.setImageResource(R.drawable.activity_eating)
                     eventIcon = R.drawable.activity_eating.toString()
@@ -486,8 +497,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             startTime: String, //using unix timestamp
             endTime: String,
             gender: String,
-            invitation: Int
+            invitation: Int,
+            cardId: Int
         )
+        fun getCurrentUserAttributes():JSONObject
     }
 
     companion object {

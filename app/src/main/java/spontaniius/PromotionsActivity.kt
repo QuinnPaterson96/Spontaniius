@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import spontaniius.ui.promotions.PromotionTab
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_sign_up3.*
+
 
 
 class PromotionEntry {//Class format taken from [1] https://grokonez.com/android/kotlin-listview-example-android.

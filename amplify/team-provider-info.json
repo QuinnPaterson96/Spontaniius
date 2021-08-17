@@ -13,11 +13,11 @@
     },
     "categories": {
       "auth": {
-        "spontaniiuscf36249b": {
+        "spontaniius16acfee6": {
           "userPoolId": "us-west-2_qQgFXTjud",
           "userPoolName": "SpontaniiusUsers",
           "webClientId": "uqes3ma1re97ko7o5tf29khuv",
-          "nativeClientId": "c5uj4d5g76uoi7rl8341ethgr"
+          "nativeClientId": "uqes3ma1re97ko7o5tf29khuv"
         }
       }
     }

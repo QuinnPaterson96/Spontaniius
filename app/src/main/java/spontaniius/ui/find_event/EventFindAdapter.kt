@@ -1,6 +1,7 @@
 package spontaniius.ui.find_event
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import spontaniius.R
@@ -29,7 +31,7 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         var mTextViewDistance: TextView
         var mTextViewTime: TextView
         var direction_button: ImageView
-        var details: RelativeLayout
+        var details: ConstraintLayout
         lateinit var eventid: String
         lateinit var event: JSONObject
 
@@ -77,6 +79,13 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
 
         holder.mTextViewDistance.setText(distance.toString() + " km")
         holder.mTextViewTime.setText(currentItem.time_started)
+        if(currentItem.time_started.contains("starts")){
+            holder.details.setBackgroundColor(Color.parseColor("#9ffc58"))
+        }else{
+            holder.details.setBackgroundColor(Color.parseColor("#fafa9b"))
+        }
+
+
         holder.direction_button.setOnClickListener{
 
             val url = "https://www.google.com/maps/dir/?api=1&destination=${locationPoint}"

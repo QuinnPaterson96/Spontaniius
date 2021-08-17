@@ -17,7 +17,7 @@
         android:title="@string/promotions_screen" />
 
     <item
-        android:id="@+id/cards"
+        android:id="@+id/card_collection"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/cards_screen" />
 

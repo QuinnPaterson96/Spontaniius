@@ -56,7 +56,7 @@
             android:layout_weight=".9"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Name" />
+            android:text="" />
       </LinearLayout>
     </TableRow>
 
@@ -69,10 +69,18 @@
           android:orientation="horizontal"
           android:weightSum="1">
 
+        <Button
+            android:id="@+id/report_go_back"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Back" />
       <View
           android:layout_width="0dp"
           android:layout_height="0dp"
-          android:layout_weight="0.6" />
+          android:layout_weight="0.4" />
+
+
 
         <Button
             android:id="@+id/send_report_button"

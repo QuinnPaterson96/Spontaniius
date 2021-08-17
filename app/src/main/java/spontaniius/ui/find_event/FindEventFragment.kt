@@ -318,10 +318,37 @@ class FindEventFragment : Fragment() {
                         )
                     )
 
+                    val eventStartString = event.get("eventstarts")
+                    val startTime = ZonedDateTime.parse(
+                        eventStartString as CharSequence?, DateTimeFormatter.ofPattern(
+                            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+                        )
+                    )
+
                     val currentTime = currtime.time / 1000
-                    val eventTime = endTime.toEpochSecond()
-                    val milliseconds = eventTime - currentTime
+                    val eventEndTime = endTime.toEpochSecond()
+                    val eventStartTime = startTime.toEpochSecond()
+
+
+                    var milliseconds = eventEndTime - currentTime
                     val minutesFromEnd = milliseconds.toInt() / 60
+
+
+                    milliseconds =   eventStartTime - currentTime
+
+
+                    val minutesFromStart = milliseconds.toInt() / 60
+
+                    var releventTimerString =""
+                    if(minutesFromStart<0){
+                        // Event has already started so we're going to show when event ends
+                        releventTimerString ="ends in " + minutesFromEnd.toString() + " mins"
+                    }else{
+                        // Event has yet to start, so we're going to show how long it is until start
+                        releventTimerString = "starts in " + minutesFromStart.toString() + " mins"
+
+                    }
+
 
                     try {
                         var hangout = EventTile(
@@ -329,7 +356,7 @@ class FindEventFragment : Fragment() {
                             event.get("eventtitle").toString(),
                             event.get("eventtext").toString(),
                             event.get("distance").toString(),
-                            "ends in " + minutesFromEnd.toString() + " mins",
+                            releventTimerString,
                             event.get("streetaddress").toString(),
                             event.get("eventid").toString(),
                             event,

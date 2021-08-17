@@ -146,14 +146,17 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         else -> radius3
                     }
 
+                    var startDateString = getDateString(year, month, day, startTime.hour, startTime.minute)
+                    var endDateString = getDateString(year, month, day, endTime.hour, endTime.minute)
+
                     val cardId = listenerCreateEvent?.getCurrentUserAttributes()?.getString("cardid")?.toInt()
                     if (cardId != null) {
                         listenerCreateEvent?.createEvent(
                             title.text.toString(),
                             description.text.toString(),
                             eventIcon,
-                            getDateString(year, month, day, startTime.hour, startTime.minute),
-                            getDateString(year, month, day, endTime.hour, endTime.minute),
+                            startDateString,
+                            endDateString,
                             gender,
                             invitation,
                             cardId

@@ -28,6 +28,9 @@ class ReportUserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report_user)
+        findViewById<Button>(R.id.report_go_back).setOnClickListener() {
+            onBackPressed()
+        }
         findViewById<Button>(R.id.send_report_button).setOnClickListener(){
             var reportText = findViewById<EditText>(R.id.report_text).text
 

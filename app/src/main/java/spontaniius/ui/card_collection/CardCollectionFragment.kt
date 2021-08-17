@@ -146,12 +146,25 @@ class CardCollectionFragment : Fragment() {
                     }
 
 
+                    // This is used to maintain a pattern of date-card-card or blank-card-card
+                    if((userCardCollection.size) % 3==0){
+                        var blanks = UserCard(
+                            "",
+                            0,
+                            "",
+                            ""
+                        )
+
+                        userCardCollection.add(blanks)
+                    }
+
+
 
 
                     try {
                         var hangout = UserCard(
                             event.get("cardtext").toString(),
-                            R.drawable.card_bubbles,
+                            event.get("background").toString().toInt(),
                             event.get("cardid").toString(),
                             event.get("greeting").toString()
                         )
@@ -187,11 +200,15 @@ class CardCollectionFragment : Fragment() {
         gridView.adapter = cardAdapter
         gridView.onItemClickListener =
             OnItemClickListener { adapterView, view, position, l ->
-                var selectedCard = userCardCollection.get(position) // We get the newly selected card
-                selectedCardBackground.setImageResource(selectedCard.getBackground())
-                selectedCardGreeting.text = selectedCard.getGreeting()
-                selectedCardName.text = selectedCard.getCardOwnerName()
-                selectedCardId= selectedCard.getCardUserID()!!
+
+                if(position%3!=0){
+                    // We only want to change card if a card is collected
+                    var selectedCard = userCardCollection.get(position) // We get the newly selected card
+                    selectedCardBackground.setImageResource(selectedCard.getBackground())
+                    selectedCardGreeting.text = selectedCard.getGreeting()
+                    selectedCardName.text = selectedCard.getCardOwnerName()
+                    selectedCardId= selectedCard.getCardUserID()!!
+                }
             }
 
 

@@ -52,12 +52,7 @@ package="spontaniius">
     <activity android:name="spontaniius.ui.report_user.ReportUserActivity"></activity>
 
     <activity android:name=".ui.BottomNavigationActivity"></activity>
-    <activity
-        android:name=".ui.find_event.FindEventActivity"
-        android:label="@string/title_activity_find_event">
 
-
-    </activity>
     <!--
          The API key for Google Maps-based APIs is defined as a string resource.
          (See the file "res/values/google_maps_api.xml").
@@ -73,7 +68,7 @@ package="spontaniius">
 
 
     <activity android:name=".MainActivity" />
-    <activity android:name=".ui.sign_up.SignUpActivity3" />
+    <activity android:name=".ui.card_editing.CardEditingActivity" />
     <activity android:name=".ui.sign_up.SignUpActivity2" />
     <activity android:name=".ui.event_management.EventManagementActivity"></activity>
 

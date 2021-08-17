@@ -184,6 +184,7 @@ class EventManagementFragment : Fragment() {
             add15MinsButton.text = "Join in"
             add15MinsButton.setOnClickListener{
                 joinIn()
+                chatDetailsToggle()
             }
         }
 
@@ -222,6 +223,9 @@ class EventManagementFragment : Fragment() {
             chatDetailsToggle()
         }
         joinFromDetailsButon = fragmentView?.findViewById<View>(R.id.chatroomAndJoin) as Button
+        if(manager){
+            joinFromDetailsButon.visibility= GONE
+        }
         joinFromDetailsButon.setOnClickListener{
             joinIn()
             chatDetailsToggle()
@@ -338,6 +342,8 @@ class EventManagementFragment : Fragment() {
 
 
                 alertCardReceived()
+                joinFromDetailsButon.visibility= GONE
+                add15MinsButton.visibility= GONE
 
             },
             { error ->

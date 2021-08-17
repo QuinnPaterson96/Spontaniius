@@ -31,6 +31,7 @@ import spontaniius.data.Repository
 import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.card_collection.CardCollectionFragment
+import spontaniius.ui.card_editing.CardEditingActivity
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
 import spontaniius.ui.event_management.EventManagementFragment
@@ -113,7 +114,7 @@ class BottomNavigationActivity : AppCompatActivity(),
 
                             var CurrUserAttributes = getCurrentUserAttributes()
                             val intentUserDetails =
-                                Intent(appContext, SignUpActivity3::class.java).apply {
+                                Intent(appContext, CardEditingActivity::class.java).apply {
                                     putExtra(USER_NAME, CurrUserAttributes.get("name").toString())
                                     putExtra(PHONE_NUMBER,
                                         CurrUserAttributes.get("phone_number").toString())
@@ -162,10 +163,7 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
 
-        createEventComponent =
-            (applicationContext as SpontaniiusApplication).applicationComponent.createEventComponent()
-                .create()
-        createEventComponent.inject(this)
+
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         fragment_container = findViewById(R.id.fragment_container)

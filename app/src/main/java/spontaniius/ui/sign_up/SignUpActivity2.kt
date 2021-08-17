@@ -6,6 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import spontaniius.R
 import spontaniius.R.layout.activity_sign_up2
+import spontaniius.ui.card_editing.CardEditingActivity
 
 
 const val GREETING = "spontaniius.ui.sign_up.MESSAGE3"
@@ -55,7 +56,7 @@ class SignUpActivity2 : AppCompatActivity() {
 
         done2.setOnClickListener{
 
-            val intent = Intent(this, SignUpActivity3::class.java).apply{
+            val intent = Intent(this, CardEditingActivity::class.java).apply{
                 putExtra(USER_NAME, name)
                 putExtra(PHONE_NUMBER, phone)
                 putExtra(GREETING, greeting)

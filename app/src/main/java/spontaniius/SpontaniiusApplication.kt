@@ -5,7 +5,6 @@ import spontaniius.DaggerApplicationComponent
 import spontaniius.dependency_injection.ContextModule
 import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.dependency_injection.EventDaoModule
-import spontaniius.dependency_injection.FindEventComponent
 import dagger.Component
 import javax.inject.Singleton
 
@@ -18,7 +17,7 @@ import javax.inject.Singleton
 interface ApplicationComponent {
 
     fun createEventComponent(): CreateEventComponent.Factory
-    fun FindEventComponent(): FindEventComponent.Factory
+
 
     @Component.Builder
     interface Builder {
@@ -28,7 +27,6 @@ interface ApplicationComponent {
 }
 
 open class SpontaniiusApplication : Application() {
-    open val applicationComponent: ApplicationComponent =
-        DaggerApplicationComponent.builder().contextModule(ContextModule(this)).build()
+
 //    open val applicationComponent: spontaniius.ApplicationComponent = DaggerApplicationComponent.builder().build()
 }

@@ -10,18 +10,11 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.ActionBar
 
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
-
-import com.amplifyframework.auth.options.AuthSignOutOptions
-import com.amplifyframework.core.Amplify
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 

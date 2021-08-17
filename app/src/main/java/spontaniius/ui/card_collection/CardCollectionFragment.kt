@@ -78,23 +78,6 @@ class CardCollectionFragment : Fragment() {
         val getEventsRequest = StringRequest(Request.Method.GET, url,
             { response ->
 
-                /*
-                  example object
-                 "userid":"4e875378-b4ab-486b-aab6-4e134393957e",
-                  "cardids":[
-                     30,
-                     31,
-                     30,
-                     31
-                  ],
-                  "meetingdate":"2021-08-10T00:00:00.000Z",
-                  "cardid":30,
-                  "cardtext":"Quinn",
-                  "background":"Yellow",
-                  "backgroundaddress":"undefined",
-                  "phone":"+17782660158",
-                  "greeting":"This is a temporary placeholder"
-                 */
                 val eventJSONArray = JSONArray(response.toString())
                 var currentDate = ""
 
@@ -111,8 +94,7 @@ class CardCollectionFragment : Fragment() {
                     var debugDate = meetingDate.toLocalDate()
                     var thisDate = debugDate
 
-                    //LocalTime.parse(meetingDate.toLocalDate().toString(),
-                    // DateTimeFormatter.ofPattern("yyyy-MMM-dd"))
+
 
                     // This is the way we break up gridview by date, using fake tiles to take advantage of automatic formatting
                     if (thisDate.toString() != currentDate) {
@@ -122,16 +104,19 @@ class CardCollectionFragment : Fragment() {
 
                         var emptyblocks =
                             (userCardCollection.size) % 3 // This finishes off current row with blanks to create some space between dates
-                        for (k in 0 until emptyblocks) {
-                            var blanks = UserCard(
-                                "",
-                                0,
-                                "",
-                                ""
-                            )
+                        if(emptyblocks!=0){
+                            for (k in 0 until 3-emptyblocks) {
+                                var blanks = UserCard(
+                                    "",
+                                    0,
+                                    "",
+                                    ""
+                                )
 
-                            userCardCollection.add(blanks)
+                                userCardCollection.add(blanks)
+                            }
                         }
+
 
 
                         // Now we add in the date card

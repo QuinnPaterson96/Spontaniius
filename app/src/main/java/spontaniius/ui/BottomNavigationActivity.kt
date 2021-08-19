@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import android.widget.*
 import androidx.appcompat.app.ActionBar
 
@@ -293,7 +294,8 @@ class BottomNavigationActivity : AppCompatActivity(),
         endTime: String,
         gender: String,
         invitation: Int,
-        cardId: Int
+        cardId: Int,
+        loadingProgress: ProgressBar // Kludge to get around not being able to make work on resume
     ) {
 
 
@@ -324,6 +326,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                     val JSONResponse = JSONObject(response.toString())
                     eventid = JSONResponse.get("eventid") as Int
                     meetupOwner = true
+                    loadingProgress.visibility=GONE
 
                     eventManagementFragment =
                         EventManagementFragment.newInstance(eventid.toString(),
@@ -334,6 +337,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                     currentFragment = eventManagementFragment
                 },
                 Response.ErrorListener { error ->
+                    loadingProgress.visibility=GONE
                     error.printStackTrace()
                 }
 

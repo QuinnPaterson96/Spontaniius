@@ -12,11 +12,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
@@ -33,10 +33,6 @@ import org.json.JSONObject
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.*
 
 
@@ -164,8 +160,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             endDateString,
                             gender,
                             invitation,
-                            cardId
-
+                            cardId,
+                            eventLoad
                         )
                     }
                 }
@@ -480,7 +476,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -503,7 +498,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             endTime: String,
             gender: String,
             invitation: Int,
-            cardId: Int
+            cardId: Int,
+            loadingProgress:ProgressBar
         )
         fun getCurrentUserAttributes():JSONObject
     }

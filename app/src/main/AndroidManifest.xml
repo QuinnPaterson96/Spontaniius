@@ -70,7 +70,7 @@ package="spontaniius">
     <activity android:name=".MainActivity" />
     <activity android:name=".ui.card_editing.CardEditingActivity" />
     <activity android:name=".ui.sign_up.SignUpActivity2" />
-    <activity android:name=".ui.event_management.EventManagementActivity"></activity>
+
 
     <activity android:name=".ui.sign_up.SignUpActivity"></activity>
 

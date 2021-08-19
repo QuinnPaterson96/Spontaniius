@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
@@ -63,6 +64,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var titleField: EditText
     lateinit var descriptionField:EditText
+    lateinit var eventLoad:ProgressBar
     // tracks if using stock title
     var stockTitle = false
 
@@ -73,6 +75,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     ): View? {
         // Inflate the layout for this fragment
         val viewLayout = inflater.inflate(R.layout.fragment_create_event, container, false)
+
 
 
         val locateMeButton = viewLayout.findViewById<ImageView>(R.id.locate_me_button_create);
@@ -117,6 +120,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
             val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
             val invitationType = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
+            eventLoad = viewLayout.findViewById(R.id.loading)
 
             val debugIcon = eventIcon;
 
@@ -150,6 +154,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     var endDateString = getDateString(year, month, day, endTime.hour, endTime.minute)
 
                     val cardId = listenerCreateEvent?.getCurrentUserAttributes()?.getString("cardid")?.toInt()
+                    eventLoad.visibility = View.VISIBLE
                     if (cardId != null) {
                         listenerCreateEvent?.createEvent(
                             title.text.toString(),

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.landing_screen.LandingScreenActivity">
+    <!--
+   slideranimation duration is to set duration for transition between two slides
+   sliderautocycledirection is to set animationbetween transition of your slides
+   sliderindicator enables is used to display the indicators for slider
+   slider indicator gravity is to set gravity for indicator gravity
+   slider indicator margin is to set margin for indicator
+   slider indicator orientation is used to add orientation for slider
+   slider indicator padding is use to add padding to indicator
+   slider indicator selected color is use to specify selected color
+   and slider indicator unselected color is use to specify the color when the slider is unselected
+   slider scroll time in sec is used to specify scrolling time in seconds
+   -->
+
+
+    <com.smarteist.autoimageslider.SliderView
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="150dp"
+        android:layout_centerInParent="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:sliderAnimationDuration="600"
+        app:sliderAutoCycleDirection="back_and_forth"
+        app:sliderIndicatorAnimationDuration="600"
+        app:sliderIndicatorEnabled="false"
+        app:sliderIndicatorGravity="center_horizontal|bottom"
+        app:sliderIndicatorMargin="15dp"
+        app:sliderIndicatorOrientation="horizontal"
+        app:sliderIndicatorPadding="3dp"
+        app:sliderIndicatorRadius="2dp"
+        app:sliderIndicatorSelectedColor="#5A5A5A"
+        app:sliderIndicatorUnselectedColor="#FFF"
+        app:sliderScrollTimeInSec="1" >
+
+    </com.smarteist.autoimageslider.SliderView>
+
+
+    <Button
+        android:id="@+id/email_signup"
+        android:layout_width="200dp"
+        android:background="@drawable/spontaniius_primary_button"
+        android:layout_height="wrap_content"
+        android:text="Email Signup"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slider"
+        />
+
+    <Button
+        android:id="@+id/login_button_landing"
+        android:layout_height="wrap_content"
+        android:background="@drawable/spontaniius_primary_button"
+
+        android:layout_marginTop="10dp"
+        android:layout_width="200dp"
+        app:layout_constraintTop_toBottomOf="@id/email_signup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:text="Login" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

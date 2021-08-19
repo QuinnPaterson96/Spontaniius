@@ -6,9 +6,11 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="0dp"
-        android:layout_height="124dp"
+        android:id="@+id/instructionText"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="37dp"
         android:text="Please Enter Confirmation Code You Recieved By Phone"
         android:textSize="30dp"
@@ -18,7 +20,7 @@
 
     <EditText
         android:id="@+id/confirmation_code"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="89dp"
         android:layout_marginStart="31dp"
         android:layout_marginEnd="31dp"
@@ -28,7 +30,10 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/back_button"
         app:layout_constraintEnd_toEndOf="@+id/confirm_button"
-        app:layout_constraintStart_toStartOf="@+id/back_button" />
+        app:layout_constraintStart_toStartOf="@+id/back_button"
+        android:background="@color/quantum_white_100"/>
+
+
 
     <Button
         android:id="@+id/confirm_button"
@@ -38,7 +43,8 @@
         android:layout_marginEnd="83dp"
         android:text="Confirm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmation_code" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmation_code"
+        android:background="@drawable/spontaniius_primary_button"/>
 
     <Button
         android:id="@+id/back_button"

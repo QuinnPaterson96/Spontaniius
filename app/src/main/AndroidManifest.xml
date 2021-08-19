@@ -72,8 +72,7 @@ package="spontaniius">
     <activity android:name=".ui.sign_up.SignUpActivity2" />
     <activity android:name=".ui.event_management.EventManagementActivity"></activity>
 
-    <activity android:name=".ui.sign_up.SignUpActivity">
-    </activity>
+    <activity android:name=".ui.sign_up.SignUpActivity"></activity>
 
 
     <activity
@@ -86,8 +85,12 @@ package="spontaniius">
     </activity>
 
     <activity android:name=".ui.promotions.PromotionTab" />
+    <activity android:name="spontaniius.ui.landing_screen.LandingScreenActivity"></activity>
+    <activity android:name="spontaniius.ui.login.ResetPasswordActivity"></activity>
+
 
     <!-- Any inner elements would go here. -->
 </application>
 </manifest>
+
 

@@ -36,61 +36,6 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        try {
-            Amplify.addPlugin(AWSCognitoAuthPlugin())
-            try {
-                val config = AmplifyConfiguration.builder(applicationContext)
-                    .devMenuEnabled(false)
-                    .build()
-                Amplify.configure(config, applicationContext)
-                Log.i("MyAmplifyApp", "Initialized Amplify")
-            } catch (error: AmplifyException) {
-                Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
-            }
-
-        }catch (error: Exception){
-
-        }
-
-/*
-        try{
-            val permissions = arrayOf<String>()
-
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-
-            permissionsToRequest = permissionsToRequest(permissions);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (permissionsToRequest.size() > 0) {
-                    requestPermissions(
-                        permissionsToRequest.toArray(new String [permissionsToRequest.size()]),
-                        ALL_PERMISSIONS_RESULT
-                    );
-                }
-            }
-
-        }catch (error: Exception){
-
-        }
-*/
-
-        Amplify.Auth.fetchAuthSession(
-            { result ->
-                val intent2 = Intent(this, BottomNavigationActivity::class.java).apply {
-
-                }
-
-                if (result.isSignedIn == true) {
-                    startActivity(intent2)
-                }
-
-                Log.i("AmplifyQuickstart", result.toString())
-
-            },
-            { error -> Log.e("AmplifyQuickstart", error.toString()) }
-        )
         setContentView(R.layout.activity_sign_up)
 
         supportFragmentManager.beginTransaction().add(
@@ -178,33 +123,10 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                 },
                 { error -> Log.e("AuthQuickStart", "Sign up failed", error) }
             )
-/*
-            val createUserRequest = JsonObjectRequest(
-                Request.Method.PUT, url, userObject,
-                Response.Listener { response ->
-                    val userid = JSONObject(response.toString()).getInt("userid")
-                    val intent = Intent(this, SignUpActivity2::class.java).apply {
-                        putExtra(USER_NAME, put_name)
-                        putExtra(PHONE_NUMBER, put_phone)
-                        putExtra(USER_ID, userid)
-
-                    }
-
-                    startActivity(intent)
-                },
-                Response.ErrorListener { error ->
-                    Toast.makeText(this, "err" + error.toString(), Toast.LENGTH_LONG).show()
-                }
-            )
-            queue.add(createUserRequest)
-            */
-
         }
 
         login.setOnClickListener{
-            val intent2 = Intent(this, LoginActivity::class.java).apply {
-
-            }
+            val intent2 = Intent(this, LoginActivity::class.java).apply {}
 
             startActivity(intent2)
         }

@@ -90,4 +90,5 @@
     <string name="apology_message">Our deepest apologies that you\'ve had a bad experience,and thank you for taking the time to report this. Can you tell us about what happened?</string>
     <string name="no_results_hint_text">Looks like there\'s no results in your area, maybe</string>
     <string name="create_an_event_hint_prompt">Create An Event</string>
+    <string name="activation_code_label">Activation Code</string>
 </resources>

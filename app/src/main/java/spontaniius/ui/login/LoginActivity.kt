@@ -37,8 +37,16 @@ class LoginActivity : AppCompatActivity() {
         val signup = findViewById<Button>(R.id.signup_button)
         val login = findViewById<Button>(R.id.login_button)
         val loading = findViewById<ProgressBar>(R.id.loading)
+        val forgotPasswordButton = findViewById<Button>(R.id.forgot_password_button)
         var ccp: CountryCodePicker
         ccp =  findViewById(R.id.ccp);
+
+        forgotPasswordButton.setOnClickListener {
+            val resetIntent = Intent(this, ResetPasswordActivity::class.java).apply {
+                putExtra(USERNAME, username.text.toString())
+            }
+            startActivity(resetIntent)
+        }
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)

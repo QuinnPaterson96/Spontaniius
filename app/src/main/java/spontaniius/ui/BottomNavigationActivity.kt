@@ -246,11 +246,10 @@ class BottomNavigationActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        if(this::previousFragment.isInitialized)
+        if(this::previousFragment.isInitialized && currentFragment!=previousFragment)
         supportFragmentManager.beginTransaction().hide(currentFragment)
             .show(previousFragment).commit()
         previousFragment = currentFragment
-        currentFragment = previousFragment
         return
     }
 

@@ -374,9 +374,7 @@ class EventManagementFragment : Fragment() {
             .setValue(
                 ChatMessage(
                     input.text.toString(),
-                    FirebaseAuth.getInstance()
-                        .currentUser
-                        ?.getDisplayName()
+                    listenerManageEvent?.getCurrentUserAttributes()?.get("name").toString()
                 )
             )
 

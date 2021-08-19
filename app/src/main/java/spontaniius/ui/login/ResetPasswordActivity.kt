@@ -40,6 +40,10 @@ class ResetPasswordActivity : AppCompatActivity() {
         val resendCodeButton:Button=findViewById(R.id.resend_code)
         ccp =  findViewById(R.id.ccp_username);
         var phoneNumber = ""
+        back.setOnClickListener {
+            val intent2 = Intent(this, LoginActivity::class.java).apply {}
+            startActivity(intent2)
+        }
 
 
 

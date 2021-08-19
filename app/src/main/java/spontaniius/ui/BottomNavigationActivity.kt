@@ -246,7 +246,7 @@ class BottomNavigationActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        if(this::userDetails.isInitialized)
+        if(this::previousFragment.isInitialized)
         supportFragmentManager.beginTransaction().hide(currentFragment)
             .show(previousFragment).commit()
         previousFragment = currentFragment
@@ -429,6 +429,10 @@ class BottomNavigationActivity : AppCompatActivity(),
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
         currentFragment = eventManagementFragment
+    }
+
+    override fun switchToCreate() {
+        bottomNavigation.selectedItemId = R.id.create_event
     }
 
     override fun exitEvent(){

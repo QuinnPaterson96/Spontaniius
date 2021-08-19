@@ -73,6 +73,12 @@ package="spontaniius">
     <activity android:name=".ui.event_management.EventManagementActivity"></activity>
 
     <activity android:name=".ui.sign_up.SignUpActivity">
+    </activity>
+
+
+    <activity
+        android:name=".ui.SplashScreenActivity"
+        android:theme="@style/SplashTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

@@ -247,11 +247,16 @@ class BottomNavigationActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
+       // currently back button is prone to causing kerfuffles, so disabled for now
+
+        /*
         if(this::previousFragment.isInitialized && currentFragment!=previousFragment)
         supportFragmentManager.beginTransaction().hide(currentFragment)
             .show(previousFragment).commit()
         previousFragment = currentFragment
         return
+
+        */
     }
 
     override fun onLocationSelected(latLng: LatLng) {

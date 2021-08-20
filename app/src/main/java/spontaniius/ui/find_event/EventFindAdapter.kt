@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -32,6 +33,7 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         var mTextViewTime: TextView
         var direction_button: ImageView
         var details: ConstraintLayout
+        var timeRemainIndicator: Button
         lateinit var eventid: String
         lateinit var event: JSONObject
 
@@ -43,6 +45,7 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
             mTextViewTime = itemView.findViewById(R.id.textView4)
             direction_button = itemView.findViewById(R.id.directionButton)
             details=itemView.findViewById(R.id.details)
+            timeRemainIndicator=itemView.findViewById(R.id.time_indicator)
 
         }
     }
@@ -80,9 +83,9 @@ class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
         holder.mTextViewDistance.setText(distance.toString() + " km")
         holder.mTextViewTime.setText(currentItem.time_started)
         if(currentItem.time_started.contains("starts")){
-            holder.details.setBackgroundColor(Color.parseColor("#9ffc58"))
+            holder.timeRemainIndicator.setBackgroundColor(Color.parseColor("#9ffc58"))
         }else{
-            holder.details.setBackgroundColor(Color.parseColor("#fafa9b"))
+            holder.timeRemainIndicator.setBackgroundColor(Color.parseColor("#fafa9b"))
         }
 
 

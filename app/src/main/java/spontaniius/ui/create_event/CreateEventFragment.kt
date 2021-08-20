@@ -61,6 +61,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var titleField: EditText
     lateinit var descriptionField:EditText
     lateinit var eventLoad:ProgressBar
+    lateinit var genderSpinner: Spinner
     // tracks if using stock title
     var stockTitle = false
 
@@ -99,7 +100,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
          */
 
 
-        val genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
+        genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
         ArrayAdapter.createFromResource(
             listenerCreateEvent as Context,
             R.array.gender_array,
@@ -109,8 +110,28 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             genderSpinner.adapter = arrayAdapter
         }
         genderSpinner.onItemSelectedListener = this
+
+
         val createEventButton = viewLayout.findViewById<Button>(R.id.create_event_button)
         createEventButton.setOnClickListener {
+
+                gender = genderSpinner.selectedItem.toString()
+
+                // goal is to keep aligned with gender options in Signup, might do more cleanup later
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(0)){
+                    gender = "Any"
+                }
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(1)){
+                    gender = "Male"
+                }
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(2)){
+                    gender = "Female"
+                }
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(3)){
+                    gender = "Non-Binary"
+                }
+
+
             val title = viewLayout.findViewById<EditText>(R.id.event_title)
             val description = viewLayout.findViewById<EditText>(R.id.event_description)
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
@@ -324,9 +345,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         super.onAttach(context)
         if (context is OnCreateEventFragmentInteractionListener) {
             listenerCreateEvent = context
-            if (!::gender.isInitialized) {
-                gender = context.resources.getStringArray(R.array.gender_array)[0]
-            }
         } else {
             throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }

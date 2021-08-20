@@ -125,7 +125,8 @@
                     </LinearLayout>
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:translationY="-60dp">
 
                     <LinearLayout
                         style="@style/create_event_item_layout"

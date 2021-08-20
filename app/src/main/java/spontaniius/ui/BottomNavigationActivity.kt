@@ -532,6 +532,18 @@ class BottomNavigationActivity : AppCompatActivity(),
         return JSONObject()
 
         }
+
+    override fun updateCardCollectionFragment() {
+        // First we remove the old fragment.
+        supportFragmentManager.beginTransaction()
+                .remove(cardCollectionFragment).commitNow()
+
+
+        // Then we create a new one.
+        cardCollectionFragment = CardCollectionFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, cardCollectionFragment, null).hide(cardCollectionFragment).commit()
     }
+}
 
 

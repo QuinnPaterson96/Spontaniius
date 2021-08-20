@@ -135,7 +135,7 @@ class FindEventFragment : Fragment() {
 
         hintButton.setOnClickListener {
             getEventsNearCurrentLocation()
-            hintButton.visibility=GONE
+
         }
 
 
@@ -315,12 +315,14 @@ class FindEventFragment : Fragment() {
 
         val currtime = Calendar.getInstance().time
         val url =
-            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress&currentTime=$currtime";
+            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=" +
+                    "$streetAddress&currentTime=$currtime&gender=${listenerFindEvent?.getCurrentUserAttributes()?.get("gender")}";
         val getEventsRequest = StringRequest(Request.Method.GET, url,
             { response ->
                 eventList.clear()
                 val newList: ArrayList<EventTile> = ArrayList()
                 val eventJSONArray = JSONArray(response.toString())
+                    hintButton.visibility=GONE
 
                 if (eventJSONArray.length()==0){
                     // We suggest creating an event if there's no events near you.
@@ -514,6 +516,7 @@ class FindEventFragment : Fragment() {
     interface OnFindEventFragmentInteractionListener {
         fun openEventChatroom(eventid: String, event: JSONObject)
         fun switchToCreate()
+        fun getCurrentUserAttributes():JSONObject
     }
 
     /*

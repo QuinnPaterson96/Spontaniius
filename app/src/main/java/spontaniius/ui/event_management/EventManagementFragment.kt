@@ -566,6 +566,8 @@ class EventManagementFragment : Fragment() {
     }
 
     fun alertCardReceived(){
+        listenerManageEvent?.updateCardCollectionFragment()
+        Toast.makeText(this.context, "You've received a new card", Toast.LENGTH_LONG).show()
 
     }
 
@@ -578,5 +580,6 @@ class EventManagementFragment : Fragment() {
         fun whatIsCurrentEvent():JSONObject
         fun getCurrentUserAttributes():JSONObject
         fun refreshEventDetails():JSONObject
+        fun updateCardCollectionFragment()
     }
 }

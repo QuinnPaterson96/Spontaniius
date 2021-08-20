@@ -3,6 +3,7 @@ package spontaniius.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -129,6 +130,9 @@ class BottomNavigationActivity : AppCompatActivity(),
                             return true
                         }
                         R.id.about_us -> {
+                            val openURL = Intent(android.content.Intent.ACTION_VIEW)
+                            openURL.data = Uri.parse("https://www.spontaniius.com")
+                            startActivity(openURL)
                             return true
                         }
                         R.id.sign_out -> {
@@ -153,11 +157,6 @@ class BottomNavigationActivity : AppCompatActivity(),
                             startActivity(intentSignout)
                             return true
                         }
-                        R.id.delete_account -> {
-                            return true
-                        }
-
-
                         else -> false
                     }
                 }
@@ -430,13 +429,20 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
 
-    override fun openEventChatroom(eventid: String, event: JSONObject){
-        meetupOwner = false
-        currentEvent = event
-        eventManagementFragment = EventManagementFragment.newInstance(eventid, meetupOwner)
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
-        currentFragment = eventManagementFragment
+    override fun openEventChatroom(chatEventid: String, event: JSONObject){
+        if (eventid.toString() == chatEventid && meetupOwner==true){ // this is a check that you don't already own this event
+            supportFragmentManager.beginTransaction().hide(currentFragment)
+                .show(eventManagementFragment).commit()
+            previousFragment = currentFragment
+            currentFragment = eventManagementFragment
+        }else{
+            meetupOwner = false
+            currentEvent = event
+            eventManagementFragment = EventManagementFragment.newInstance(chatEventid, meetupOwner)
+            supportFragmentManager.beginTransaction()
+                .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
+            currentFragment = eventManagementFragment
+        }
     }
 
     override fun switchToCreate() {

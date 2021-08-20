@@ -45,4 +45,10 @@
         android:icon="@drawable/activity_coffee"
         />
 
+    <item
+        android:id="@+id/other_activity"
+        android:title="Other"
+        android:icon="@drawable/activity_other"
+        />
+
 </menu>

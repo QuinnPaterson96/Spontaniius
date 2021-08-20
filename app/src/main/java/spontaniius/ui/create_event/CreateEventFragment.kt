@@ -169,6 +169,9 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                     var startDateString = getDateString(year, month, day, startTime.hour, startTime.minute)
                     var endDateString = getDateString(year, month, day, endTime.hour, endTime.minute)
+                    if (eventIcon==""){
+                        eventIcon=R.drawable.activity_other.toString() // if user hasn't set icon we assume it's other.
+                    }
 
                     val cardId = listenerCreateEvent?.getCurrentUserAttributes()?.getString("cardid")?.toInt()
                     eventLoad.visibility = View.VISIBLE
@@ -425,7 +428,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         iconSelectButton.setImageResource(R.drawable.activity_eating)
                         eventIcon = R.drawable.activity_eating.toString()
                         if (emptyOrStock) {
-                            titleField.setText("Let's grab some food together")
+                            titleField.setText("Let's grab some food")
                             stockTitle = true
 
                         }
@@ -484,6 +487,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                     }
 
+                    R.id.other_activity ->{
+                        iconSelectButton.setImageResource(R.drawable.activity_other)
+                        eventIcon = R.drawable.activity_coffee.toString()
+                        return true
+                    }
 
                     else -> false
                 }

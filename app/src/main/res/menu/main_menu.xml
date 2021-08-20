@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/user_details" android:title="User Details"/>
+        android:id="@+id/user_details" android:title=" Edit User Details"/>
     <item
         android:id="@+id/edit_card" android:title="Edit Card"/>
     <item
         android:id="@+id/about_us" android:title="About App"/>
     <item
-        android:id="@+id/sign_out" android:title="Sign out"/>
-    <item
         android:id="@+id/blank" android:title=""/>
     <item
-        android:id="@+id/delete_account" android:title="Delete Account"/>
+        android:id="@+id/sign_out" android:title="Sign out"/>
+
+
 </menu>

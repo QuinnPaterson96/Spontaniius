@@ -12,8 +12,21 @@
       "AmplifyAppId": "d22y3clvkjya4l"
     },
     "categories": {
+      "function": {
+        "spontaniiusa529dc04CustomMessage": {
+          "REDIRECTURL": "myapp://callback/",
+          "EMAILSUBJECT": "Spontaniius Account Confirmation",
+          "EMAILMESSAGE": "Click this link to authenticate your account"
+        },
+        "spontaniiusa529dc04PostConfirmation": {
+          "GROUP": "SpontaniiusNew"
+        },
+        "spontaniiusa529dc04PreSignup": {
+          "DOMAINDENYLIST": ""
+        }
+      },
       "auth": {
-        "spontaniius16acfee6": {
+        "spontaniius5cf533c3": {
           "userPoolId": "us-west-2_qQgFXTjud",
           "userPoolName": "SpontaniiusUsers",
           "webClientId": "uqes3ma1re97ko7o5tf29khuv",

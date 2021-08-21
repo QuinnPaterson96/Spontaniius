@@ -135,6 +135,13 @@ class BottomNavigationActivity : AppCompatActivity(),
                             startActivity(openURL)
                             return true
                         }
+
+                        R.id.report_an_issue ->{
+                            val openURL = Intent(android.content.Intent.ACTION_VIEW)
+                            openURL.data = Uri.parse("https://www.spontaniius.com/contact")
+                            startActivity(openURL)
+                            return true
+                        }
                         R.id.sign_out -> {
                             Amplify.Auth.signOut(
                                 AuthSignOutOptions.builder().globalSignOut(true).build(),

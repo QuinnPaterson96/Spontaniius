@@ -6,6 +6,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.amplifyframework.AmplifyException
@@ -16,12 +18,14 @@ import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.AmplifyConfiguration
 import com.rilixtech.widget.countrycodepicker.CountryCodePicker
+import kotlinx.android.synthetic.main.activity_sign_up.*
 import org.json.JSONException
 import org.json.JSONObject
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
 import spontaniius.ui.login.LoginActivity
+import spontaniius.ui.login.USERNAME
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -73,7 +77,10 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
             val put_password = enter_pass.text.toString()
             val put_gender = enter_gender.selectedItem.toString()
             var ccp: CountryCodePicker
+            var eventLoad = findViewById<ProgressBar>(R.id.loading)
+
             ccp =  findViewById(R.id.ccp);
+            val errorText = findViewById<TextView>(R.id.error_text)
 
             val userObject = JSONObject()
             try {
@@ -100,8 +107,11 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                 )
             )
 
+            errorText.text = ""
 
-            var username = put_name+rnd.nextInt(1000).toString()
+            var username = put_name.replace(" ","")+rnd.nextInt(1000).toString()
+            eventLoad.visibility=VISIBLE
+
             Amplify.Auth.signUp(
                 username,
                 put_password,
@@ -111,7 +121,8 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                 { result ->
                     Log.i("AuthQuickStart", "Result: $result")
                     val intent = Intent(this, SignUpConfirmActivity::class.java).apply {
-                        putExtra(USER_NAME, username)
+                        putExtra(USER_NAME, put_name)
+                        putExtra(USERNAME, username)
                         putExtra(PHONE_NUMBER, ccp.selectedCountryCodeWithPlus + put_phone)
                         putExtra(USER_ID, result.user?.userId)
                         putExtra("Password", put_password)
@@ -121,7 +132,18 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                     startActivity(intent)
 
                 },
-                { error -> Log.e("AuthQuickStart", "Sign up failed", error) }
+                { error -> Log.e("AuthQuickStart", "Sign up failed", error)
+
+                    if(error.message?.toLowerCase()?.contains("password")!!) {
+                        errorText.text =
+                            ("Your password must be 6 characters long, at least one capital letter, and at least one number")
+                    }
+                    if(error.toString()?.toLowerCase()?.contains("phone")!!) {
+                        errorText.text =
+                            ("Phone number isn't valid")
+                    }
+                    eventLoad.visibility= GONE
+                }
             )
         }
 

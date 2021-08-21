@@ -3,11 +3,14 @@ package spontaniius.ui.sign_up
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.amplifyframework.core.Amplify
 import spontaniius.R
 import spontaniius.ui.card_editing.CardEditingActivity
+import spontaniius.ui.login.USERNAME
 
 
 class SignUpConfirmActivity : AppCompatActivity() {
@@ -20,23 +23,29 @@ class SignUpConfirmActivity : AppCompatActivity() {
         val back = findViewById<Button>(R.id.back_button)
         val confirm = findViewById<Button>(R.id.confirm_button)
         val confirmationCodeEditText = findViewById<EditText>(R.id.confirmation_code)
+        val username = intent.getStringExtra(USERNAME)
         val name = intent.getStringExtra(USER_NAME)
+
         val phone = intent.getStringExtra(PHONE_NUMBER)
         val userid = intent.getStringExtra(USER_ID)
         val password = intent.getStringExtra("Password")
+        val errorText = findViewById<TextView>(R.id.error_text)
+        var eventLoad = findViewById<ProgressBar>(R.id.loading)
 
 
 
 
         confirm.setOnClickListener{
+            errorText.text = ""
+            eventLoad.visibility= VISIBLE
             Amplify.Auth.confirmSignUp(
-                name!!,
+                username!!,
                 confirmationCodeEditText.text.toString(),
 
                 { result ->
                     Log.i("AuthQuickstart", if (result.isSignUpComplete) "Confirm signUp succeeded" else "Confirm sign up not complete")
                     Amplify.Auth.signIn(
-                        name,
+                        username,
                         password,
                         { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
                             val intent = Intent(this, CardEditingActivity::class.java).apply {
@@ -47,10 +56,15 @@ class SignUpConfirmActivity : AppCompatActivity() {
                             }
 
                             startActivity(intent)},
-                        { error -> Log.e("AuthQuickstart", error.toString()) }
+                        { error -> Log.e("AuthQuickstart", error.toString())
+                            eventLoad.visibility= GONE
+                        }
                     )
                 },
-                { error -> Log.e("AuthQuickstart", error.toString()) }
+                { error -> Log.e("AuthQuickstart", error.toString())
+                    errorText.text = "wrong authentication code"
+                    eventLoad.visibility= GONE
+                }
             )
         }
 

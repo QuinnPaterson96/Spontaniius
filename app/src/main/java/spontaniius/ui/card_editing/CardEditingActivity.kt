@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -32,6 +34,7 @@ class CardEditingActivity : AppCompatActivity(){
     lateinit var greetingView: TextView
     lateinit var selectedCardBackground: ImageView
     lateinit var cardGreetingEdit: EditText
+    lateinit var loadingBar: ProgressBar
     var backgroundID = 0
 
 
@@ -50,6 +53,7 @@ class CardEditingActivity : AppCompatActivity(){
         greetingView = findViewById<TextView>(R.id.selected_card_greeting)
         greetingView.text = findViewById<EditText>(R.id.card_greeting_edit).text
         selectedCardBackground=findViewById(R.id.selected_card_background)
+        loadingBar=findViewById(R.id.loading)
         selectedCardBackground.setImageResource(cardbackgrounds[0])
         backgroundID = cardbackgrounds[0]
         var selectedCardGreeting = findViewById<TextView>(R.id.selected_card_greeting)
@@ -104,6 +108,8 @@ class CardEditingActivity : AppCompatActivity(){
 
 
         done3.setOnClickListener {
+            loadingBar.visibility=VISIBLE
+
             val url = "https://1j8ss7fj13.execute-api.us-west-2.amazonaws.com/default/createCard"
             val cardObject = JSONObject()
             try {
@@ -133,6 +139,7 @@ class CardEditingActivity : AppCompatActivity(){
                 },
                 { error ->
                     Toast.makeText(this, "err" + error.toString(), Toast.LENGTH_LONG).show()
+                    loadingBar.visibility= GONE
                 }
             )
             queue.add(createUserRequest)

@@ -57,7 +57,8 @@
         android:tint="@android:color/white"
         android:visibility="visible"
         app:fabSize="mini"
-        tools:visibility="gone" />
+        tools:visibility="gone"
+        android:contentDescription="This button sends your message"/>
 
     <ListView
         android:id="@+id/list_of_messages"
@@ -123,6 +124,8 @@
                     android:id="@+id/textView8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/quantum_black_100"
+
                     android:text="About Event:"
                     android:textSize="20sp" />
 
@@ -131,6 +134,7 @@
                     android:id="@+id/event_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/quantum_black_100"
                     android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book." />
 
 
@@ -151,12 +155,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Event Started"
+                            android:textColor="@color/quantum_black_100"
                             android:textAlignment="center" />
 
                         <TextView
                             android:id="@+id/event_started"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/quantum_black_100"
                             android:text="TextView"
                             android:textAlignment="center" />
                     </LinearLayout>
@@ -172,6 +178,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Event Ends"
+                            android:textColor="@color/quantum_black_100"
+
                             android:textAlignment="center" />
 
                         <TextView
@@ -179,6 +187,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="TextView"
+                            android:textColor="@color/quantum_black_100"
+
                             android:textAlignment="center" />
                     </LinearLayout>
 

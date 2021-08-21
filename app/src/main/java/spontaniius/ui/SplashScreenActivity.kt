@@ -35,19 +35,25 @@ class SplashScreenActivity : AppCompatActivity() {
         Amplify.Auth.fetchAuthSession(
             { result ->
                 val intent2 = Intent(this, BottomNavigationActivity::class.java).apply {
-
+                    finish()
                 }
 
                 if (result.isSignedIn == true) {
                     startActivity(intent2)
+                }else{
+                    startActivity(Intent(this@SplashScreenActivity, LandingScreenActivity::class.java))
+                    finish()// Go to landing screen if not logged in
                 }
 
                 Log.i("AmplifyQuickstart", result.toString())
 
             },
-            { error -> Log.e("AmplifyQuickstart", error.toString()) }
+            { error ->
+                Log.e("AmplifyQuickstart", error.toString())
+                startActivity(Intent(this@SplashScreenActivity, LandingScreenActivity::class.java)) // Go to landing screen if issue checking logged in.
+                finish()
+            }
         )
-        startActivity(Intent(this@SplashScreenActivity, LandingScreenActivity::class.java))
-        finish()
+
     }
 }

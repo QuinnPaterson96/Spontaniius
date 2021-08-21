@@ -29,6 +29,8 @@ import spontaniius.ui.sign_up.USER_ID
 import spontaniius.ui.sign_up.USER_NAME
 
 
+const val CARD_EDIT_NEW = "spontaniius.ui.card_editing.MESSAGE7"
+
 class CardEditingActivity : AppCompatActivity(){
 
     lateinit var greetingView: TextView
@@ -36,7 +38,16 @@ class CardEditingActivity : AppCompatActivity(){
     lateinit var cardGreetingEdit: EditText
     lateinit var loadingBar: ProgressBar
     var backgroundID = 0
+    var newUserCard = true
+    override fun onBackPressed() {
+        if (newUserCard==false){
+            val intent4 = Intent(this, BottomNavigationActivity::class.java)
+            startActivity(intent4)
+        }else{
 
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +58,7 @@ class CardEditingActivity : AppCompatActivity(){
 
 
 
+        newUserCard = intent.getBooleanExtra(CARD_EDIT_NEW, true)
 
         val name = intent.getStringExtra(USER_NAME)
         findViewById<TextView>(R.id.selected_card_user_name).text = name
@@ -99,12 +111,17 @@ class CardEditingActivity : AppCompatActivity(){
         }
 
 
+        if(newUserCard){
+            back2.visibility= GONE
+        }
 
 
         back2.setOnClickListener{
             val intent4 = Intent(this, BottomNavigationActivity::class.java)
             startActivity(intent4)
         }
+
+
 
 
         done3.setOnClickListener {

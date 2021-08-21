@@ -92,14 +92,15 @@
                             android:id="@+id/autocomplete_fragment"
                             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                             android:layout_width="235dp"
-                            android:layout_height="31dp" />
+                            android:layout_height="48dp" />
 
                         <ImageView
                             android:id="@+id/locate_me_button_create"
                             android:layout_width="47dp"
                             android:layout_height="match_parent"
                             android:padding="2dp"
-                            app:srcCompat="@drawable/ic_baseline_my_location_24" />
+                            app:srcCompat="@drawable/ic_baseline_my_location_24"
+                            android:contentDescription="Set event location to my location"/>
                     </LinearLayout>
                 </TableRow>
 
@@ -160,13 +161,14 @@
                         <TextView
                             android:id="@+id/pick_gender_prompt"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/select_gender_prompt" />
+                            android:layout_height="match_parent"
+                            android:text="@string/select_gender_prompt"
+                            android:gravity="center_vertical"/>
 
                         <Spinner
                             android:id="@+id/gender_select_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp" />
                     </LinearLayout>
                 </TableRow>
 

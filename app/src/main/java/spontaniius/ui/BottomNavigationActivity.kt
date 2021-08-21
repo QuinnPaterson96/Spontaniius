@@ -36,6 +36,7 @@ import spontaniius.data.Repository
 import spontaniius.dependency_injection.CreateEventComponent
 import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.card_collection.CardCollectionFragment
+import spontaniius.ui.card_editing.CARD_EDIT_NEW
 import spontaniius.ui.card_editing.CardEditingActivity
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
@@ -124,6 +125,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                                     putExtra(PHONE_NUMBER,
                                         CurrUserAttributes.get("phone_number").toString())
                                     putExtra(USER_ID, Amplify.Auth.currentUser.userId)
+                                    putExtra(CARD_EDIT_NEW, false)
                                 }
 
                             startActivity(intentUserDetails)

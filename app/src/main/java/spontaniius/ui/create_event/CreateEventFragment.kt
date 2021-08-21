@@ -15,7 +15,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
@@ -65,7 +64,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // tracks if using stock title
     var stockTitle = false
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -87,9 +85,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         iconSelectButton.setOnClickListener {
 //            TODO: Select some icons from a set of chosen ones here
 //            TODO: Go through icons with quinn and select a few good ones to use
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 IconSelectPopup()
-            }
         }
 
         /*
@@ -167,8 +163,16 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         else -> radius3
                     }
 
-                    var startDateString = getDateString(year, month, day, startTime.hour, startTime.minute)
-                    var endDateString = getDateString(year, month, day, endTime.hour, endTime.minute)
+                    var startDateString = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        getDateString(year, month, day, startTime.hour, startTime.minute)
+                    } else {
+                        getDateString(year, month, day, startTime.currentHour, startTime.currentMinute) // We use the deprecated old versions in older apis
+                    }
+                    var endDateString = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        getDateString(year, month, day, endTime.hour, endTime.minute)
+                    } else {
+                        getDateString(year, month, day, endTime.currentHour, endTime.currentMinute) // We use the deprecated old versions in older apis
+                    }
                     if (eventIcon==""){
                         eventIcon=R.drawable.activity_other.toString() // if user hasn't set icon we assume it's other.
                     }
@@ -389,7 +393,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun IconSelectPopup(){
         val popup = PopupMenu(context, iconSelectButton)
         val inflater = popup.menuInflater
@@ -497,8 +500,10 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             }
         })
-        popup.setForceShowIcon(true)
-        popup.show()
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          popup.setForceShowIcon(true)
+      }
+      popup.show()
     }
 
 

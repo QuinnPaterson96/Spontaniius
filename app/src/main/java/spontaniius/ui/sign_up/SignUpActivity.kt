@@ -109,7 +109,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
 
             errorText.text = ""
 
-            var username = put_name.replace(" ","")+rnd.nextInt(1000).toString()
+            var username = put_name.replace(" ","")+rnd.nextInt(100000).toString()
             eventLoad.visibility=VISIBLE
 
             Amplify.Auth.signUp(

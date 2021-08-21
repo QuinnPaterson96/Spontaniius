@@ -45,7 +45,8 @@
             android:id="@+id/selected_card_background"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/card_welcome"/>
 
         <TextView
             android:id="@+id/selected_card_user_name"
@@ -62,7 +63,8 @@
             android:paddingRight="8dp"
             android:textSize="40sp"
             android:textStyle="bold"
-            tools:text="Bob Smith"
+            tools:text="Welcome To Spontaniius"
+            android:textColor="@color/quantum_black_100"
 
             />
 
@@ -75,12 +77,12 @@
             android:layout_alignRight="@+id/selected_card_background"
             android:layout_alignBottom="@+id/selected_card_background"
 
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="100dp"
             android:gravity="center_horizontal"
             android:textSize="20sp"
 
 
-            tools:text="Hi" />
+            tools:text="Go and meet some new people" />
 
     </RelativeLayout>
 

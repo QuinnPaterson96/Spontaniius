@@ -70,9 +70,14 @@ package="spontaniius">
     <activity android:name=".MainActivity" />
     <activity android:name=".ui.card_editing.CardEditingActivity" />
     <activity android:name=".ui.sign_up.SignUpActivity2" />
-    <activity android:name=".ui.event_management.EventManagementActivity"></activity>
 
-    <activity android:name=".ui.sign_up.SignUpActivity">
+
+    <activity android:name=".ui.sign_up.SignUpActivity"></activity>
+
+
+    <activity
+        android:name=".ui.SplashScreenActivity"
+        android:theme="@style/SplashTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -80,8 +85,12 @@ package="spontaniius">
     </activity>
 
     <activity android:name=".ui.promotions.PromotionTab" />
+    <activity android:name="spontaniius.ui.landing_screen.LandingScreenActivity"></activity>
+    <activity android:name="spontaniius.ui.login.ResetPasswordActivity"></activity>
+
 
     <!-- Any inner elements would go here. -->
 </application>
 </manifest>
+
 

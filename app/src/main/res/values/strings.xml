@@ -12,7 +12,7 @@
     <string name="prompt_select_event_icon">Choose Event Icon</string>
     <string name="select_start_time_prompt">Start Time:</string>
     <string name="select_end_time_prompt">End Time:</string>
-    <string name="select_gender_prompt">Gender</string>
+    <string name="select_gender_prompt">Gender Restriction</string>
     <string name="select_location_prompt">Location</string>
     <string name="create_event">Create Event</string>
     <string name="invite_prompt">Invite:</string>
@@ -88,4 +88,7 @@
     <string name="gender_nonbinary">Non-Binary</string>
     <string name="gender_other">Other/Prefer not to say</string>
     <string name="apology_message">Our deepest apologies that you\'ve had a bad experience,and thank you for taking the time to report this. Can you tell us about what happened?</string>
+    <string name="no_results_hint_text">Looks like there\'s no results in your area, maybe</string>
+    <string name="create_an_event_hint_prompt">Create An Event</string>
+    <string name="activation_code_label">Activation Code</string>
 </resources>

@@ -3,15 +3,18 @@ package spontaniius.ui.find_event
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -20,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -62,6 +64,9 @@ class FindEventFragment : Fragment() {
     private var googleMap: GoogleMap? = null
     lateinit var mapButton: Button
     lateinit var listButton: Button
+    lateinit var hintButton: Button
+    lateinit var hintCreateEventButton: Button
+    lateinit var hintText: TextView
     var ViewList=1 // either 1 for list mode or 0 for map mode
 
 
@@ -116,6 +121,8 @@ class FindEventFragment : Fragment() {
         swipeContainer = view.findViewById(R.id.swipeContainer)
         listButton = view.findViewById(R.id.listButton)
         mapButton = view.findViewById(R.id.mapButton)
+        hintButton = view.findViewById(R.id.hint_get_events_button)
+        hintText = view.findViewById(R.id.hint_text)
 
         listButton.setOnClickListener{
             switchToList()
@@ -124,6 +131,13 @@ class FindEventFragment : Fragment() {
         mapButton.setOnClickListener{
             switchToMap()
         }
+
+
+        hintButton.setOnClickListener {
+            getEventsNearCurrentLocation()
+
+        }
+
 
 
 
@@ -138,7 +152,7 @@ class FindEventFragment : Fragment() {
         */
         val locateMeButton = view.findViewById<ImageView>(R.id.locate_me_button);
         locateMeButton.setOnClickListener {
-            getCurrentLocation()
+            getEventsNearCurrentLocation()
         }
 
         // Setup refresh listener which triggers new data loading
@@ -209,7 +223,7 @@ class FindEventFragment : Fragment() {
     }
 
 
-    fun getCurrentLocation(){
+    fun getEventsNearCurrentLocation(){
         if (this.context?.let {
                 ActivityCompat.checkSelfPermission(
                     it,
@@ -301,13 +315,28 @@ class FindEventFragment : Fragment() {
 
         val currtime = Calendar.getInstance().time
         val url =
-            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=$streetAddress&currentTime=$currtime";
+            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=" +
+                    "$streetAddress&currentTime=$currtime&gender=${listenerFindEvent?.getCurrentUserAttributes()?.get("gender")}";
         val getEventsRequest = StringRequest(Request.Method.GET, url,
             { response ->
                 eventList.clear()
                 val newList: ArrayList<EventTile> = ArrayList()
                 val eventJSONArray = JSONArray(response.toString())
+                    hintButton.visibility=GONE
 
+                if (eventJSONArray.length()==0){
+                    // We suggest creating an event if there's no events near you.
+
+                    hintButton.visibility = VISIBLE
+                    hintText.visibility= VISIBLE
+                    hintButton.text = "Create An Event"
+                    hintButton.setOnClickListener {
+                        listenerFindEvent?.switchToCreate()
+                        hintText.visibility= GONE
+                        hintButton.visibility = GONE
+
+                    }
+                }
                 for (i in 0 until eventJSONArray.length()) {
 
                     val event: JSONObject = eventJSONArray.getJSONObject(i)
@@ -462,15 +491,16 @@ class FindEventFragment : Fragment() {
     fun switchToMap(){
         mapFragment.view?.visibility = View.VISIBLE
         swipeContainer.visibility=View.GONE
-        listButton.setBackgroundColor(Color.GRAY)
-        mapButton.setBackgroundColor(Color.YELLOW)
+        listButton.setBackgroundColor(getResources().getColor(R.color.colorNeutral))
+        mapButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary))
     }
 
     fun switchToList(){
         mapFragment.view?.visibility = View.GONE
         swipeContainer.visibility=View.VISIBLE
-        listButton.setBackgroundColor(Color.YELLOW)
-        mapButton.setBackgroundColor(Color.GRAY)
+        listButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary))
+        mapButton.setBackgroundColor(getResources().getColor(R.color.colorNeutral))
+
 
     }
 
@@ -485,6 +515,8 @@ class FindEventFragment : Fragment() {
 
     interface OnFindEventFragmentInteractionListener {
         fun openEventChatroom(eventid: String, event: JSONObject)
+        fun switchToCreate()
+        fun getCurrentUserAttributes():JSONObject
     }
 
     /*

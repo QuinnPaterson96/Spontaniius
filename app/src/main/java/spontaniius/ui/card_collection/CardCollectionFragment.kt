@@ -36,7 +36,8 @@ lateinit var selectedCardBackground: ImageView
 lateinit var selectedCardName: TextView
 lateinit var selectedCardGreeting: TextView
 lateinit var selectedCardId: String
-
+lateinit var cardOptionsMenu:TextView
+lateinit var gridView: GridView
 
 /**
  * A simple [Fragment] subclass.
@@ -68,7 +69,46 @@ class CardCollectionFragment : Fragment() {
         selectedCardBackground=view.findViewById(R.id.selected_card_background)
         selectedCardGreeting=view.findViewById(R.id.selected_card_greeting)
         selectedCardName=view.findViewById(R.id.selected_card_user_name)
+        cardOptionsMenu = view.findViewById<TextView>(R.id.card_user_menu_button)
+        gridView = view?.findViewById(R.id.gridview) as GridView
+
+        setupCards()
       //  var userCardCollection= listOf<UserCard>()
+
+        // Inflate the layout for this fragment
+        return view
+    }
+
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment CardCollectionFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            CardCollectionFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+        fun newInstance() =
+            CardCollectionFragment().apply {
+                arguments = Bundle().apply {
+                }
+            }
+    }
+
+
+
+
+
+    fun setupCards(){
         val userCardCollection: ArrayList<UserCard> = ArrayList()
 
 
@@ -180,7 +220,7 @@ class CardCollectionFragment : Fragment() {
 
 
 
-        val gridView = view.findViewById(R.id.gridview) as GridView
+
         val cardAdapter = this.context?.let { CardAdapter(userCardCollection) }
         gridView.adapter = cardAdapter
         gridView.onItemClickListener =
@@ -197,9 +237,9 @@ class CardCollectionFragment : Fragment() {
             }
 
 
-        var cardOptionsMenu = view.findViewById<TextView>(R.id.card_user_menu_button)
 
-        cardOptionsMenu.setOnClickListener {
+
+        cardOptionsMenu?.setOnClickListener {
 
             val popup = PopupMenu(this.context, cardOptionsMenu)
             val inflater = popup.menuInflater
@@ -224,33 +264,6 @@ class CardCollectionFragment : Fragment() {
             })
             popup.show()
         }
-        // Inflate the layout for this fragment
-        return view
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CardCollectionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CardCollectionFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-        fun newInstance() =
-            CardCollectionFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
     }
 
     override fun onAttach(context: Context) {

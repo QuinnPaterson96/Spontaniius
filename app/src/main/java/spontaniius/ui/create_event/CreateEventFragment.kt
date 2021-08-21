@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -32,10 +33,6 @@ import org.json.JSONObject
 import spontaniius.R
 import spontaniius.dependency_injection.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.*
 
 
@@ -63,6 +60,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var titleField: EditText
     lateinit var descriptionField:EditText
+    lateinit var eventLoad:ProgressBar
+    lateinit var genderSpinner: Spinner
     // tracks if using stock title
     var stockTitle = false
 
@@ -73,6 +72,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
     ): View? {
         // Inflate the layout for this fragment
         val viewLayout = inflater.inflate(R.layout.fragment_create_event, container, false)
+
 
 
         val locateMeButton = viewLayout.findViewById<ImageView>(R.id.locate_me_button_create);
@@ -100,7 +100,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
          */
 
 
-        val genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
+        genderSpinner = viewLayout.findViewById<Spinner>(R.id.gender_select_spinner)
         ArrayAdapter.createFromResource(
             listenerCreateEvent as Context,
             R.array.gender_array,
@@ -110,13 +110,34 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             genderSpinner.adapter = arrayAdapter
         }
         genderSpinner.onItemSelectedListener = this
+
+
         val createEventButton = viewLayout.findViewById<Button>(R.id.create_event_button)
         createEventButton.setOnClickListener {
+
+                gender = genderSpinner.selectedItem.toString()
+
+                // goal is to keep aligned with gender options in Signup, might do more cleanup later
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(0)){
+                    gender = "Any"
+                }
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(1)){
+                    gender = "Male"
+                }
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(2)){
+                    gender = "Female"
+                }
+                if(gender== context?.resources?.getStringArray(R.array.gender_array)?.get(3)){
+                    gender = "Non-Binary"
+                }
+
+
             val title = viewLayout.findViewById<EditText>(R.id.event_title)
             val description = viewLayout.findViewById<EditText>(R.id.event_description)
             val startTime = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
             val endTime = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
             val invitationType = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
+            eventLoad = viewLayout.findViewById(R.id.loading)
 
             val debugIcon = eventIcon;
 
@@ -148,8 +169,12 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                     var startDateString = getDateString(year, month, day, startTime.hour, startTime.minute)
                     var endDateString = getDateString(year, month, day, endTime.hour, endTime.minute)
+                    if (eventIcon==""){
+                        eventIcon=R.drawable.activity_other.toString() // if user hasn't set icon we assume it's other.
+                    }
 
                     val cardId = listenerCreateEvent?.getCurrentUserAttributes()?.getString("cardid")?.toInt()
+                    eventLoad.visibility = View.VISIBLE
                     if (cardId != null) {
                         listenerCreateEvent?.createEvent(
                             title.text.toString(),
@@ -159,8 +184,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             endDateString,
                             gender,
                             invitation,
-                            cardId
-
+                            cardId,
+                            eventLoad
                         )
                     }
                 }
@@ -323,9 +348,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         super.onAttach(context)
         if (context is OnCreateEventFragmentInteractionListener) {
             listenerCreateEvent = context
-            if (!::gender.isInitialized) {
-                gender = context.resources.getStringArray(R.array.gender_array)[0]
-            }
         } else {
             throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
@@ -406,7 +428,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         iconSelectButton.setImageResource(R.drawable.activity_eating)
                         eventIcon = R.drawable.activity_eating.toString()
                         if (emptyOrStock) {
-                            titleField.setText("Let's grab some food together")
+                            titleField.setText("Let's grab some food")
                             stockTitle = true
 
                         }
@@ -465,6 +487,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                     }
 
+                    R.id.other_activity ->{
+                        iconSelectButton.setImageResource(R.drawable.activity_other)
+                        eventIcon = R.drawable.activity_coffee.toString()
+                        return true
+                    }
 
                     else -> false
                 }
@@ -473,7 +500,6 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         popup.setForceShowIcon(true)
         popup.show()
     }
-
 
 
     /**
@@ -498,7 +524,8 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             endTime: String,
             gender: String,
             invitation: Int,
-            cardId: Int
+            cardId: Int,
+            loadingProgress:ProgressBar
         )
         fun getCurrentUserAttributes():JSONObject
     }

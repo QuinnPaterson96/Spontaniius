@@ -1,16 +1,12 @@
 package spontaniius.data.data_source.remote
 
-import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import spontaniius.data.EventEntity
 import spontaniius.data.data_source.DataSource
-import spontaniius.ui.event_management.EventManagementActivity
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 class RemoteDataSource @Inject constructor() :
     DataSource {

@@ -25,8 +25,6 @@ import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -37,67 +35,18 @@ class LoginActivity : AppCompatActivity() {
         val signup = findViewById<Button>(R.id.signup_button)
         val login = findViewById<Button>(R.id.login_button)
         val loading = findViewById<ProgressBar>(R.id.loading)
+        val forgotPasswordButton = findViewById<Button>(R.id.forgot_password_button)
         var ccp: CountryCodePicker
         ccp =  findViewById(R.id.ccp);
 
-        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
-
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
-
-            // disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
-
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
+        forgotPasswordButton.setOnClickListener {
+            val resetIntent = Intent(this, ResetPasswordActivity::class.java).apply {
+                putExtra(USERNAME, username.text.toString())
             }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
-            }
-        })
-
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-            val loginResult = it ?: return@Observer
-
-            loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
-        })
-
-        username.afterTextChanged {
-            loginViewModel.loginDataChanged(
-                ccp.selectedCountryCodeWithPlus +username.text.toString(),
-                password.text.toString()
-            )
+            startActivity(resetIntent)
         }
 
-        password.apply {
-            afterTextChanged {
-                loginViewModel.loginDataChanged(
-                    ccp.selectedCountryCodeWithPlus +username.text.toString(),
-                    password.text.toString()
-                )
-            }
 
-            setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            ccp.selectedCountryCodeWithPlus +username.text.toString(),
-                            password.text.toString()
-                        )
-                }
-                false
-            }
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
@@ -107,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
                     { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
                         loading.visibility = View.INVISIBLE
 
-                        val intent2 = Intent(this.context, BottomNavigationActivity::class.java).apply {
+                        val intent2 = Intent(this, BottomNavigationActivity::class.java).apply {
 
                         }
                         startActivity(intent2)
@@ -118,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             signup.setOnClickListener {
-                val intent3 = Intent(this.context, SignUpActivity::class.java).apply {
+                val intent3 = Intent(this, SignUpActivity::class.java).apply {
 
                 }
                 startActivity(intent3)
@@ -126,21 +75,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
-        // TODO : initiate successful logged in experience
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
-    }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
-    }
-}
 
 /**
  * Extension function to simplify setting an afterTextChanged action to EditText components.

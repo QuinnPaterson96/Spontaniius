@@ -106,10 +106,10 @@ class FindPromotionsFragment : Fragment() {
             )
         )
         promotionDetailList.add(PromotionDetailPage(3,"YETI YEET","The wild yeti can be heard screaming 'Yeet!' from the mountaintops regularly in this spectacular display of a mating call in the Hymilayas"))
-        var inflatedview = inflater.inflate(R.layout.fragment_find_promotions, container, false)
-        var Promotion_Listview = inflatedview.findViewById<ListView>(R.id.Promotion_List)
-        var promoAdapter = PromoDetailAdapter(requireActivity().application,PromosForList);
-        Promotion_Listview.adapter = promoAdapter
+        var inflatedview = inflater.inflate(R.layout.fragment_promotions, container, false)
+     //   var Promotion_Listview = inflatedview.findViewById<ListView>(R.id.Promotion_List)
+    //    var promoAdapter = PromoDetailAdapter(requireActivity().application,PromosForList);
+    //    Promotion_Listview.adapter = promoAdapter
         //Promotion_List.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
             //Toast.makeText(requireActivity().application, "Click on " + PromosForList[position].title, Toast.LENGTH_SHORT).show()
             //val intent = Intent(this, PromotionTab::class.java)

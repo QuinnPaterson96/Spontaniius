@@ -114,6 +114,10 @@ class CardCollectionFragment : Fragment() {
 
 
         // We start of by retrieving card collection from database using user's id
+        var userId =  listenerCardCollection?.getCurrentUserAttributes()?.getString("userid")?.toInt()
+
+
+
         val url =
             "https://17tbc8bm31.execute-api.us-west-2.amazonaws.com/default/GetCardCollectionDetails?userid=${Amplify.Auth.currentUser.userId}";
         val getEventsRequest = StringRequest(Request.Method.GET, url,
@@ -124,7 +128,7 @@ class CardCollectionFragment : Fragment() {
 
                 if(eventJSONArray.length()==0){
                     selectedCardName.text="Welcome To Spontaniius"
-                    cardOptionsMenu.visibility= View.GONE
+                    cardOptionsMenu.visibility= GONE
                 }
 
                 for (i in 0 until eventJSONArray.length()) {

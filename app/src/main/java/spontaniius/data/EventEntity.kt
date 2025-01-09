@@ -30,7 +30,6 @@ data class EventEntity(
         jsonObject.put("eventtext", this.description)
         jsonObject.put("genderrestrict", this.gender)
         jsonObject.put("icon", this.icon)
-//        TODO: test actual addresses
         jsonObject.put("streetaddress", "${this.latitude},${this.longitude}")
         jsonObject.put("maxradius", this.invitation)
         jsonObject.put("eventstarts", this.startTime)

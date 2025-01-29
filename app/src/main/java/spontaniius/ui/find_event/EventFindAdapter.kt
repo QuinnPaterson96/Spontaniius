@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import spontaniius.R
+import com.spontaniius.R
 import org.json.JSONObject
 import kotlin.math.roundToInt
 

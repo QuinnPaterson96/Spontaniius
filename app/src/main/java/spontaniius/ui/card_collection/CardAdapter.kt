@@ -1,6 +1,6 @@
 package spontaniius.ui.card_collection
 
-import spontaniius.R
+import com.spontaniius.R
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View

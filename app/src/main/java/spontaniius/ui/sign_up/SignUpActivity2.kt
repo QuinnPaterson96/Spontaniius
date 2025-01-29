@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import spontaniius.R
-import spontaniius.R.layout.activity_sign_up2
+import com.spontaniius.R
+import com.spontaniius.R.layout.activity_sign_up2
 import spontaniius.ui.card_editing.CardEditingActivity
 
 

@@ -25,15 +25,12 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
-import java.lang.Exception
-import java.lang.System.console
+import com.spontaniius.R
+import spontaniius.di.VolleySingleton
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZonedDateTime

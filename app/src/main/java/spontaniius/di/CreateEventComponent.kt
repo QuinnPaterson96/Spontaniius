@@ -1,4 +1,4 @@
-package spontaniius.dependency_injection
+package spontaniius.di
 
 import spontaniius.ui.BottomNavigationActivity
 import dagger.Subcomponent

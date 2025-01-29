@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
-package="spontaniius">
+<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android">
 <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.INTERNET" />
@@ -13,7 +11,6 @@ package="spontaniius">
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 <application
@@ -27,9 +24,9 @@ package="spontaniius">
 
 
     <activity
-        android:name=".ui.user_menu.UserOptionsActivity"
+        android:name="spontaniius.ui.user_menu.UserOptionsActivity"
         android:label="@string/title_activity_user_details"
-        android:theme="@style/AppTheme.NoActionBar"></activity>
+        android:theme="@style/AppTheme.NoActionBar" />
 
     <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -41,16 +38,16 @@ package="spontaniius">
         -->
 
     <activity
-        android:name=".ui.sign_up.SignUpConfirmActivity"
+        android:name="spontaniius.ui.sign_up.SignUpConfirmActivity"
         android:label="@string/title_activity_confirm_signup"
-        android:theme="@style/AppTheme.NoActionBar"></activity>
+        android:theme="@style/AppTheme.NoActionBar" />
     <activity
-        android:name=".ui.login.LoginActivity"
-        android:label="@string/title_activity_login"></activity>
+        android:name="spontaniius.ui.login.LoginActivity"
+        android:label="@string/title_activity_login" />
 
-    <activity android:name="spontaniius.ui.report_user.ReportUserActivity"></activity>
+    <activity android:name="spontaniius.ui.report_user.ReportUserActivity" />
 
-    <activity android:name=".ui.BottomNavigationActivity"></activity>
+    <activity android:name="spontaniius.ui.BottomNavigationActivity" />
 
     <!--
          The API key for Google Maps-based APIs is defined as a string resource.
@@ -66,16 +63,17 @@ package="spontaniius">
         android:value="@string/google_maps_key" />
 
 
-    <activity android:name=".MainActivity" />
-    <activity android:name=".ui.card_editing.CardEditingActivity" />
-    <activity android:name=".ui.sign_up.SignUpActivity2" />
+    <activity android:name="spontaniius.MainActivity" />
+    <activity android:name="spontaniius.ui.card_editing.CardEditingActivity" />
+    <activity android:name="spontaniius.ui.sign_up.SignUpActivity2" />
 
 
-    <activity android:name=".ui.sign_up.SignUpActivity"></activity>
+    <activity android:name="spontaniius.ui.sign_up.SignUpActivity" />
 
 
     <activity
-        android:name=".ui.SplashScreenActivity"
+        android:name="spontaniius.ui.SplashScreenActivity"
+        android:exported="true"
         android:theme="@style/SplashTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -83,9 +81,9 @@ package="spontaniius">
         </intent-filter>
     </activity>
 
-    <activity android:name=".ui.promotions.PromotionTab" />
-    <activity android:name="spontaniius.ui.landing_screen.LandingScreenActivity"></activity>
-    <activity android:name="spontaniius.ui.login.ResetPasswordActivity"></activity>
+    <activity android:name="spontaniius.ui.promotions.PromotionTab" />
+    <activity android:name="spontaniius.ui.landing_screen.LandingScreenActivity" />
+    <activity android:name="spontaniius.ui.login.ResetPasswordActivity" />
 
 
     <!-- Any inner elements would go here. -->

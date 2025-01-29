@@ -8,7 +8,7 @@ import android.view.View.VISIBLE
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.amplifyframework.core.Amplify
-import spontaniius.R
+import com.spontaniius.R
 import spontaniius.ui.card_editing.CardEditingActivity
 import spontaniius.ui.login.USERNAME
 

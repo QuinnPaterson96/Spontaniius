@@ -21,7 +21,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.example.spontaniius.ui.promotions.FindPromotionsFragment
@@ -29,12 +28,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.json.JSONException
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.SpontaniiusApplication
+import com.spontaniius.R
 import spontaniius.data.EventEntity
 import spontaniius.data.Repository
-import spontaniius.dependency_injection.CreateEventComponent
-import spontaniius.dependency_injection.VolleySingleton
+import spontaniius.di.CreateEventComponent
+import spontaniius.di.VolleySingleton
 import spontaniius.ui.card_collection.CardCollectionFragment
 import spontaniius.ui.card_editing.CARD_EDIT_NEW
 import spontaniius.ui.card_editing.CardEditingActivity
@@ -335,7 +333,7 @@ class BottomNavigationActivity : AppCompatActivity(),
             val url = "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent"
             val getLocationRequest = JsonObjectRequest(
                 Request.Method.POST, url, thisEvent.toJSON(),
-                Response.Listener<JSONObject> { response ->
+                { response ->
                     val JSONResponse = JSONObject(response.toString())
                     eventid = JSONResponse.get("eventid") as Int
                     meetupOwner = true
@@ -349,7 +347,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                             currentFragment).commitNow()
                     currentFragment = eventManagementFragment
                 },
-                Response.ErrorListener { error ->
+                { error ->
                     loadingProgress.visibility=GONE
                     error.printStackTrace()
                 }
@@ -399,18 +397,18 @@ class BottomNavigationActivity : AppCompatActivity(),
                 error.printStackTrace()
             }
         )
-        val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
-        queue?.add(endEventRequest)
+        val queue = this.let { VolleySingleton.getInstance(it).requestQueue }
+        queue.add(endEventRequest)
     }
 
     override fun add15Mins(){
-        var newEndTime = ZonedDateTime.parse(
+        val newEndTime = ZonedDateTime.parse(
             eventEnds as CharSequence?, DateTimeFormatter.ofPattern(
                 "yyyy-[M][MM]-[d][dd]['T'][ ][HH][H]:[m][mm]:ssz"
             )
         )
 
-        var eventEndsTime = newEndTime.plusMinutes(15)
+        val eventEndsTime = newEndTime.plusMinutes(15)
 
 
         eventEnds = eventEndsTime.format(DateTimeFormatter.ofPattern(
@@ -419,7 +417,8 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
 
-        val url ="https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+eventEnds;
+        val url =
+            "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime=$eventEnds";
         val extendEventRequest = StringRequest(Request.Method.PUT, url,
             { response ->
                 Toast.makeText(
@@ -519,20 +518,38 @@ class BottomNavigationActivity : AppCompatActivity(),
             }
 
             val currentUserAttributeObject = JSONObject()
+
+            val currentUser = Amplify.Auth.getCurrentUser(
+                { attributes ->
+                    val userId = attributes.find { it.key.keyString == "sub" }?.value
+                    Log.i("AuthDemo", "User ID: $userId")
+                },
+                { error ->
+                    Log.e("AuthDemo", "Failed to fetch user attributes", error)
+                }
+            )
+            if (currentUser != null) {
+                val userId = currentUser.username
+                Log.i("AuthDemo", "Current user ID: $userId")
+            } else {
+                Log.w("AuthDemo", "No user is currently signed in")
+            }
+
+
             try {
                 currentUserAttributeObject.put("userid", Amplify.Auth.currentUser.userId)
                 for (attribute in userAttributes!!) {
-                    var arributeName = attribute?.key?.keyString
-                    if (arributeName == "custom:cardid") {
+                    val attributeName = attribute?.key?.keyString
+                    if (attributeName == "custom:cardid") {
                         currentUserAttributeObject.put("cardid", attribute?.value)
                     }
-                    if (arributeName == "phone_number") {
+                    if (attributeName == "phone_number") {
                         currentUserAttributeObject.put("phone_number", attribute?.value)
                     }
-                    if (arributeName == "gender") {
+                    if (attributeName == "gender") {
                         currentUserAttributeObject.put("gender", attribute?.value)
                     }
-                    if (arributeName == "name") {
+                    if (attributeName == "name") {
                         currentUserAttributeObject.put("name", attribute?.value)
                     }
                 }

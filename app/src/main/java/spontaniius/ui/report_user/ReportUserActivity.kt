@@ -9,17 +9,11 @@ import android.widget.Toast
 import com.amplifyframework.core.Amplify
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
-import org.json.JSONArray
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
+import com.spontaniius.R
+import spontaniius.di.VolleySingleton
 import spontaniius.ui.BottomNavigationActivity
 import spontaniius.ui.card_collection.*
-import spontaniius.ui.sign_up.USER_NAME
-import java.text.SimpleDateFormat
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 const val CARD_ID = "spontaniius.ui.sign_up.MESSAGE4"

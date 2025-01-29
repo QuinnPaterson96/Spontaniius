@@ -16,7 +16,7 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.core.Amplify
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.delay
-import spontaniius.R
+import com.spontaniius.R
 import java.util.*
 
 

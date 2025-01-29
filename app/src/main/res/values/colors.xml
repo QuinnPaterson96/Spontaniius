@@ -9,4 +9,11 @@
     <color name="light_blue_600">#FF039BE5</color>
     <color name="gray_400">#FFBDBDBD</color>
     <color name="gray_600">#FF757575</color>
+    <color name="quantum_yellow50">#FFF9C4</color>
+    <color name="quantum_orange200">#FFAB91</color>
+    <color name="quantum_orangeA200">#FFAB40</color>
+    <color name="quantum_white_100">#FFFFFF</color>
+    <color name="quantum_black_100">#000000</color>
+    <color name="quantum_amber50">#FFF8E1</color>
+    <color name="quantum_googgreen500">#1BD14c</color>
 </resources>

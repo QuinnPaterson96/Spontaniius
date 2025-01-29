@@ -18,7 +18,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import com.amplifyframework.core.Amplify
 
-import spontaniius.R
+import com.spontaniius.R
 import spontaniius.ui.BottomNavigationActivity
 import spontaniius.ui.sign_up.SignUpActivity
 import com.rilixtech.widget.countrycodepicker.CountryCodePicker

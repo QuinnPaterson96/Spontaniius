@@ -1,4 +1,5 @@
-package spontaniius.dependency_injection
+package spontaniius.di
+
 
 import spontaniius.data.DefaultRepository
 import spontaniius.data.Repository

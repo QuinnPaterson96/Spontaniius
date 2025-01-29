@@ -11,7 +11,7 @@ import android.widget.*
 import spontaniius.MainActivity
 import spontaniius.PromotionDetailPage
 import spontaniius.PromotionEntry
-import spontaniius.R
+import com.spontaniius.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 // TODO: Rename parameter arguments, choose names that match

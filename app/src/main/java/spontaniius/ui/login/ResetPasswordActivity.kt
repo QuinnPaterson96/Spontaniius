@@ -11,7 +11,7 @@ import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.result.AuthResetPasswordResult
 import com.amplifyframework.core.Amplify
 import com.rilixtech.widget.countrycodepicker.CountryCodePicker
-import spontaniius.R
+import com.spontaniius.R
 import spontaniius.ui.sign_up.USER_ID
 
 const val USERNAME = "spontaniius.ui.sign_up.MESSAGE5"

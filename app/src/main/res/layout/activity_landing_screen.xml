@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.landing_screen.LandingScreenActivity">
+    tools:context="spontaniius.ui.landing_screen.LandingScreenActivity">
     <!--
    slideranimation duration is to set duration for transition between two slides
    sliderautocycledirection is to set animationbetween transition of your slides
@@ -19,41 +19,17 @@
    -->
 
 
-    <com.smarteist.autoimageslider.SliderView
-        android:id="@+id/slider"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="150dp"
-        android:layout_centerInParent="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:sliderAnimationDuration="600"
-        app:sliderAutoCycleDirection="back_and_forth"
-        app:sliderIndicatorAnimationDuration="600"
-        app:sliderIndicatorEnabled="false"
-        app:sliderIndicatorGravity="center_horizontal|bottom"
-        app:sliderIndicatorMargin="15dp"
-        app:sliderIndicatorOrientation="horizontal"
-        app:sliderIndicatorPadding="3dp"
-        app:sliderIndicatorRadius="2dp"
-        app:sliderIndicatorSelectedColor="#5A5A5A"
-        app:sliderIndicatorUnselectedColor="#FFF"
-        app:sliderScrollTimeInSec="1" >
-
-    </com.smarteist.autoimageslider.SliderView>
-
-
     <Button
         android:id="@+id/email_signup"
         android:layout_width="200dp"
-        android:background="@drawable/spontaniius_primary_button"
         android:layout_height="wrap_content"
-        android:text="Sign up"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="100dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/spontaniius_primary_button"
+        android:text="Sign up"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/slider"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/login_button_landing"

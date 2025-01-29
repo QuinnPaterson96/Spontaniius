@@ -1,4 +1,4 @@
-package spontaniius.dependency_injection
+package spontaniius.di
 
 import android.content.Context
 import spontaniius.data.data_source.local.EventDao

@@ -3,14 +3,14 @@ buildscript {
 
     repositories {
         google()
-        mavenCentral() // Added Maven Central for broader compatibility
-        maven { url "https://plugins.gradle.org/m2/" } // Gradle Plugin Portal for newer plugins
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.7.3' // Updated Android Gradle Plugin
         classpath 'com.google.gms:google-services:4.4.2' // Updated Google Services plugin
-        classpath 'com.amazonaws:aws-android-sdk-appsync-gradle-plugin:3.0.0' // Updated AWS AppSync plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10" // Use the latest version
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -25,6 +25,6 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }

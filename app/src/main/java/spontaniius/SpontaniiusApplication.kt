@@ -1,10 +1,9 @@
 package spontaniius
 
 import android.app.Application
-import spontaniius.DaggerApplicationComponent
-import spontaniius.dependency_injection.ContextModule
-import spontaniius.dependency_injection.CreateEventComponent
-import spontaniius.dependency_injection.EventDaoModule
+import spontaniius.di.ContextModule
+import spontaniius.di.CreateEventComponent
+import spontaniius.di.EventDaoModule
 import dagger.Component
 import javax.inject.Singleton
 

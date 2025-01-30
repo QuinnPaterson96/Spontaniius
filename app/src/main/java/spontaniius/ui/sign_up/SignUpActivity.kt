@@ -14,8 +14,7 @@ import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
-import com.rilixtech.widget.countrycodepicker.CountryCodePicker
-import kotlinx.android.synthetic.main.activity_sign_up.*
+import com.hbb20.CountryCodePicker
 import org.json.JSONException
 import org.json.JSONObject
 import com.spontaniius.R
@@ -120,7 +119,7 @@ class SignUpActivity : AppCompatActivity(), SignUpFragment.OnSignUpFragmentInter
                         putExtra(USER_NAME, put_name)
                         putExtra(USERNAME, username)
                         putExtra(PHONE_NUMBER, ccp.selectedCountryCodeWithPlus + put_phone)
-                        putExtra(USER_ID, result.user?.userId)
+                        putExtra(USER_ID, result.userId)
                         putExtra("Password", put_password)
 
                     }

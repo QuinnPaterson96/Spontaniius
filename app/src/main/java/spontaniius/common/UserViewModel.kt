@@ -1,3 +1,5 @@
+package spontaniius.common  // Ensure this matches your folder structure
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import spontaniius.common.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel

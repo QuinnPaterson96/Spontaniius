@@ -57,82 +57,77 @@ class ResetPasswordActivity : AppCompatActivity() {
          confirmationCodeEditText.setText(passedThroughUserName)
          confirmationCodeEditText.hint = "phone #"
 
+        confirmPhoneButton.setOnClickListener {
+            phoneNumber=confirmationCodeEditText.text.toString()
+            Amplify.Auth.resetPassword(
+                ccp.selectedCountryCodeWithPlus+confirmationCodeEditText.text.toString(),
+                { result: AuthResetPasswordResult ->
+                    Log.i(
+                        "AuthQuickstart",
+                        result.toString()
+                    )
 
+                    ccp.visibility= GONE
+                    passwordSection.visibility= VISIBLE
+                    confirmationCodeLabel.visibility= VISIBLE
+                    confirmationCodeLabel.text="Activation Code"
+                    confirmationCodeEditText.hint = "Activation Code"
+                    confirmationCodeEditText.setText("")
+                    resendCodeButton.visibility= VISIBLE
 
-
-                confirmPhoneButton.setOnClickListener {
-                    phoneNumber=confirmationCodeEditText.text.toString()
-                    Amplify.Auth.resetPassword(
-                        ccp.selectedCountryCodeWithPlus+confirmationCodeEditText.text.toString(),
-                        { result: AuthResetPasswordResult ->
-                            Log.i(
-                                "AuthQuickstart",
-                                result.toString()
-                            )
-
-                            ccp.visibility= GONE
-                            passwordSection.visibility= VISIBLE
-                            confirmationCodeLabel.visibility= VISIBLE
-                            confirmationCodeLabel.text="Activation Code"
-                            confirmationCodeEditText.hint = "Activation Code"
-                            confirmationCodeEditText.setText("")
-                            resendCodeButton.visibility= VISIBLE
-
-                            resendCodeButton.setOnClickListener {
-                                passwordSection.visibility= GONE
-                                ccp.visibility= VISIBLE // This is needed in order to help user set phone number
-                                confirmationCodeLabel.visibility= GONE
-                                instructionTextView.text="Please enter your phone number"
-                                confirmationCodeEditText.setText(phoneNumber)
-                                confirmationCodeEditText.hint = "phone #"
-                                confirmPhoneButton.visibility= VISIBLE
-                                confirm.visibility= GONE
-                                resendCodeButton.visibility = GONE
-                                confirmPhoneButton.visibility= VISIBLE
-
-
-                            }
-                            confirmPhoneButton.visibility= GONE
-                            confirm.visibility= VISIBLE
-
-                            confirm.setOnClickListener {
-                                Amplify.Auth.confirmResetPassword(
-                                    newPasswordEditText.text.toString(),
-                                    confirmationCodeEditText.text.toString(),
-                                    {
-                                        Log.i(
-                                            "AuthQuickstart",
-                                            "New password confirmed"
-                                        )
-                                        val toast = Toast.makeText(applicationContext, "Password Reset", Toast.LENGTH_SHORT)
-                                        toast.show()
-                                        val intent2 = Intent(this, LoginActivity::class.java).apply {}
-                                        startActivity(intent2)
-
-                                    }
-                                ) { error: AuthException ->
-                                    Log.e(
-                                        "AuthQuickstart",
-                                        error.toString()
-                                    )
-                                    errorTextView.text = error.toString()
-                                }
-                            }
-
-                        }
-                    ) { error: AuthException ->
-                        Log.e(
-                            "AuthQuickstart",
-                            error.toString()
-                        )
-                        errorTextView.text= "Try providing your phone number again"
+                    resendCodeButton.setOnClickListener {
+                        passwordSection.visibility= GONE
+                        ccp.visibility= VISIBLE // This is needed in order to help user set phone number
+                        confirmationCodeLabel.visibility= GONE
+                        instructionTextView.text="Please enter your phone number"
+                        confirmationCodeEditText.setText(phoneNumber)
                         confirmationCodeEditText.hint = "phone #"
-                        confirmationCodeEditText.setText("")
+                        confirmPhoneButton.visibility= VISIBLE
+                        confirm.visibility= GONE
+                        resendCodeButton.visibility = GONE
+                        confirmPhoneButton.visibility= VISIBLE
+
 
                     }
-                }
+                    confirmPhoneButton.visibility= GONE
+                    confirm.visibility= VISIBLE
 
+                    confirm.setOnClickListener {
+                        val username = "bob" // #TODO do this usernameEditText.text.toString() // Ensure you have a reference to the username input
+                        val newPassword = newPasswordEditText.text.toString()
+                        val confirmationCode = confirmationCodeEditText.text.toString()
+
+                        Amplify.Auth.confirmResetPassword(
+                            username,
+                            newPassword,
+                            confirmationCode,
+                            {
+                                Log.i("AuthQuickstart", "New password confirmed")
+                                Toast.makeText(applicationContext, "Password Reset", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this, LoginActivity::class.java)
+                                startActivity(intent)
+                            },
+                            { error ->
+                                Log.e("AuthQuickstart", error.toString())
+                                errorTextView.text = error.toString()
+                            }
+                        )
+                    }
+
+                }
+            ) { error: AuthException ->
+                Log.e(
+                    "AuthQuickstart",
+                    error.toString()
+                )
+                errorTextView.text= "Try providing your phone number again"
+                confirmationCodeEditText.hint = "phone #"
+                confirmationCodeEditText.setText("")
 
             }
+        }
+
+
+    }
  }
 

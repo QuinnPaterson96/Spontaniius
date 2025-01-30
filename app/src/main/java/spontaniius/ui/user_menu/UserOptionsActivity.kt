@@ -8,7 +8,6 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.amazonaws.mobileconnectors.cognitoauth.Auth
 import com.amplifyframework.auth.AuthCategory
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
@@ -66,7 +65,7 @@ class UserOptionsActivity : AppCompatActivity() {
             finish()
         }
 
-        var currUser = Amplify.Auth.currentUser
+       //#TODO deal with this later var currUser = Amplify.Auth.currentUser
 
         Amplify.Auth.fetchUserAttributes(
             { attributes: List<AuthUserAttribute?> ->

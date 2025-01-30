@@ -4,6 +4,8 @@ package spontaniius.common // Ensure this matches the actual folder structure
 import android.util.Log
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
+import com.amplifyframework.auth.exceptions.InvalidStateException
+import com.amplifyframework.auth.exceptions.SignedOutException
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -14,9 +16,7 @@ import kotlin.coroutines.resumeWithException
 
 
 class UserRepository @Inject constructor() {
-
     private var cachedUserDetails: JSONObject? = null
-
 
 
     /**
@@ -50,7 +50,11 @@ class UserRepository @Inject constructor() {
 
             cachedUserDetails = userDetails
             userDetails
-        } catch (e: AuthException) {
+        }catch (e: SignedOutException){
+            Log.i("UserRepository", "User Not Logged in", e)
+            null
+        }
+        catch (e: Exception) {
             Log.e("UserRepository", "Error fetching user attributes", e)
             null
         }

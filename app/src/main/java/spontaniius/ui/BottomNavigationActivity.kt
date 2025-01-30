@@ -1,6 +1,5 @@
 package spontaniius.ui
 
-import UserViewModel
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
@@ -20,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
@@ -32,6 +32,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.json.JSONObject
 import com.spontaniius.R
+import dagger.hilt.android.AndroidEntryPoint
+import spontaniius.common.UserViewModel
 import spontaniius.data.EventEntity
 import spontaniius.di.VolleySingleton
 import spontaniius.ui.card_collection.CardCollectionFragment
@@ -49,17 +51,17 @@ import java.util.*
 import java.util.logging.Logger
 
 
-//TODO: rename to MainActivity
+@AndroidEntryPoint
 class BottomNavigationActivity : AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener,
     EventManagementFragment.OnEventManagementFragmentInteractionListener,
     FindEventFragment.OnFindEventFragmentInteractionListener,
     CardCollectionFragment.OnCardCollectionFragmentInteractionListener,
     MapsFragment.MapsInteractionListener {
+    private val userViewModel: UserViewModel by viewModels()
 
     private val mapsFragmentTag = "MAPS TAG"
     private var latLng: LatLng? = null
-    private val userViewModel: UserViewModel by viewModels()
     lateinit var bottomNavigation: BottomNavigationView
     lateinit var currentFragment: Fragment
     lateinit var previousFragment: Fragment
@@ -79,8 +81,11 @@ class BottomNavigationActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_bottom_navigation)
 
-        navController = findNavController(R.id.nav_host_fragment)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+        navController = navHostFragment?.navController ?: throw IllegalStateException("NavController not found")
+
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigation.setupWithNavController(navController!!)
 
@@ -103,7 +108,7 @@ class BottomNavigationActivity : AppCompatActivity(),
         // User authentication handling
         userViewModel.userAttributes.observe(this) { attributes ->
             if (attributes == null) {
-                 // showLoginScreen() #TODO add navigation to login screen
+                navController!!.navigate(R.id.loginFragment)
             } else {
                 userDetails = attributes
             }
@@ -112,7 +117,6 @@ class BottomNavigationActivity : AppCompatActivity(),
         userViewModel.fetchUserAttributes()
 
 
-        setContentView(R.layout.activity_bottom_navigation)
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar!!.setDisplayShowCustomEnabled(true)
         supportActionBar!!.setCustomView(R.layout.spontaniius_action_bar)

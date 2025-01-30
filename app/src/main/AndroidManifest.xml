@@ -47,7 +47,13 @@
 
     <activity android:name="spontaniius.ui.report_user.ReportUserActivity" />
 
-    <activity android:name="spontaniius.ui.BottomNavigationActivity" />
+    <activity android:name="spontaniius.ui.BottomNavigationActivity"
+        android:exported="true">
+        <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
 
     <!--
          The API key for Google Maps-based APIs is defined as a string resource.
@@ -63,7 +69,6 @@
         android:value="@string/google_maps_key" />
 
 
-    <activity android:name="spontaniius.MainActivity" />
     <activity android:name="spontaniius.ui.card_editing.CardEditingActivity" />
     <activity android:name="spontaniius.ui.sign_up.SignUpActivity2" />
 
@@ -75,10 +80,6 @@
         android:name="spontaniius.ui.SplashScreenActivity"
         android:exported="true"
         android:theme="@style/SplashTheme">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
     </activity>
 
     <activity android:name="spontaniius.ui.promotions.PromotionTab" />

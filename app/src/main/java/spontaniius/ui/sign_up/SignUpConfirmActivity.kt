@@ -47,7 +47,7 @@ class SignUpConfirmActivity : AppCompatActivity() {
                     Amplify.Auth.signIn(
                         username,
                         password,
-                        { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
+                        { result -> Log.i("AuthQuickstart", if (result.isSignedIn) "Sign in succeeded" else "Sign in not complete")
                             val intent = Intent(this, CardEditingActivity::class.java).apply {
                                 putExtra(USER_NAME, name)
                                 putExtra(PHONE_NUMBER, phone)

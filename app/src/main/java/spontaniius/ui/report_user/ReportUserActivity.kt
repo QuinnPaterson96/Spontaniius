@@ -31,7 +31,7 @@ class ReportUserActivity : AppCompatActivity() {
             val cardExchangeDetails = JSONObject()
 
             cardExchangeDetails.put("cardid", intent.getStringExtra(CARD_ID))
-            cardExchangeDetails.put("userid", Amplify.Auth.currentUser.userId)
+            cardExchangeDetails.put("userid", "bob") //#TODO fix user reporting, turn this into a fragment
             cardExchangeDetails.put("report", reportText)
 
 

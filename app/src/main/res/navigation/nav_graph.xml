@@ -33,6 +33,11 @@
         android:name="spontaniius.ui.create_event.MapsFragment"
         android:label="Map Selector" />
 
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="spontaniius.ui.login.LoginFragment"
+        android:label="Login Screen" />
+
     <!-- Event Management -->
     <fragment
         android:id="@+id/eventManagementFragment"

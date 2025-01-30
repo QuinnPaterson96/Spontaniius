@@ -17,7 +17,8 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -48,6 +49,7 @@ import kotlin.collections.ArrayList
 
 
 class FindEventFragment : Fragment() {
+    private val findEventViewModel: FindEventViewModel by viewModels()
     private var listenerFindEvent: FindEventFragment.OnFindEventFragmentInteractionListener? = null
 
 
@@ -217,7 +219,6 @@ class FindEventFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(FindEventViewModel::class.java)
         // TODO: Use the ViewModel
     }
 

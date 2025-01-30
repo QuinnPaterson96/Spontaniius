@@ -3,7 +3,7 @@ package spontaniius.ui.login
 import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -17,11 +17,11 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.amplifyframework.core.Amplify
+import com.hbb20.CountryCodePicker
 
 import com.spontaniius.R
 import spontaniius.ui.BottomNavigationActivity
 import spontaniius.ui.sign_up.SignUpActivity
-import com.rilixtech.widget.countrycodepicker.CountryCodePicker
 
 class LoginActivity : AppCompatActivity() {
 
@@ -36,8 +36,9 @@ class LoginActivity : AppCompatActivity() {
         val login = findViewById<Button>(R.id.login_button)
         val loading = findViewById<ProgressBar>(R.id.loading)
         val forgotPasswordButton = findViewById<Button>(R.id.forgot_password_button)
+
         var ccp: CountryCodePicker
-        ccp =  findViewById(R.id.ccp);
+        ccp =  findViewById(R.id.ccp)
 
         forgotPasswordButton.setOnClickListener {
             val resetIntent = Intent(this, ResetPasswordActivity::class.java).apply {
@@ -51,9 +52,9 @@ class LoginActivity : AppCompatActivity() {
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 Amplify.Auth.signIn(
-                    ccp.selectedCountryCodeWithPlus +username.text.toString(),
+                     username.text.toString() + ccp.selectedCountryCodeWithPlus,
                     password.text.toString(),
-                    { result -> Log.i("AuthQuickstart", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete")
+                    { result -> Log.i("AuthQuickstart", if (result.isSignedIn) "Sign in succeeded" else "Sign in not complete")
                         loading.visibility = View.INVISIBLE
 
                         val intent2 = Intent(this, BottomNavigationActivity::class.java).apply {

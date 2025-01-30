@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.result.AuthResetPasswordResult
 import com.amplifyframework.core.Amplify
-import com.rilixtech.widget.countrycodepicker.CountryCodePicker
+import com.hbb20.CountryCodePicker
 import com.spontaniius.R
 import spontaniius.ui.sign_up.USER_ID
 
@@ -20,7 +20,6 @@ class ResetPasswordActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        var ccp: CountryCodePicker
 
 
         var passedThroughUserName = intent.getStringExtra(USERNAME)
@@ -38,7 +37,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         val passwordSection = findViewById<LinearLayout>(R.id.password_section)
         val newPasswordEditText:EditText = findViewById(R.id.new_password)
         val resendCodeButton:Button=findViewById(R.id.resend_code)
-        ccp =  findViewById(R.id.ccp_username);
+        var ccp: CountryCodePicker = findViewById(R.id.ccp_username);
         var phoneNumber = ""
         back.setOnClickListener {
             val intent2 = Intent(this, LoginActivity::class.java).apply {}
@@ -48,8 +47,8 @@ class ResetPasswordActivity : AppCompatActivity() {
 
 
 
-                // We assume here that the reason reset password failed is due to not having the right /
-                // any phone number, so we prompt user to re-enter
+        // We assume here that the reason reset password failed is due to not having the right /
+        // any phone number, so we prompt user to re-enter
 
          passwordSection.visibility= GONE
          ccp.visibility= VISIBLE // This is needed in order to help user set phone number

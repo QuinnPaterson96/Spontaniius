@@ -43,7 +43,7 @@ class MapsFragment : Fragment() {
 
     private fun createConfirmButton() {
         val c = context
-        confirmButton = FloatingActionButton(c)
+        confirmButton = FloatingActionButton(c!!)
         confirmButton.maxWidth = 10
         confirmButton.maxHeight = 10
         confirmButton.setImageResource(R.drawable.ic_baseline_check_24)

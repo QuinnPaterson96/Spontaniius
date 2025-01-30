@@ -515,7 +515,7 @@ class FindEventFragment : Fragment() {
     interface OnFindEventFragmentInteractionListener {
         fun openEventChatroom(eventid: String, event: JSONObject)
         fun switchToCreate()
-        fun getCurrentUserAttributes():JSONObject
+        fun getCurrentUserAttributes(): JSONObject?
     }
 
     /*

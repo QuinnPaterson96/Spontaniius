@@ -1,5 +1,6 @@
 package spontaniius.ui
 
+import UserViewModel
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
@@ -10,28 +11,28 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 
 
-import com.amplifyframework.auth.AuthException
-import com.amplifyframework.auth.AuthUserAttribute
-import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.core.AmplifyConfiguration
 
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
-import com.example.spontaniius.ui.promotions.FindPromotionsFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import org.json.JSONException
 import org.json.JSONObject
 import com.spontaniius.R
 import spontaniius.data.EventEntity
-import spontaniius.data.Repository
-import spontaniius.di.CreateEventComponent
 import spontaniius.di.VolleySingleton
 import spontaniius.ui.card_collection.CardCollectionFragment
 import spontaniius.ui.card_editing.CARD_EDIT_NEW
@@ -45,7 +46,7 @@ import spontaniius.ui.user_menu.UserOptionsActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import javax.inject.Inject
+import java.util.logging.Logger
 
 
 //TODO: rename to MainActivity
@@ -56,39 +57,61 @@ class BottomNavigationActivity : AppCompatActivity(),
     CardCollectionFragment.OnCardCollectionFragmentInteractionListener,
     MapsFragment.MapsInteractionListener {
 
-    private val createEventFragmentTag = "CREATE EVENT TAG"
     private val mapsFragmentTag = "MAPS TAG"
     private var latLng: LatLng? = null
-
-    @Inject
-    lateinit var repository: Repository
-    private lateinit var createEventComponent: CreateEventComponent
-
+    private val userViewModel: UserViewModel by viewModels()
     lateinit var bottomNavigation: BottomNavigationView
-    lateinit var fragment_container: FrameLayout
     lateinit var currentFragment: Fragment
     lateinit var previousFragment: Fragment
     lateinit var createEventFragment: CreateEventFragment
-    lateinit var promotionFragment: Fragment
-    lateinit var cardCollectionFragment: Fragment
     lateinit var eventManagementFragment: EventManagementFragment
-    lateinit var eventJoinFragment: EventManagementFragment
-
     lateinit var findEventFragment: FindEventFragment
-
     lateinit var optionsMenu: ImageView
     lateinit var actionBarView:View
     lateinit var appContext: Context
-
-    lateinit var iconSelectButton: ImageButton
     lateinit var currentEvent: JSONObject
     var meetupOwner = false
     var eventid = 0
     var eventEnds = ""
-    lateinit var userDetails: JSONObject
+    var userDetails: JSONObject? = null
+
+    private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        navController = findNavController(R.id.nav_host_fragment)
+        val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavigation.setupWithNavController(navController!!)
+
+        try {
+            Amplify.addPlugin(AWSCognitoAuthPlugin())
+            try {
+                val config = AmplifyConfiguration.builder(applicationContext)
+                    .devMenuEnabled(false)
+                    .build()
+                Amplify.configure(config, applicationContext)
+                Log.i("MyAmplifyApp", "Initialized Amplify")
+            } catch (error: AmplifyException) {
+                Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
+            }
+
+        }catch (error: Exception){
+            Log.e("MyAmplifyApp", error.stackTraceToString())
+        }
+
+        // User authentication handling
+        userViewModel.userAttributes.observe(this) { attributes ->
+            if (attributes == null) {
+                 // showLoginScreen() #TODO add navigation to login screen
+            } else {
+                userDetails = attributes
+            }
+        }
+
+        userViewModel.fetchUserAttributes()
+
+
         setContentView(R.layout.activity_bottom_navigation)
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar!!.setDisplayShowCustomEnabled(true)
@@ -105,7 +128,7 @@ class BottomNavigationActivity : AppCompatActivity(),
             popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
                 override fun onMenuItemClick(item: MenuItem): Boolean {
 
-                    return when (item.getItemId()) {
+                    return when (item.itemId) {
                         R.id.user_details -> {
                             val intentUserDetails = Intent(appContext,
                                 UserOptionsActivity::class.java).apply {
@@ -116,13 +139,17 @@ class BottomNavigationActivity : AppCompatActivity(),
                         }
                         R.id.edit_card -> {
 
-                            var CurrUserAttributes = getCurrentUserAttributes()
+                            var currUserAttributes = getCurrentUserAttributes()
                             val intentUserDetails =
                                 Intent(appContext, CardEditingActivity::class.java).apply {
-                                    putExtra(USER_NAME, CurrUserAttributes.get("name").toString())
-                                    putExtra(PHONE_NUMBER,
-                                        CurrUserAttributes.get("phone_number").toString())
-                                    putExtra(USER_ID, Amplify.Auth.currentUser.userId)
+                                    if (currUserAttributes != null) {
+                                        putExtra(USER_NAME, currUserAttributes.get("name").toString())
+                                    }
+                                    if (currUserAttributes != null) {
+                                        putExtra(PHONE_NUMBER,
+                                            currUserAttributes.get("phone_number").toString())
+                                    }
+                                    putExtra(USER_ID, "spoof") //#TODO fix this
                                     putExtra(CARD_EDIT_NEW, false)
                                 }
 
@@ -142,7 +169,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                             startActivity(openURL)
                             return true
                         }
-                        R.id.sign_out -> {
+/*                        R.id.sign_out -> {
                             Amplify.Auth.signOut(
                                 AuthSignOutOptions.builder().globalSignOut(true).build(),
                                 {
@@ -163,115 +190,22 @@ class BottomNavigationActivity : AppCompatActivity(),
                                 }
                             startActivity(intentSignout)
                             return true
-                        }
+                        }*/
                         else -> false
                     }
                 }
             })
             popup.show()
         }
-
-
-
-
-
-        bottomNavigation = findViewById(R.id.bottom_navigation)
-        fragment_container = findViewById(R.id.fragment_container)
-        createEventFragment = CreateEventFragment.newInstance()
-        findEventFragment = FindEventFragment.newInstance()
-        cardCollectionFragment = CardCollectionFragment.newInstance()
-
-        //TODO: when Cord is done with his promotion fragment, create that here
-//        TODO: Then, have this class (BottomNavigationActivity) implement all the methods that the fragment calls (probably want to define an interface for that)
-//            Note: the above can be accomplished with a lil copy-paste
-//        TODO: mark old classes as deprecated (see CreateEventActivity.kt for an example of how to do that)
-//        After the refactoring has been stable for a few commits, feel free to remove the old classes entirely (git has records of them, if they are really needed)
-        promotionFragment = FindPromotionsFragment.newInstance()
-
-
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, promotionFragment, null).hide(promotionFragment).commit()
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, createEventFragment, null).hide(createEventFragment)
-            .commit()
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, findEventFragment, null).commit()
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, cardCollectionFragment, null).hide(cardCollectionFragment).commit()
-
-
-        currentFragment = findEventFragment
-        bottomNavigation.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.find_event -> {
-                    supportFragmentManager.beginTransaction().hide(currentFragment)
-                        .show(findEventFragment).commit()
-                    previousFragment = currentFragment
-                    currentFragment = findEventFragment
-                    true
-                }
-                R.id.create_event -> {
-                    if (meetupOwner) {
-                        supportFragmentManager.beginTransaction().hide(currentFragment)
-                            .show(eventManagementFragment).commit()
-                        previousFragment = currentFragment
-                        currentFragment = eventManagementFragment
-                        true
-                    } else {
-                        supportFragmentManager.beginTransaction().hide(currentFragment)
-                            .show(createEventFragment).commit()
-                        previousFragment = currentFragment
-                        currentFragment = createEventFragment
-                        true
-                    }
-
-
-                }
-                R.id.promotions -> {
-                    supportFragmentManager.beginTransaction().hide(currentFragment)
-                        .show(promotionFragment).commit()
-                    previousFragment = currentFragment
-                    currentFragment = promotionFragment
-                    true
-                }
-
-                R.id.card_collection -> {
-                    supportFragmentManager.beginTransaction().hide(currentFragment)
-                        .show(cardCollectionFragment).commit()
-                    previousFragment = currentFragment
-                    currentFragment = cardCollectionFragment
-                    true
-                }
-
-                else -> {
-                    false
-                }
-            }
-        }
     }
 
     override fun onBackPressed() {
-       // currently back button is prone to causing kerfuffles, so disabled for now
-
-        /*
-        if(this::previousFragment.isInitialized && currentFragment!=previousFragment)
-        supportFragmentManager.beginTransaction().hide(currentFragment)
-            .show(previousFragment).commit()
-        previousFragment = currentFragment
-        return
-
-        */
+        navController?.popBackStack()
     }
 
     override fun onLocationSelected(latLng: LatLng) {
         this.latLng = latLng
-        val mapsFragment = supportFragmentManager.findFragmentByTag(mapsFragmentTag)
-        if (mapsFragment != null) {
-            supportFragmentManager.beginTransaction().remove(mapsFragment)
-                .show(createEventFragment).commit()
-        }
+        navController?.navigate(R.id.createEventFragment)
         Toast.makeText(
             this,
             "latitude is " + latLng.latitude + " and longitude is " + latLng.longitude,
@@ -280,11 +214,8 @@ class BottomNavigationActivity : AppCompatActivity(),
     }
 
 
-
-
     override fun selectLocation() {
-        supportFragmentManager.beginTransaction().hide(currentFragment)
-            .add(R.id.fragment_container, MapsFragment(), mapsFragmentTag).commit()
+        navController?.navigate(R.id.mapsFragment)
     }
 
     override fun googleLocationSelect(latLng: LatLng) {
@@ -339,13 +270,11 @@ class BottomNavigationActivity : AppCompatActivity(),
                     meetupOwner = true
                     loadingProgress.visibility=GONE
 
-                    eventManagementFragment =
-                        EventManagementFragment.newInstance(eventid.toString(),
-                            meetupOwner)
-                    supportFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, eventManagementFragment, null).hide(
-                            currentFragment).commitNow()
-                    currentFragment = eventManagementFragment
+                    val bundle = Bundle().apply {
+                        putString("event_id", eventid.toString())
+                        putBoolean("is_event_owner", meetupOwner)
+                    }
+                    navController?.navigate(R.id.eventManagementFragment, bundle)
                 },
                 { error ->
                     loadingProgress.visibility=GONE
@@ -353,8 +282,8 @@ class BottomNavigationActivity : AppCompatActivity(),
                 }
 
             )
-            val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
-            queue?.add(getLocationRequest)
+            val queue = this.let { VolleySingleton.getInstance(it).requestQueue }
+            queue.add(getLocationRequest)
             /*
            GlobalScope.launch {
                 repository.saveEvent(
@@ -387,14 +316,13 @@ class BottomNavigationActivity : AppCompatActivity(),
         val url =
             "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+currtime;
         val endEventRequest = StringRequest(Request.Method.PUT, url,
-            { response ->
-                supportFragmentManager.beginTransaction().hide(currentFragment)
-                    .show(createEventFragment).remove(eventManagementFragment).commitNow()
-                currentFragment = createEventFragment
+            { _ ->
+                navController?.navigate(R.id.findEventFragment)
                 meetupOwner = false
             },
             { error ->
                 error.printStackTrace()
+                //#TODO add logging
             }
         )
         val queue = this.let { VolleySingleton.getInstance(it).requestQueue }
@@ -437,150 +365,39 @@ class BottomNavigationActivity : AppCompatActivity(),
 
 
 
-    override fun openEventChatroom(chatEventid: String, event: JSONObject){
-        if (eventid.toString() == chatEventid && meetupOwner==true){ // this is a check that you don't already own this event
-            supportFragmentManager.beginTransaction().hide(currentFragment)
-                .show(eventManagementFragment).commit()
-            previousFragment = currentFragment
-            currentFragment = eventManagementFragment
-        }else{
-            meetupOwner = false
-            currentEvent = event
-            eventManagementFragment = EventManagementFragment.newInstance(chatEventid, meetupOwner)
-            supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, eventManagementFragment, null).hide(currentFragment).commitNow()
-            currentFragment = eventManagementFragment
+    override fun openEventChatroom(eventid: String, event: JSONObject) {
+        val bundle = Bundle().apply {
+            putString("event_id", eventid)
+            putBoolean("is_event_owner", meetupOwner)
         }
+        navController?.navigate(R.id.eventManagementFragment, bundle)
     }
 
     override fun switchToCreate() {
-        bottomNavigation.selectedItemId = R.id.create_event
+        navController?.navigate(R.id.createEventFragment)
+
     }
 
     override fun exitEvent(){
-        supportFragmentManager.beginTransaction().hide(currentFragment)
-            .show(findEventFragment).remove(eventManagementFragment).commitNow()
-        currentFragment = findEventFragment
+        navController?.navigate(R.id.findEventFragment)
     }
 
     override fun getEventID(): Int {
         return eventid
     }
 
-
-
-
     override fun whatIsCurrentEvent():JSONObject{
         return currentEvent
     }
-
 
     // This was created to streamline the process of accessing user attributes and to reduce code
     // duplication across program. It fetches the user attributes and returns them as a JSON object
     // If the details have already been fetched it avoids calling AWS Auth again
 
-    override fun getCurrentUserAttributes():JSONObject{
-        // We check to see if user details have already been initialized or not, if not then prepares to
-        // collect details
-        if(!this::userDetails.isInitialized) {
-            var userAttributes: List<AuthUserAttribute?>? = null
-            val cardExchangeDetails = JSONObject()
-            Amplify.Auth.fetchUserAttributes(
-                { attributes: List<AuthUserAttribute?> ->
-                    Log.e(
-                        "AuthDemo",
-                        attributes.toString()
-                    )
-                    userAttributes = attributes
-                    //     initializeUserData(nameEditText, phoneNumberTextView, genderRadioGroup, userAttributes)
-                }
-            ) { error: AuthException? ->
-                Log.e(
-                    "AuthDemo",
-                    "Failed to fetch user attributes.",
-                    error
-                )
-            }
-
-            var startTime = Calendar.getInstance().timeInMillis
-
-            while (userAttributes == null) {
-                // waiting for attributes before moving forward
-                if ((Calendar.getInstance().timeInMillis - startTime > 5000)) {
-                    Toast.makeText(
-                        this,
-                        "We weren't able to get your user data, please try again later",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    break
-                }
-
-            }
-
-            val currentUserAttributeObject = JSONObject()
-
-            val currentUser = Amplify.Auth.getCurrentUser(
-                { attributes ->
-                    val userId = attributes.find { it.key.keyString == "sub" }?.value
-                    Log.i("AuthDemo", "User ID: $userId")
-                },
-                { error ->
-                    Log.e("AuthDemo", "Failed to fetch user attributes", error)
-                }
-            )
-            if (currentUser != null) {
-                val userId = currentUser.username
-                Log.i("AuthDemo", "Current user ID: $userId")
-            } else {
-                Log.w("AuthDemo", "No user is currently signed in")
-            }
-
-
-            try {
-                currentUserAttributeObject.put("userid", Amplify.Auth.currentUser.userId)
-                for (attribute in userAttributes!!) {
-                    val attributeName = attribute?.key?.keyString
-                    if (attributeName == "custom:cardid") {
-                        currentUserAttributeObject.put("cardid", attribute?.value)
-                    }
-                    if (attributeName == "phone_number") {
-                        currentUserAttributeObject.put("phone_number", attribute?.value)
-                    }
-                    if (attributeName == "gender") {
-                        currentUserAttributeObject.put("gender", attribute?.value)
-                    }
-                    if (attributeName == "name") {
-                        currentUserAttributeObject.put("name", attribute?.value)
-                    }
-                }
-
-            } catch (e: JSONException) {
-                // handle exception
-            }
-            userDetails = currentUserAttributeObject
-        }
-
-        return userDetails
+    override fun getCurrentUserAttributes(): JSONObject? {
+         return userDetails
        }
 
-
-    override  fun refreshEventDetails():JSONObject {
-
-        return JSONObject()
-
-        }
-
-    override fun updateCardCollectionFragment() {
-        // First we remove the old fragment.
-        supportFragmentManager.beginTransaction()
-                .remove(cardCollectionFragment).commitNow()
-
-
-        // Then we create a new one.
-        cardCollectionFragment = CardCollectionFragment.newInstance()
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, cardCollectionFragment, null).hide(cardCollectionFragment).commit()
-    }
 }
 
 

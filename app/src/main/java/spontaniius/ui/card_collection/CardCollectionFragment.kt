@@ -115,7 +115,7 @@ class CardCollectionFragment : Fragment() {
 
 
         val url =
-            "https://17tbc8bm31.execute-api.us-west-2.amazonaws.com/default/GetCardCollectionDetails?userid=${Amplify.Auth.currentUser.userId}";
+            "https://17tbc8bm31.execute-api.us-west-2.amazonaws.com/default/GetCardCollectionDetails?userid=${1}"; //#TODO make is so this is populated by user id
         val getEventsRequest = StringRequest(Request.Method.GET, url,
             { response ->
 
@@ -282,6 +282,6 @@ class CardCollectionFragment : Fragment() {
     }
 
     interface OnCardCollectionFragmentInteractionListener {
-        fun getCurrentUserAttributes():JSONObject
+        fun getCurrentUserAttributes(): JSONObject?
     }
 }

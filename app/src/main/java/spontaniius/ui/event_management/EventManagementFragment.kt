@@ -40,8 +40,8 @@ import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "eventid"
-private const val ARG_PARAM2 = "role"
+private const val ARG_PARAM1 = "event_id"
+private const val ARG_PARAM2 = "is_event_owner"
 
 
 /**
@@ -231,7 +231,7 @@ class EventManagementFragment : Fragment() {
         // makes it so you have your own card already collected.
 
         var ownCardJsonArray = JSONArray()
-        ownCardJsonArray.put(0, listenerManageEvent!!.getCurrentUserAttributes().get("cardid"))
+        ownCardJsonArray.put(0, listenerManageEvent!!.getCurrentUserAttributes()!!.get("cardid"))
         eventMemberCards = ownCardJsonArray
         return fragmentView
     }
@@ -325,7 +325,7 @@ class EventManagementFragment : Fragment() {
         var eventID = requireArguments().getString(ARG_PARAM1)
         cardExchangeDetails.put("eventid", eventID)
         cardExchangeDetails.put("cardid", aboutUser?.getString("cardid"))
-        cardExchangeDetails.put("userid", Amplify.Auth.currentUser.userId)
+        cardExchangeDetails.put("userid", aboutUser?.getString("userid"))
         cardExchangeDetails.put("meetingdate", currDate)
 
         val url = "https://1outrf3pp4.execute-api.us-west-2.amazonaws.com/default/joinEvent"
@@ -453,14 +453,16 @@ class EventManagementFragment : Fragment() {
             location = LatLng(latlong.getDouble("x"), latlong.getDouble("y"))
         }
 
-        googleMap?.addMarker(
-            location?.let {
-                MarkerOptions()
-                    .position(it)
-                    .title(eventTitle.text.toString())
-            }
-            // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
-        )
+        location.let {
+            MarkerOptions()
+                .position(it)
+                .title(eventTitle.text.toString())
+        }.let {
+            googleMap?.addMarker(
+                it
+                // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
+            )
+        }
 
         if (::mapFragment.isInitialized) {
 
@@ -531,7 +533,9 @@ class EventManagementFragment : Fragment() {
                     val format = SimpleDateFormat("yyyy.MM.dd")
                     var currDate = format.format(Calendar.getInstance().time)
                     var cardUpdateDetails = JSONObject()
-                    cardUpdateDetails.put("userid", Amplify.Auth.currentUser.userId)
+                    var aboutUser = listenerManageEvent?.getCurrentUserAttributes()
+
+                    cardUpdateDetails.put("userid", aboutUser?.getString("userid"))
                     cardUpdateDetails.put("cardids", newCards)
                     cardUpdateDetails.put("meetingdate", currDate)
 
@@ -563,8 +567,7 @@ class EventManagementFragment : Fragment() {
     }
 
     fun alertCardReceived(){
-        listenerManageEvent?.updateCardCollectionFragment()
-        Toast.makeText(this.context, "You've received a new card", Toast.LENGTH_LONG).show()
+        //#TODO Update In future
 
     }
 
@@ -575,8 +578,6 @@ class EventManagementFragment : Fragment() {
         fun exitEvent()
         fun getEventID():Int
         fun whatIsCurrentEvent():JSONObject
-        fun getCurrentUserAttributes():JSONObject
-        fun refreshEventDetails():JSONObject
-        fun updateCardCollectionFragment()
+        fun getCurrentUserAttributes(): JSONObject?
     }
 }

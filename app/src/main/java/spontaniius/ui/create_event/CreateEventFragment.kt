@@ -300,7 +300,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 )
 
                 listenerCreateEvent?.googleLocationSelect(currLatLng)
-                val etPlace = autocompleteFragment.view?.findViewById(R.id.places_autocomplete_search_input) as EditText
+                val etPlace = autocompleteFragment.view?.findViewById(R.id.autocomplete_fragment) as EditText
                 etPlace.hint = currLatLng.toString()
             }
             }
@@ -531,7 +531,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             cardId: Int,
             loadingProgress:ProgressBar
         )
-        fun getCurrentUserAttributes():JSONObject
+        fun getCurrentUserAttributes(): JSONObject?
     }
 
     companion object {

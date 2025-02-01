@@ -1,12 +1,9 @@
-package spontaniius.common // Ensure this matches the actual folder structure
+package spontaniius.data.repository // Ensure this matches the actual folder structure
 
 
 import android.util.Log
-import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
-import com.amplifyframework.auth.exceptions.InvalidStateException
 import com.amplifyframework.auth.exceptions.SignedOutException
-import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONObject

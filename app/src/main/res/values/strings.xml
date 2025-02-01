@@ -91,4 +91,7 @@
     <string name="no_results_hint_text">Looks like there\'s no results in your area, maybe</string>
     <string name="create_an_event_hint_prompt">Create An Event</string>
     <string name="activation_code_label">Activation Code</string>
+    <string name="login">Log in</string>
+    <string name="sign_up">Sign Up</string>
+
 </resources>

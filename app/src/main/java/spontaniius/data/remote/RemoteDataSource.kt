@@ -1,4 +1,4 @@
-package spontaniius.data.data_source.remote
+package spontaniius.data.remote
 
 import android.util.Log
 import spontaniius.data.EventEntity

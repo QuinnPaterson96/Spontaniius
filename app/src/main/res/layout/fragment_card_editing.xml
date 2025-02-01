@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="spontaniius.ui.card_editing.CardEditingActivity">
+    tools:context="spontaniius.ui.card_editing.CardEditingFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="wrap_content">
 
+            <!-- Welcome Bar -->
             <LinearLayout
                 android:id="@+id/welcomeBar"
                 android:layout_width="match_parent"
@@ -21,19 +23,15 @@
                 android:background="@android:color/holo_blue_bright"
                 app:layout_constraintTop_toTopOf="parent"
                 android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/design_greeting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:text="@string/custom"
-                    android:textSize="28sp"
-                    app:layout_constraintBottom_toTopOf="parent" />
-
-
+                    android:textSize="28sp" />
             </LinearLayout>
 
+            <!-- Card Preview -->
             <RelativeLayout
                 android:id="@+id/main_card"
                 android:layout_width="match_parent"
@@ -51,46 +49,27 @@
                     android:id="@+id/selected_card_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/selected_card_background"
-                    android:layout_alignTop="@+id/selected_card_background"
-                    android:layout_alignRight="@+id/selected_card_background"
-                    android:layout_alignBottom="@+id/selected_card_background"
-                    android:layout_marginTop="40dp"
-                    android:gravity="center_horizontal"
-                    android:paddingLeft="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingRight="8dp"
+                    android:layout_centerHorizontal="true"
                     android:textSize="40sp"
                     android:textStyle="bold"
-                    tools:text="Bob Smith"
-
-                    />
+                    tools:text="Bob Smith"/>
 
                 <TextView
                     android:id="@+id/selected_card_greeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/selected_card_background"
-                    android:layout_alignTop="@+id/selected_card_user_name"
-                    android:layout_alignRight="@+id/selected_card_background"
-                    android:layout_alignBottom="@+id/selected_card_background"
-
                     android:layout_marginTop="70dp"
                     android:gravity="center_horizontal"
                     android:textSize="20sp"
-
-
                     tools:text="Hi" />
-
             </RelativeLayout>
 
-
+            <!-- Card Selection Bar -->
             <HorizontalScrollView
                 android:id="@+id/cardBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/main_card">
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -103,7 +82,7 @@
                         android:layout_height="50dp"
 
                         android:background="@drawable/card_gold"
-                        android:text="Name" />
+                        android:text="@string/name" />
 
                     <Button
                         android:id="@+id/card1"
@@ -111,14 +90,14 @@
                         android:layout_height="50dp"
 
                         android:background="@drawable/card_bubbles"
-                        android:text="Name" />
+                        android:text="@string/name" />
 
                     <Button
                         android:id="@+id/card2"
                         android:layout_width="80dp"
                         android:layout_height="50dp"
                         android:background="@drawable/card_sunrise"
-                        android:text="Name" />
+                        android:text="@string/name" />
 
                     <Button
                         android:id="@+id/card3"
@@ -126,14 +105,14 @@
                         android:layout_height="50dp"
 
                         android:background="@drawable/card_ocean"
-                        android:text="Name" />
+                        android:text="@string/name" />
 
                     <Button
                         android:id="@+id/card4"
                         android:layout_width="80dp"
                         android:layout_height="50dp"
                         android:background="@drawable/card_rose"
-                        android:text="Name" />
+                        android:text="@string/name" />
 
                     <Button
                         android:id="@+id/card5"
@@ -141,7 +120,7 @@
                         android:layout_height="50dp"
 
                         android:background="@drawable/card_trees"
-                        android:text="Name" />
+                        android:text="@string/name" />
 
                     <Button
                         android:id="@+id/card6"
@@ -149,21 +128,18 @@
                         android:layout_height="50dp"
 
                         android:background="@drawable/card_circuit"
-                        android:text="Name" />
-
+                        android:text="@string/name" />
 
                 </LinearLayout>
             </HorizontalScrollView>
 
-
+            <!-- Greeting Input -->
             <LinearLayout
                 android:id="@+id/greetingInputSection"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:orientation="horizontal"
-                android:weightSum="1"
                 app:layout_constraintTop_toBottomOf="@id/cardBar">
-
 
                 <TextView
                     android:id="@+id/textView7"
@@ -177,18 +153,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
-                    android:layout_weight=".9"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="Hi, nice to meet you" />
+                    android:text="Hi, nice to meet you"/>
             </LinearLayout>
 
+            <!-- Navigation Buttons -->
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/buttonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="1"
                 app:layout_constraintTop_toBottomOf="@id/greetingInputSection">
 
                 <Button
@@ -196,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:text="Back" />
 
                 <View
@@ -219,6 +194,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
+    <!-- Loading Spinner -->
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="wrap_content"
@@ -235,7 +211,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

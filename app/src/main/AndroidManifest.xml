@@ -41,9 +41,17 @@
         android:name="spontaniius.ui.sign_up.SignUpConfirmActivity"
         android:label="@string/title_activity_confirm_signup"
         android:theme="@style/AppTheme.NoActionBar" />
+
     <activity
-        android:name="spontaniius.ui.login.LoginActivity"
-        android:label="@string/title_activity_login" />
+        android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="myapp" />
+        </intent-filter>
+    </activity>
 
     <activity android:name="spontaniius.ui.report_user.ReportUserActivity" />
 
@@ -84,7 +92,7 @@
 
     <activity android:name="spontaniius.ui.promotions.PromotionTab" />
     <activity android:name="spontaniius.ui.landing_screen.LandingScreenActivity" />
-    <activity android:name="spontaniius.ui.login.ResetPasswordActivity" />
+    <activity android:name="spontaniius.ui.phone_login.ResetPasswordActivity" />
 
 
     <!-- Any inner elements would go here. -->

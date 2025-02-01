@@ -1,33 +1,20 @@
 package spontaniius.ui.login
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import spontaniius.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import spontaniius.repository.LoginRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val loginRepository: LoginRepository
-) : ViewModel() {
+class LoginViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
 
-    private val _loginState = MutableLiveData<LoginState>()
-    val loginState: LiveData<LoginState> = _loginState
+    val authResult: LiveData<Boolean> = authRepository.authResult
 
-    fun login(username: String, password: String) {
-        _loginState.value = LoginState.Loading
-        viewModelScope.launch {
-            val result = loginRepository.login(username, password)
-            _loginState.value = result
-        }
+    fun getGoogleSignInIntent(): Intent = authRepository.getGoogleSignInIntent()
+
+    fun handleGoogleSignInResult(data: Intent?) {
+        authRepository.handleGoogleSignInResult(data)
     }
-}
-
-sealed class LoginState {
-    object Loading : LoginState()
-    object Success : LoginState()
-    data class Error(val message: String) : LoginState()
 }

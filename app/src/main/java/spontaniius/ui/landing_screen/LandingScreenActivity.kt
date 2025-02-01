@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.spontaniius.R
-import spontaniius.ui.login.LoginActivity
 import spontaniius.ui.sign_up.SignUpActivity
 
 
@@ -22,8 +21,10 @@ class LandingScreenActivity : AppCompatActivity() {
         emailSignupButton = findViewById(R.id.email_signup)
 
         loginButton.setOnClickListener {
-            val intent2 = Intent(this, LoginActivity::class.java).apply {}
+
+/*            val intent2 = Intent(this, LoginActivity::class.java).apply {}
             startActivity(intent2)
+            #TODO Fix this*/
         }
         emailSignupButton.setOnClickListener {
             val intent3 = Intent(this, SignUpActivity::class.java).apply {}

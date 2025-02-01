@@ -9,7 +9,6 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.AmplifyConfiguration
 import spontaniius.ui.landing_screen.LandingScreenActivity
-import spontaniius.ui.sign_up.SignUpActivity
 
 
 class SplashScreenActivity : AppCompatActivity() {

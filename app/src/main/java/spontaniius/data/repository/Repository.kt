@@ -1,4 +1,6 @@
-package spontaniius.data
+package spontaniius.data.repository
+
+import spontaniius.data.EventEntity
 
 interface Repository {
 

@@ -22,7 +22,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.amplifyframework.AmplifyException
-import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.AmplifyConfiguration
 
 import com.android.volley.Request
@@ -37,13 +36,10 @@ import spontaniius.common.UserViewModel
 import spontaniius.data.EventEntity
 import spontaniius.di.VolleySingleton
 import spontaniius.ui.card_collection.CardCollectionFragment
-import spontaniius.ui.card_editing.CARD_EDIT_NEW
-import spontaniius.ui.card_editing.CardEditingActivity
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
 import spontaniius.ui.event_management.EventManagementFragment
 import spontaniius.ui.find_event.FindEventFragment
-import spontaniius.ui.sign_up.*
 import spontaniius.ui.user_menu.UserOptionsActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -89,22 +85,6 @@ class BottomNavigationActivity : AppCompatActivity(),
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigation.setupWithNavController(navController!!)
 
-        try {
-            Amplify.addPlugin(AWSCognitoAuthPlugin())
-            try {
-                val config = AmplifyConfiguration.builder(applicationContext)
-                    .devMenuEnabled(false)
-                    .build()
-                Amplify.configure(config, applicationContext)
-                Log.i("MyAmplifyApp", "Initialized Amplify")
-            } catch (error: AmplifyException) {
-                Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
-            }
-
-        }catch (error: Exception){
-            Log.e("MyAmplifyApp", error.stackTraceToString())
-        }
-
         // User authentication handling
         userViewModel.userAttributes.observe(this) { attributes ->
             if (attributes == null) {
@@ -142,7 +122,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                             return true
                         }
                         R.id.edit_card -> {
-
+/*
                             var currUserAttributes = getCurrentUserAttributes()
                             val intentUserDetails =
                                 Intent(appContext, CardEditingActivity::class.java).apply {
@@ -157,7 +137,7 @@ class BottomNavigationActivity : AppCompatActivity(),
                                     putExtra(CARD_EDIT_NEW, false)
                                 }
 
-                            startActivity(intentUserDetails)
+                            startActivity(intentUserDetails)*/
                             return true
                         }
                         R.id.about_us -> {

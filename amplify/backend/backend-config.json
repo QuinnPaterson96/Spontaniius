@@ -1,11 +1,11 @@
 {
   "auth": {
     "spontaniius5cf533c3": {
-      "service": "Cognito",
-      "serviceType": "imported",
-      "providerPlugin": "awscloudformation",
+      "customAuth": false,
       "dependsOn": [],
-      "customAuth": false
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "imported"
     }
   },
   "function": {
@@ -23,6 +23,80 @@
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_spontaniius5cf533c3_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "spontaniius5cf533c3"
+        }
+      ]
+    },
+    "AMPLIFY_auth_spontaniius5cf533c3_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "spontaniius5cf533c3"
+        }
+      ]
+    },
+    "AMPLIFY_auth_spontaniius5cf533c3_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "spontaniius5cf533c3"
+        }
+      ]
+    },
+    "AMPLIFY_auth_spontaniius5cf533c3_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "spontaniius5cf533c3"
+        }
+      ]
+    },
+    "AMPLIFY_function_spontaniiusa529dc04CustomMessage_EMAILMESSAGE": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "spontaniiusa529dc04CustomMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_spontaniiusa529dc04CustomMessage_EMAILSUBJECT": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "spontaniiusa529dc04CustomMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_spontaniiusa529dc04CustomMessage_REDIRECTURL": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "spontaniiusa529dc04CustomMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_spontaniiusa529dc04PostConfirmation_GROUP": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "spontaniiusa529dc04PostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_spontaniiusa529dc04PreSignup_DOMAINDENYLIST": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "spontaniiusa529dc04PreSignup"
+        }
+      ]
     }
   }
 }

@@ -51,9 +51,7 @@ class SignUpFragment : Fragment() {
             loading.visibility = View.GONE
             result.fold(
                 onSuccess = { userId ->
-                    val action = SignUpFragmentDirections
-                        .actionSignUpFragmentToSignUpConfirmFragment(username, password)
-
+                    val action = SignUpFragmentDirections.actionSignUpFragmentToSignUpConfirmFragment(username.text.toString(), password.text.toString())
                     findNavController().navigate(action)
                 },
                 onFailure = { error ->
@@ -83,7 +81,7 @@ class SignUpFragment : Fragment() {
         }
 
         loginButton.setOnClickListener {
-            findNavController().navigate(R.id.loginFragment)
+            findNavController().navigate(R.id.phoneLoginFragment)
         }
     }
 

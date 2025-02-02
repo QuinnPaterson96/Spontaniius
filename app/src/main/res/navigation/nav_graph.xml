@@ -35,9 +35,9 @@
 
     <fragment
         android:id="@+id/passwordResetFragment"
-        android:name="spontaniius.ui.password_reset.PasswordResetFragment"
-        android:label="Reset Password"
-       />
+        android:name="spontaniius.ui.password_reset.ResetPasswordFragment"
+        android:label="Reset Password" />
+
     <!-- Event Management -->
     <fragment
         android:id="@+id/eventManagementFragment"
@@ -55,41 +55,43 @@
             android:defaultValue="false"/>
     </fragment>
 
-    <!-- Login Fragment (used when user is NOT authenticated) -->
+    <!-- Login Fragment -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="spontaniius.ui.login.LoginFragment"
         android:label="Login" />
 
     <fragment
+        android:id="@+id/phoneLoginFragment"
+        android:name="spontaniius.ui.phone_login.PhoneLoginFragment"
+        android:label="Phone Login" />
+
+    <!-- Sign Up Confirmation Fragment (Fixing Arguments) -->
+    <fragment
         android:id="@+id/signUpConfirmFragment"
         android:name="spontaniius.ui.sign_up_confirm.SignUpConfirmFragment"
         android:label="Confirm Sign Up">
+
         <argument
             android:name="username"
             app:argType="string"
-            android:defaultValue="0" />
+            android:defaultValue="" />
 
         <argument
             android:name="password"
             app:argType="string"
-            android:defaultValue="false"/>
+            android:defaultValue="" />
     </fragment>
 
+    <!-- Sign Up Fragment (Action Should Be Inside Here) -->
     <fragment
         android:id="@+id/signupFragment"
         android:name="spontaniius.ui.sign_up.SignUpFragment"
         android:label="Sign Up Fragment">
+
         <action
             android:id="@+id/action_signUpFragment_to_signUpConfirmFragment"
-            app:destination="@id/signUpConfirmFragment" >
-            <argument
-                android:name="username"
-                android:defaultValue='""' />
-            <argument
-                android:name="password"
-                android:defaultValue='""' />
-        </action>
+            app:destination="@id/signUpConfirmFragment"/>
     </fragment>
 
 

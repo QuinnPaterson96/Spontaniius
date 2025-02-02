@@ -12,7 +12,8 @@
         android:backgroundTint="@color/google_blue"
         android:textColor="@android:color/white"
         android:padding="10dp"
-        android:gravity="center"/>
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
         android:id="@+id/btn_facebook_signin"
@@ -22,7 +23,7 @@
         app:layout_constraintTop_toBottomOf="@id/btn_google_signin"/>
 
     <Button
-        android:id="@+id/btn_email_login"
+        android:id="@+id/btn_phone_login"
         android:text="Continue with Phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

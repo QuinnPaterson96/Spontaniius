@@ -72,7 +72,7 @@ class PhoneLoginFragment : Fragment() {
 
         // Navigate to SignUpFragment
         signupButton.setOnClickListener {
-        //    findNavController().navigate(R.id.action_phoneLoginFragment_to_signUpFragment)
+            findNavController().navigate(R.id.signupFragment)
         }
 
         // Navigate to ForgotPasswordFragment

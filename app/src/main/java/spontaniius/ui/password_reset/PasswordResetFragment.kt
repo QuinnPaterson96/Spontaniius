@@ -1,7 +1,6 @@
-package com.spontaniius.ui.auth
+package spontaniius.ui.password_reset
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +11,9 @@ import androidx.navigation.fragment.findNavController
 import com.spontaniius.R
 import com.hbb20.CountryCodePicker
 import dagger.hilt.android.AndroidEntryPoint
-import spontaniius.ui.password_reset.ResetPasswordViewModel
 
 @AndroidEntryPoint
 class ResetPasswordFragment : Fragment() {
-
     private val viewModel: ResetPasswordViewModel by viewModels()
 
     private lateinit var instructionTextView: TextView

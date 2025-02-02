@@ -10,9 +10,11 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.spontaniius.R
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
@@ -31,6 +33,11 @@ class LoginFragment : Fragment() {
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
 
+        val phoneSignInButton = view.findViewById<Button>(R.id.btn_phone_login)
+        phoneSignInButton.setOnClickListener {
+            findNavController().navigate(R.id.phoneLoginFragment)
+        }
+
         // Observe login success
         viewModel.authResult.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
@@ -46,7 +53,7 @@ class LoginFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN && resultCode == Activity.RESULT_OK) {
-            viewModel.handleGoogleSignInResult(data)
+            viewModel.handleGoogleSignInResult(data, requireActivity())
         }
     }
 }

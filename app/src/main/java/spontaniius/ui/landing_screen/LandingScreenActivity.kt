@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.spontaniius.R
-import spontaniius.ui.sign_up.SignUpActivity
 
 
 class LandingScreenActivity : AppCompatActivity() {
@@ -27,8 +26,8 @@ class LandingScreenActivity : AppCompatActivity() {
             #TODO Fix this*/
         }
         emailSignupButton.setOnClickListener {
-            val intent3 = Intent(this, SignUpActivity::class.java).apply {}
-            startActivity(intent3)
+            //val intent3 = Intent(this, SignUpActivity::class.java).apply {}
+           // startActivity(intent3)
         }
 
     }

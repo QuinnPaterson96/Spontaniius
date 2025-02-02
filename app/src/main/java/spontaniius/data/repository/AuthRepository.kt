@@ -1,6 +1,7 @@
 package spontaniius.data.repository
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -19,15 +20,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.spontaniius.BuildConfig
 import com.spontaniius.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-@ActivityScoped
-class AuthRepository @Inject constructor(private val activity: Activity) {
+@Singleton
+class AuthRepository @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     private val _authResult = MutableLiveData<Boolean>()
     val authResult: LiveData<Boolean> = _authResult
@@ -46,18 +51,27 @@ class AuthRepository @Inject constructor(private val activity: Activity) {
             .requestIdToken(BuildConfig.GOOGLE_CLIENT_ID)
             .requestEmail()
             .build()
-        GoogleSignIn.getClient(activity, gso)
+        GoogleSignIn.getClient(context, gso)
     }
 
     fun getGoogleSignInIntent(): Intent = googleSignInClient.signInIntent
 
-    fun handleGoogleSignInResult(data: Intent?) {
+    fun handleGoogleSignInResult(data: Intent?, activity: Activity) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         try {
             val account = task.getResult(ApiException::class.java)
             val idToken = account?.idToken
             if (idToken != null) {
-                authenticateWithAWS(idToken)
+                Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity,
+                    { result ->
+                        Log.i("AuthRepository", "Sign in successful: $result")
+                        _authResult.postValue(true)
+                    },
+                    { error ->
+                        Log.e("AuthRepository", "Sign in failed", error)
+                        _authResult.postValue(false)
+                    }
+                )
             } else {
                 _authResult.postValue(false)
             }
@@ -67,18 +81,6 @@ class AuthRepository @Inject constructor(private val activity: Activity) {
         }
     }
 
-    private fun authenticateWithAWS(idToken: String) {
-        Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity,
-            { result ->
-                Log.i("AuthRepository", "Sign in successful: $result")
-                _authResult.postValue(true)
-            },
-            { error ->
-                Log.e("AuthRepository", "Sign in failed", error)
-                _authResult.postValue(false)
-            }
-        )
-    }
 
     fun resetPassword(phoneNumber: String) {
         Amplify.Auth.resetPassword(

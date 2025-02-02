@@ -1,5 +1,6 @@
 package spontaniius.ui.login
 
+import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +15,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
 
     fun getGoogleSignInIntent(): Intent = authRepository.getGoogleSignInIntent()
 
-    fun handleGoogleSignInResult(data: Intent?) {
-        authRepository.handleGoogleSignInResult(data)
+    fun handleGoogleSignInResult(data: Intent?, activity: Activity) {
+        authRepository.handleGoogleSignInResult(data, activity)
     }
 }

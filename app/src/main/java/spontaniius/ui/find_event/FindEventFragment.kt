@@ -17,7 +17,6 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +40,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import com.spontaniius.R
 import spontaniius.di.VolleySingleton
-import spontaniius.ui.BottomNavigationActivity
+import spontaniius.ui.MainActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -238,11 +237,11 @@ class FindEventFragment : Fragment() {
         ) {
 
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
             )
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2
             )
 

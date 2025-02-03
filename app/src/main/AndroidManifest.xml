@@ -55,7 +55,7 @@
 
     <activity android:name="spontaniius.ui.report_user.ReportUserActivity" />
 
-    <activity android:name="spontaniius.ui.BottomNavigationActivity"
+    <activity android:name="spontaniius.ui.MainActivity"
         android:exported="true">
         <intent-filter>
         <action android:name="android.intent.action.MAIN" />

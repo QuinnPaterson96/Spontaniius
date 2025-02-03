@@ -16,7 +16,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="10dp"/>
+        android:layout_marginStart="10dp"
+        app:ccp_defaultNameCode="CA"/>
 
     <EditText
         android:id="@+id/username"

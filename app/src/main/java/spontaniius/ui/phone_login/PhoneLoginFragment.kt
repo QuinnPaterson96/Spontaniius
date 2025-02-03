@@ -46,7 +46,7 @@ class PhoneLoginFragment : Fragment() {
             result.fold(
                 onSuccess = { isSuccess ->
                     if (isSuccess) {
-                        findNavController().navigate(R.id.bottom_navigation)
+                        findNavController().navigate(R.id.findEventFragment)
                     } else {
                         Toast.makeText(requireContext(), "Login incomplete", Toast.LENGTH_SHORT).show()
                     }

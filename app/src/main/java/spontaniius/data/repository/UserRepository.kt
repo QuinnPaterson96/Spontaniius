@@ -1,7 +1,8 @@
-package spontaniius.data.repository // Ensure this matches the actual folder structure
-
+package spontaniius.data.repository
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.exceptions.SignedOutException
 import com.amplifyframework.core.Amplify
@@ -11,68 +12,49 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-
 class UserRepository @Inject constructor() {
-    private var cachedUserDetails: JSONObject? = null
+
+    private val _userDetails = MutableLiveData<JSONObject?>()
+    val userDetails: LiveData<JSONObject?> get() = _userDetails
 
 
     /**
-     * Fetches the current user's attributes if they are authenticated.
-     * Returns a JSONObject containing the user's attributes or null if the user is not logged in.
+     * Fetches the current user's attributes and updates LiveData.
+     * If the user is not logged in, it sets LiveData to null.
      */
-    suspend fun getCurrentUserAttributes(): JSONObject? {
-        if (cachedUserDetails != null) {
-            return cachedUserDetails
-        }
-
-
-        return try {
-            val userAttributes = fetchUserAttributes()
-
-            // Extract user ID manually from attributes
-            val userId = userAttributes.find { it.key.keyString == "sub" }?.value ?: "Unknown"
-
-            val userDetails = JSONObject().apply {
-                put("userid", userId) // Use extracted ID
-
-                userAttributes.forEach { attribute ->
-                    when (attribute.key.keyString) {
-                        "custom:cardid" -> put("cardid", attribute.value)
-                        "phone_number" -> put("phone_number", attribute.value)
-                        "gender" -> put("gender", attribute.value)
-                        "name" -> put("name", attribute.value)
-                    }
+    fun fetchUserAttributes() {
+        Amplify.Auth.fetchUserAttributes(
+            { attributes ->
+                val userDetails = parseUserAttributes(attributes)
+                _userDetails.postValue(userDetails)
+            },
+            { error ->
+                if (error is SignedOutException) {
+                    Log.i("UserRepository", "User is signed out. Clearing user data.")
+                } else {
+                    Log.e("UserRepository", "Error fetching user attributes", error)
                 }
+                _userDetails.postValue(null) // Clear user details on error
             }
-
-            cachedUserDetails = userDetails
-            userDetails
-        }catch (e: SignedOutException){
-            Log.i("UserRepository", "User Not Logged in", e)
-            null
-        }
-        catch (e: Exception) {
-            Log.e("UserRepository", "Error fetching user attributes", e)
-            null
-        }
+        )
     }
 
     /**
-     * Fetches user attributes asynchronously.
-     * Will fail if the user is not signed in.
+     * Parses Amplify user attributes into a structured JSONObject.
      */
-    private suspend fun fetchUserAttributes(): List<AuthUserAttribute> =
-        suspendCancellableCoroutine { continuation ->
-            Amplify.Auth.fetchUserAttributes(
-                { attributes ->
-                    continuation.resume(attributes)
-                },
-                { error ->
-                    Log.e("UserRepository", "Error fetching user attributes", error)
-                    continuation.resumeWithException(error)
+    private fun parseUserAttributes(attributes: List<AuthUserAttribute>): JSONObject {
+        val userId = attributes.find { it.key.keyString == "sub" }?.value ?: "Unknown"
+
+        return JSONObject().apply {
+            put("userid", userId)
+            attributes.forEach { attribute ->
+                when (attribute.key.keyString) {
+                    "custom:cardid" -> put("cardid", attribute.value)
+                    "phone_number" -> put("phone_number", attribute.value)
+                    "gender" -> put("gender", attribute.value)
+                    "name" -> put("name", attribute.value)
                 }
-            )
+            }
         }
-
+    }
 }
-

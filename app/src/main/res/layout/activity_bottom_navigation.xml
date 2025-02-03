@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="spontaniius.ui.BottomNavigationActivity">
+    tools:context="spontaniius.ui.MainActivity">
 
     <!-- Navigation Host for Fragments -->
     <androidx.fragment.app.FragmentContainerView

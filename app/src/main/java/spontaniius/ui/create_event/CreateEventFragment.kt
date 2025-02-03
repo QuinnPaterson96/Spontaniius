@@ -30,7 +30,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import com.spontaniius.R
 import spontaniius.di.VolleySingleton
-import spontaniius.ui.BottomNavigationActivity
+import spontaniius.ui.MainActivity
 import java.util.*
 
 
@@ -280,11 +280,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         ) {
 
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
             )
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2
             )
 

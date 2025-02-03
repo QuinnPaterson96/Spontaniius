@@ -46,7 +46,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_marginLeft="10dp"
+                    app:ccp_defaultNameCode="CA"/>
 
                 <EditText
                     android:id="@+id/phoneNumber"

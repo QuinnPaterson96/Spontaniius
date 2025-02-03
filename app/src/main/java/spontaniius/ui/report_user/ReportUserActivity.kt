@@ -6,15 +6,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.amplifyframework.core.Amplify
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import org.json.JSONObject
 import com.spontaniius.R
 import spontaniius.di.VolleySingleton
-import spontaniius.ui.BottomNavigationActivity
-import spontaniius.ui.card_collection.*
-import java.util.*
+import spontaniius.ui.MainActivity
 
 const val CARD_ID = "spontaniius.ui.sign_up.MESSAGE4"
 
@@ -43,7 +40,7 @@ class ReportUserActivity : AppCompatActivity() {
                     Toast.makeText(this, "Thank you for submitting your report, we will get to it soon, your report id is: "
                             +JSONResponse.get("reportid"), Toast.LENGTH_SHORT).show()
 
-                    val userReported = Intent(this, BottomNavigationActivity::class.java).apply {
+                    val userReported = Intent(this, MainActivity::class.java).apply {
 
                     }
                     startActivity(userReported)

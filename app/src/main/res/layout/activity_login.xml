@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:layout_marginStart="10dp"
+            app:ccp_defaultNameCode="US"
             />
         <EditText
             android:id="@+id/username"

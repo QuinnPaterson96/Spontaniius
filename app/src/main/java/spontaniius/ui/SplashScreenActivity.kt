@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.amplifyframework.AmplifyException
-import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
-import com.amplifyframework.core.AmplifyConfiguration
 import spontaniius.ui.landing_screen.LandingScreenActivity
 
 
@@ -18,7 +15,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         Amplify.Auth.fetchAuthSession(
             { result ->
-                val intent2 = Intent(this, BottomNavigationActivity::class.java).apply {
+                val intent2 = Intent(this, MainActivity::class.java).apply {
                     finish()
                 }
 

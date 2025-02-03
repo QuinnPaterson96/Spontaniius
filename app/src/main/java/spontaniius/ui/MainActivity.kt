@@ -16,13 +16,10 @@ import androidx.appcompat.app.ActionBar
 
 import com.amplifyframework.core.Amplify
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.amplifyframework.AmplifyException
-import com.amplifyframework.core.AmplifyConfiguration
+import com.amplifyframework.auth.options.AuthSignOutOptions
 
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -32,6 +29,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.json.JSONObject
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
+import spontaniius.common.AuthViewModel
 import spontaniius.common.UserViewModel
 import spontaniius.data.EventEntity
 import spontaniius.di.VolleySingleton
@@ -44,26 +42,18 @@ import spontaniius.ui.user_menu.UserOptionsActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.logging.Logger
 
 
 @AndroidEntryPoint
-class BottomNavigationActivity : AppCompatActivity(),
+class MainActivity : AppCompatActivity(),
     CreateEventFragment.OnCreateEventFragmentInteractionListener,
     EventManagementFragment.OnEventManagementFragmentInteractionListener,
     FindEventFragment.OnFindEventFragmentInteractionListener,
     CardCollectionFragment.OnCardCollectionFragmentInteractionListener,
     MapsFragment.MapsInteractionListener {
     private val userViewModel: UserViewModel by viewModels()
-
-    private val mapsFragmentTag = "MAPS TAG"
+    private val authViewModel: AuthViewModel by viewModels()
     private var latLng: LatLng? = null
-    lateinit var bottomNavigation: BottomNavigationView
-    lateinit var currentFragment: Fragment
-    lateinit var previousFragment: Fragment
-    lateinit var createEventFragment: CreateEventFragment
-    lateinit var eventManagementFragment: EventManagementFragment
-    lateinit var findEventFragment: FindEventFragment
     lateinit var optionsMenu: ImageView
     lateinit var actionBarView:View
     lateinit var appContext: Context
@@ -87,14 +77,20 @@ class BottomNavigationActivity : AppCompatActivity(),
 
         // User authentication handling
         userViewModel.userAttributes.observe(this) { attributes ->
-            if (attributes == null) {
-                navController!!.navigate(R.id.loginFragment)
+            userDetails = attributes
+        }
+
+        authViewModel.isUserSignedIn.observe(this) { signedIn ->
+            if (signedIn == true) {
+                navController!!.navigate(R.id.findEventFragment)
             } else {
-                userDetails = attributes
+                navController!!.navigate(R.id.loginFragment)
+                userViewModel.refreshUserAttributes()
             }
         }
 
-        userViewModel.fetchUserAttributes()
+        authViewModel.checkAuthState()
+
 
 
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
@@ -153,28 +149,10 @@ class BottomNavigationActivity : AppCompatActivity(),
                             startActivity(openURL)
                             return true
                         }
-/*                        R.id.sign_out -> {
-                            Amplify.Auth.signOut(
-                                AuthSignOutOptions.builder().globalSignOut(true).build(),
-                                {
-                                    Log.i(
-                                        "AuthQuickstart",
-                                        "Signed out globally"
-                                    )
-                                }
-                            ) { error: com.amplifyframework.auth.AuthException ->
-                                Log.e(
-                                    "AuthQuickstart",
-                                    error.toString()
-                                )
-                            }
-                            val intentSignout =
-                                Intent(appContext, SignUpActivity::class.java).apply {
-
-                                }
-                            startActivity(intentSignout)
+                        R.id.sign_out -> {
+                            authViewModel.signOut()
                             return true
-                        }*/
+                        }
                         else -> false
                     }
                 }

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import spontaniius.R
+import com.spontaniius.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -43,7 +43,7 @@ class MapsFragment : Fragment() {
 
     private fun createConfirmButton() {
         val c = context
-        confirmButton = FloatingActionButton(c)
+        confirmButton = FloatingActionButton(c!!)
         confirmButton.maxWidth = 10
         confirmButton.maxHeight = 10
         confirmButton.setImageResource(R.drawable.ic_baseline_check_24)

@@ -8,11 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import spontaniius.MainActivity
-import spontaniius.PromotionDetailPage
-import spontaniius.PromotionEntry
-import spontaniius.R
-import kotlinx.android.synthetic.main.activity_main.*
+import com.spontaniius.R
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

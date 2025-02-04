@@ -12,12 +12,14 @@ import android.widget.*
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.amplifyframework.auth.AuthUserAttribute
-import com.amplifyframework.core.Amplify
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.firebase.ui.database.FirebaseListAdapter
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -25,15 +27,12 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
-import java.lang.Exception
-import java.lang.System.console
+import com.spontaniius.R
+import spontaniius.di.VolleySingleton
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZonedDateTime
@@ -43,8 +42,8 @@ import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "eventid"
-private const val ARG_PARAM2 = "role"
+private const val ARG_PARAM1 = "event_id"
+private const val ARG_PARAM2 = "is_event_owner"
 
 
 /**
@@ -58,11 +57,11 @@ class EventManagementFragment : Fragment() {
 
 
 
-    lateinit var myRef: DatabaseReference
+    lateinit var messagesRef: DatabaseReference
 
 
-    lateinit var listOfMessages: ListView
-    private var adapter: FirebaseListAdapter<ChatMessage>? = null
+    lateinit var listOfMessages: RecyclerView
+    private var chatAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder>? = null
 
     lateinit var fab: FloatingActionButton
     lateinit var input: EditText
@@ -151,10 +150,10 @@ class EventManagementFragment : Fragment() {
         var args = arguments
         var eventID = args!!.getString(ARG_PARAM1, "0")
         manager = args!!.getBoolean(ARG_PARAM2, false)
-        myRef = FirebaseDatabase.getInstance().getReference(eventID)
+        messagesRef = FirebaseDatabase.getInstance().getReference(eventID)
 
-        listOfMessages = fragmentView?.findViewById<View>(R.id.list_of_messages) as ListView
-        fab = fragmentView?.findViewById<View>(R.id.fab) as FloatingActionButton
+        listOfMessages = fragmentView?.findViewById<View>(R.id.list_of_messages) as RecyclerView
+        fab = fragmentView.findViewById<View>(R.id.fab) as FloatingActionButton
         fab.setOnClickListener {
             sendMessage()
         }
@@ -189,13 +188,13 @@ class EventManagementFragment : Fragment() {
         }
 
         // Both joinees and mangers go through here to initialize some details
-        detailsToggleButton = fragmentView?.findViewById<View>(R.id.detailsButton) as Button
+        detailsToggleButton = fragmentView.findViewById<View>(R.id.detailsButton) as Button
         detailsToggleButton.setOnClickListener{
             chatDetailsToggle()
         }
-        input = fragmentView?.findViewById<View>(R.id.input) as EditText
-        chatRoomView = fragmentView?.findViewById(R.id.chatroomView) as Group
-        detailsView = fragmentView?.findViewById(R.id.detailsView) as LinearLayout
+        input = fragmentView.findViewById<View>(R.id.input) as EditText
+        chatRoomView = fragmentView.findViewById<Group>(R.id.chatroomView)!!
+        detailsView = fragmentView.findViewById<LinearLayout>(R.id.detailsView)!!
 
 
 
@@ -212,17 +211,17 @@ class EventManagementFragment : Fragment() {
 
         }
         mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
-        mapFragment?.getMapAsync(callback)
+        mapFragment.getMapAsync(callback)
         // Load chat room contents
 
         displayChatMessages();
 
 
-        chatroomToggleButton = fragmentView?.findViewById<View>(R.id.chatroomToggle) as Button
+        chatroomToggleButton = fragmentView.findViewById<View>(R.id.chatroomToggle) as Button
         chatroomToggleButton.setOnClickListener{
             chatDetailsToggle()
         }
-        joinFromDetailsButon = fragmentView?.findViewById<View>(R.id.chatroomAndJoin) as Button
+        joinFromDetailsButon = fragmentView.findViewById<View>(R.id.chatroomAndJoin) as Button
         if(manager){
             joinFromDetailsButon.visibility= GONE
         }
@@ -234,7 +233,7 @@ class EventManagementFragment : Fragment() {
         // makes it so you have your own card already collected.
 
         var ownCardJsonArray = JSONArray()
-        ownCardJsonArray.put(0, listenerManageEvent!!.getCurrentUserAttributes().get("cardid"))
+        ownCardJsonArray.put(0, listenerManageEvent!!.getCurrentUserAttributes()!!.get("cardid"))
         eventMemberCards = ownCardJsonArray
         return fragmentView
     }
@@ -267,35 +266,28 @@ class EventManagementFragment : Fragment() {
 
     private fun displayChatMessages() {
 
-        adapter = object : FirebaseListAdapter<ChatMessage>(
-            activity, ChatMessage::class.java,
-            R.layout.message, myRef
-        ) {
-            override fun populateView(v: View, model: ChatMessage, position: Int) {
-                // Get references to the views of message.xml
-                val messageText = v.findViewById<View>(R.id.message_text) as TextView
+        val query = messagesRef.orderByChild("messageTime")
 
+        // FirebaseRecyclerOptions (Needed for FirebaseRecyclerAdapter)
+        val options = FirebaseRecyclerOptions.Builder<ChatMessage>()
+            .setQuery(query, ChatMessage::class.java)
+            .build()
 
-                val messageUser = v.findViewById<View>(R.id.message_user) as TextView
-                val messageTime = v.findViewById<View>(R.id.message_time) as TextView
+        // Initialize FirebaseRecyclerAdapter
+        chatAdapter = object : FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.message, parent, false)
+                return ChatViewHolder(view)
+            }
 
-                // Set their text
-                messageText.text = model.messageText
-
-                // A few select phrases that accompany app actions trigger a refreshing of data.
-                if(model.messageText.toString().contains("Hey, I'm coming to join in")||model.messageText.toString().contains("Hope everyone had a good time, this event has ended")){
-                    eventUpdate()
-                }
-                messageUser.text = model.messageUser
-
-                // Format the date before showing it
-                messageTime.setText(
-                    convertLongToTime(model.messageTime)
-                )
-
+            override fun onBindViewHolder(holder: ChatViewHolder, position: Int, model: ChatMessage) {
+                holder.bind(model)
             }
         }
-        listOfMessages.adapter = adapter;
+
+        // Set adapter
+        listOfMessages.adapter = chatAdapter
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -328,7 +320,7 @@ class EventManagementFragment : Fragment() {
         var eventID = requireArguments().getString(ARG_PARAM1)
         cardExchangeDetails.put("eventid", eventID)
         cardExchangeDetails.put("cardid", aboutUser?.getString("cardid"))
-        cardExchangeDetails.put("userid", Amplify.Auth.currentUser.userId)
+        cardExchangeDetails.put("userid", aboutUser?.getString("userid"))
         cardExchangeDetails.put("meetingdate", currDate)
 
         val url = "https://1outrf3pp4.execute-api.us-west-2.amazonaws.com/default/joinEvent"
@@ -369,7 +361,7 @@ class EventManagementFragment : Fragment() {
 
         // Read the input field and push a new instance
         // of ChatMessage to the Firebase database
-        myRef
+        messagesRef
             .push()
             .setValue(
                 ChatMessage(
@@ -456,14 +448,16 @@ class EventManagementFragment : Fragment() {
             location = LatLng(latlong.getDouble("x"), latlong.getDouble("y"))
         }
 
-        googleMap?.addMarker(
-            location?.let {
-                MarkerOptions()
-                    .position(it)
-                    .title(eventTitle.text.toString())
-            }
-            // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
-        )
+        location.let {
+            MarkerOptions()
+                .position(it)
+                .title(eventTitle.text.toString())
+        }.let {
+            googleMap?.addMarker(
+                it
+                // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
+            )
+        }
 
         if (::mapFragment.isInitialized) {
 
@@ -534,22 +528,24 @@ class EventManagementFragment : Fragment() {
                     val format = SimpleDateFormat("yyyy.MM.dd")
                     var currDate = format.format(Calendar.getInstance().time)
                     var cardUpdateDetails = JSONObject()
-                    cardUpdateDetails.put("userid", Amplify.Auth.currentUser.userId)
+                    var aboutUser = listenerManageEvent?.getCurrentUserAttributes()
+
+                    cardUpdateDetails.put("userid", aboutUser?.getString("userid"))
                     cardUpdateDetails.put("cardids", newCards)
                     cardUpdateDetails.put("meetingdate", currDate)
 
 
-                    var url = "https://0cfxpfaiy7.execute-api.us-west-2.amazonaws.com/default/addCardsToCollection"
+                    val url = "https://0cfxpfaiy7.execute-api.us-west-2.amazonaws.com/default/addCardsToCollection"
                     val updateCardCollectionRequest = JsonObjectRequest(
                         Request.Method.POST, url, cardUpdateDetails,
-                        { response ->
+                        { _ ->
                             alertCardReceived()
                         },
                         { error ->
                             error.printStackTrace()
                         })
 
-                    val queue = this?.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
+                    val queue = this.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
                     queue?.add(updateCardCollectionRequest)
                 }
                 // We keep track of what cards are available when you join the event
@@ -566,10 +562,38 @@ class EventManagementFragment : Fragment() {
     }
 
     fun alertCardReceived(){
-        listenerManageEvent?.updateCardCollectionFragment()
-        Toast.makeText(this.context, "You've received a new card", Toast.LENGTH_LONG).show()
+        //#TODO Update In future
 
     }
+
+    // ViewHolder Class
+    class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val messageText: TextView = itemView.findViewById(R.id.message_text)
+        private val messageUser: TextView = itemView.findViewById(R.id.message_user)
+        private val messageTime: TextView = itemView.findViewById(R.id.message_time)
+
+        fun bind(chatMessage: ChatMessage) {
+            messageText.text = chatMessage.messageText
+            messageUser.text = chatMessage.messageUser
+            messageTime.text = convertLongToTime(chatMessage.messageTime)
+
+            // If specific messages trigger an update
+            if (chatMessage.messageText!!.contains("Hey, I'm coming to join in") ||
+                chatMessage.messageText!!.contains("Hope everyone had a good time, this event has ended")
+            ) {
+             // #TODO Fix this later   eventUpdate()
+            }
+
+        }
+
+        // Function to convert timestamp to readable format
+        private fun convertLongToTime(time: Long): String {
+            val date = Date(time)
+            val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            return format.format(date)
+        }
+    }
+
 
 
     interface OnEventManagementFragmentInteractionListener {
@@ -578,8 +602,11 @@ class EventManagementFragment : Fragment() {
         fun exitEvent()
         fun getEventID():Int
         fun whatIsCurrentEvent():JSONObject
-        fun getCurrentUserAttributes():JSONObject
-        fun refreshEventDetails():JSONObject
-        fun updateCardCollectionFragment()
+        fun getCurrentUserAttributes(): JSONObject?
     }
+
+
 }
+
+
+

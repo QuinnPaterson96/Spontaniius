@@ -9,8 +9,7 @@ import android.widget.AdapterView
 import android.widget.ImageButton
 
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import spontaniius.R
+import com.spontaniius.R
 import spontaniius.ui.create_event.CreateEventFragment
 
 class PromotionTabFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -32,19 +31,10 @@ class PromotionTabFragment : Fragment(), AdapterView.OnItemSelectedListener {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_promotions, container, false)
-        val viewLayout = inflater.inflate(R.layout.fragment_promotions, container, false)
-        PromoIconView = viewLayout.findViewById(R.id.event_icon)
-        /*val iconSelectButton = viewLayout.findViewById<ImageButton>(R.id.event_icon)
-        iconSelectButton.setOnClickListener {
-//            TODO: Select some icons from a set of chosen ones here
-//            TODO: Go through icons with quinn and select a few good ones to use
-        }*/
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(PromotionTabViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {

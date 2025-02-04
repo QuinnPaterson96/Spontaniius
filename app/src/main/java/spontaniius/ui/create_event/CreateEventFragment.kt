@@ -12,7 +12,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
@@ -29,9 +28,9 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import org.json.JSONArray
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
-import spontaniius.ui.BottomNavigationActivity
+import com.spontaniius.R
+import spontaniius.di.VolleySingleton
+import spontaniius.ui.MainActivity
 import java.util.*
 
 
@@ -281,11 +280,11 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
         ) {
 
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
             )
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2
             )
 
@@ -301,7 +300,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 )
 
                 listenerCreateEvent?.googleLocationSelect(currLatLng)
-                val etPlace = autocompleteFragment.view?.findViewById(R.id.places_autocomplete_search_input) as EditText
+                val etPlace = autocompleteFragment.view?.findViewById(R.id.autocomplete_fragment) as EditText
                 etPlace.hint = currLatLng.toString()
             }
             }
@@ -532,7 +531,7 @@ class CreateEventFragment : Fragment(), AdapterView.OnItemSelectedListener {
             cardId: Int,
             loadingProgress:ProgressBar
         )
-        fun getCurrentUserAttributes():JSONObject
+        fun getCurrentUserAttributes(): JSONObject?
     }
 
     companion object {

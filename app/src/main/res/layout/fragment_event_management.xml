@@ -60,7 +60,7 @@
         tools:visibility="gone"
         android:contentDescription="This button sends your message"/>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_of_messages"
         android:layout_width="wrap_content"
         android:layout_height="442dp"

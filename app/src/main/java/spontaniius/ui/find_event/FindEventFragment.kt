@@ -13,12 +13,11 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -39,9 +38,9 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import org.json.JSONArray
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
-import spontaniius.ui.BottomNavigationActivity
+import com.spontaniius.R
+import spontaniius.di.VolleySingleton
+import spontaniius.ui.MainActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -49,6 +48,7 @@ import kotlin.collections.ArrayList
 
 
 class FindEventFragment : Fragment() {
+    private val findEventViewModel: FindEventViewModel by viewModels()
     private var listenerFindEvent: FindEventFragment.OnFindEventFragmentInteractionListener? = null
 
 
@@ -218,7 +218,6 @@ class FindEventFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(FindEventViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
@@ -238,11 +237,11 @@ class FindEventFragment : Fragment() {
         ) {
 
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
             )
             ActivityCompat.requestPermissions(
-                (activity as BottomNavigationActivity),
+                (activity as MainActivity),
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 2
             )
 
@@ -516,7 +515,7 @@ class FindEventFragment : Fragment() {
     interface OnFindEventFragmentInteractionListener {
         fun openEventChatroom(eventid: String, event: JSONObject)
         fun switchToCreate()
-        fun getCurrentUserAttributes():JSONObject
+        fun getCurrentUserAttributes(): JSONObject?
     }
 
     /*

@@ -6,21 +6,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.amplifyframework.core.Amplify
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
-import org.json.JSONArray
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
-import spontaniius.ui.BottomNavigationActivity
-import spontaniius.ui.card_collection.*
-import spontaniius.ui.sign_up.USER_NAME
-import java.text.SimpleDateFormat
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import com.spontaniius.R
+import spontaniius.di.VolleySingleton
+import spontaniius.ui.MainActivity
 
 const val CARD_ID = "spontaniius.ui.sign_up.MESSAGE4"
 
@@ -37,7 +28,7 @@ class ReportUserActivity : AppCompatActivity() {
             val cardExchangeDetails = JSONObject()
 
             cardExchangeDetails.put("cardid", intent.getStringExtra(CARD_ID))
-            cardExchangeDetails.put("userid", Amplify.Auth.currentUser.userId)
+            cardExchangeDetails.put("userid", "bob") //#TODO fix user reporting, turn this into a fragment
             cardExchangeDetails.put("report", reportText)
 
 
@@ -49,7 +40,7 @@ class ReportUserActivity : AppCompatActivity() {
                     Toast.makeText(this, "Thank you for submitting your report, we will get to it soon, your report id is: "
                             +JSONResponse.get("reportid"), Toast.LENGTH_SHORT).show()
 
-                    val userReported = Intent(this, BottomNavigationActivity::class.java).apply {
+                    val userReported = Intent(this, MainActivity::class.java).apply {
 
                     }
                     startActivity(userReported)

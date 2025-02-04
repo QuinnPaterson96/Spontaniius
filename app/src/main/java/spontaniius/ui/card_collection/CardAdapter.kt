@@ -1,6 +1,6 @@
 package spontaniius.ui.card_collection
 
-import spontaniius.R
+import com.spontaniius.R
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -35,7 +35,7 @@ class CardAdapter(books: List<UserCard>) :
         val userCard: UserCard = userCards.get(position)
         val inflater = parent?.context?.
         getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(spontaniius.R.layout.user_card, null)
+        val view = inflater.inflate(R.layout.user_card, null)
 
         // Get the custom view widgets reference
         val userName = view.findViewById<TextView>(R.id.textview_user_name)

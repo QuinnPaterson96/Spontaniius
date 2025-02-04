@@ -1,32 +1,36 @@
 package spontaniius
 
 import android.app.Application
-import spontaniius.DaggerApplicationComponent
-import spontaniius.dependency_injection.ContextModule
-import spontaniius.dependency_injection.CreateEventComponent
-import spontaniius.dependency_injection.EventDaoModule
-import dagger.Component
-import javax.inject.Singleton
+import android.util.Log
+import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.AmplifyConfiguration
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class SpontaniiusApplication : Application(){
+    override fun onCreate() {
+        super.onCreate()
+        try {
+            Amplify.addPlugin(AWSCognitoAuthPlugin())
+            try {
+                val config = AmplifyConfiguration.builder(applicationContext)
+                    .devMenuEnabled(false)
+                    .build()
+                Amplify.configure(config, applicationContext)
 
 
-@Singleton
-@Component(
-    modules = [ContextModule::class,
-        EventDaoModule::class]
-)
-interface ApplicationComponent {
 
-    fun createEventComponent(): CreateEventComponent.Factory
+                Log.i("MyAmplifyApp", "Initialized Amplify")
+            } catch (error: AmplifyException) {
+                Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
+            }
 
-
-    @Component.Builder
-    interface Builder {
-        fun build(): ApplicationComponent
-        fun contextModule(contextModule: ContextModule): Builder
+        }catch (error: Exception){
+            Log.e("MyAmplifyApp", error.stackTraceToString())
+        }
     }
 }
 
-open class SpontaniiusApplication : Application() {
 
-//    open val applicationComponent: spontaniius.ApplicationComponent = DaggerApplicationComponent.builder().build()
-}

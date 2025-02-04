@@ -1,80 +1,92 @@
 package spontaniius.ui.sign_up
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
 import androidx.fragment.app.Fragment
-import spontaniius.R
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import com.spontaniius.R
+import com.spontaniius.databinding.FragmentSignUpBinding
+import com.hbb20.CountryCodePicker
 
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [SignUpFragment.OnSignUpFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [SignUpFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class SignUpFragment : Fragment() {
-    private var listenerSignUp: OnSignUpFragmentInteractionListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
-    }
+    private var _binding: FragmentSignUpBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: SignUpViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_up, container, false)
+    ): View {
+        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnSignUpFragmentInteractionListener) {
-            listenerSignUp = context
-        } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener") as Throwable
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val username = binding.userName
+        val phone = binding.phoneNumber
+        val password = binding.password
+        val genderSpinner = binding.gender
+        val signUpButton = binding.doneButton
+        val loginButton = binding.loginButton
+        val loading = binding.loading
+        val ccp = binding.ccp
+        val errorText = binding.errorText
+
+        // Gender dropdown
+        val genderOptions = arrayOf("Male", "Female", "Other")
+        genderSpinner.adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, genderOptions)
+
+        viewModel.signUpState.observe(viewLifecycleOwner) { result ->
+            loading.visibility = View.GONE
+            result.fold(
+                onSuccess = { userId ->
+                    val action = SignUpFragmentDirections.actionSignUpFragmentToSignUpConfirmFragment(userId, password.text.toString())
+                    findNavController().navigate(action)
+                },
+                onFailure = { error ->
+                    errorText.text = when {
+                        error.message?.contains("password", ignoreCase = true) == true ->
+                            "Your password must be 6 characters long, with at least one capital letter and one number."
+                        error.message?.contains("phone", ignoreCase = true) == true ->
+                            "Phone number isn't valid."
+                        else -> "Sign up failed. Please try again."
+                    }
+                }
+            )
+        }
+
+        signUpButton.setOnClickListener {
+            val nameText = username.text.toString()
+            val phoneText = phone.text.toString()
+            val passwordText = password.text.toString()
+            val gender = genderSpinner.selectedItem.toString()
+
+            if (nameText.isNotEmpty() && phoneText.isNotEmpty() && passwordText.isNotEmpty()) {
+                loading.visibility = View.VISIBLE
+                viewModel.signUp(nameText, gender, ccp.selectedCountryCodeWithPlus + phoneText, passwordText)
+            } else {
+                Toast.makeText(requireContext(), "Please fill out all fields", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        loginButton.setOnClickListener {
+            findNavController().navigate(R.id.phoneLoginFragment)
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listenerSignUp = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnSignUpFragmentInteractionListener {
-        // TODO: Update argument type and name
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment SignUpFragment.
-         */
-        @JvmStatic
-        fun newInstance() =
-            SignUpFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

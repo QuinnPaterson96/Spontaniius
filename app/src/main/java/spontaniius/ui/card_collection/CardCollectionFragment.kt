@@ -3,7 +3,6 @@ package spontaniius.ui.card_collection
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -12,19 +11,16 @@ import android.widget.*
 import android.widget.AdapterView.GONE
 import android.widget.AdapterView.OnItemClickListener
 import androidx.fragment.app.Fragment
-import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import org.json.JSONArray
 import org.json.JSONObject
-import spontaniius.R
-import spontaniius.dependency_injection.VolleySingleton
-import spontaniius.ui.event_management.EventManagementFragment
+import com.spontaniius.R
+import spontaniius.di.VolleySingleton
 import spontaniius.ui.report_user.CARD_ID
 import spontaniius.ui.report_user.ReportUserActivity
 import spontaniius.ui.sign_up.*
-import spontaniius.ui.user_menu.UserOptionsActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -119,7 +115,7 @@ class CardCollectionFragment : Fragment() {
 
 
         val url =
-            "https://17tbc8bm31.execute-api.us-west-2.amazonaws.com/default/GetCardCollectionDetails?userid=${Amplify.Auth.currentUser.userId}";
+            "https://17tbc8bm31.execute-api.us-west-2.amazonaws.com/default/GetCardCollectionDetails?userid=${1}"; //#TODO make is so this is populated by user id
         val getEventsRequest = StringRequest(Request.Method.GET, url,
             { response ->
 
@@ -286,6 +282,6 @@ class CardCollectionFragment : Fragment() {
     }
 
     interface OnCardCollectionFragmentInteractionListener {
-        fun getCurrentUserAttributes():JSONObject
+        fun getCurrentUserAttributes(): JSONObject?
     }
 }

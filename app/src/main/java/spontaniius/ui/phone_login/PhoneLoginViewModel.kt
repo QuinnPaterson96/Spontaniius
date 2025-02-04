@@ -14,13 +14,15 @@ class PhoneLoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _loginState = MutableLiveData<Result<Boolean>>()
-    val loginState: LiveData<Result<Boolean>> = _loginState
+    private val _loginError = MutableLiveData<Throwable?>()
+    val loginError: LiveData<Throwable?> = _loginError
 
     fun login(phoneNumber: String, password: String) {
         viewModelScope.launch {
             val result: Result<Boolean> = authRepository.signIn(phoneNumber, password)
-            _loginState.value = result // ✅ Now correctly returns Boolean
+            result.exceptionOrNull()?.let { error ->
+                _loginError.postValue(error) // ✅ Emit only error
+            }
         }
     }
 }

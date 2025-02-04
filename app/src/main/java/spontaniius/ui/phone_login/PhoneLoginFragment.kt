@@ -13,6 +13,7 @@ import com.spontaniius.R
 import com.spontaniius.databinding.FragmentPhoneLoginBinding
 import spontaniius.ui.login.PhoneLoginViewModel
 
+
 @AndroidEntryPoint
 class PhoneLoginFragment : Fragment() {
 
@@ -40,33 +41,44 @@ class PhoneLoginFragment : Fragment() {
         val forgotPasswordButton = binding.forgotPasswordButton
         val ccp = binding.ccp
 
-        // Observe login state and handle UI updates
-        viewModel.loginState.observe(viewLifecycleOwner) { result ->
+        val phoneErrorText = binding.phoneError
+        val passwordErrorText = binding.passwordError
+
+        // ✅ Observe only login errors
+        viewModel.loginError.observe(viewLifecycleOwner) { error ->
             loading.visibility = View.GONE
-            result.fold(
-                onSuccess = { isSuccess ->
-                    if (isSuccess) {
-                        findNavController().navigate(R.id.findEventFragment)
-                    } else {
-                        Toast.makeText(requireContext(), "Login incomplete", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                onFailure = { error ->
-                    Toast.makeText(requireContext(), "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
-                }
-            )
+            if (error != null) {
+                passwordErrorText.text = "Login failed: ${error.message}"
+                passwordErrorText.visibility = View.VISIBLE
+            }
         }
 
         // Login button click listener
         loginButton.setOnClickListener {
-            val phoneNumber = ccp.selectedCountryCodeWithPlus + username.text.toString()
-            val passwordText = password.text.toString()
+            val phoneNumber = ccp.selectedCountryCodeWithPlus + username.text.toString().trim()
+            val passwordText = password.text.toString().trim()
 
-            if (phoneNumber.isNotEmpty() && passwordText.isNotEmpty()) {
+            // Reset previous errors
+            phoneErrorText.visibility = View.GONE
+            passwordErrorText.visibility = View.GONE
+
+            var isValid = true
+
+            if (phoneNumber.isEmpty() || phoneNumber.length < 10) {
+                phoneErrorText.text = "Invalid phone number"
+                phoneErrorText.visibility = View.VISIBLE
+                isValid = false
+            }
+
+            if (passwordText.length < 6) {
+                passwordErrorText.text = "Password must be at least 6 characters"
+                passwordErrorText.visibility = View.VISIBLE
+                isValid = false
+            }
+
+            if (isValid) {
                 loading.visibility = View.VISIBLE
                 viewModel.login(phoneNumber, passwordText)
-            } else {
-                Toast.makeText(requireContext(), "Enter phone and password", Toast.LENGTH_SHORT).show()
             }
         }
 

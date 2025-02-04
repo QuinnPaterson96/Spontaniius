@@ -19,6 +19,9 @@ class SpontaniiusApplication : Application(){
                     .devMenuEnabled(false)
                     .build()
                 Amplify.configure(config, applicationContext)
+
+
+
                 Log.i("MyAmplifyApp", "Initialized Amplify")
             } catch (error: AmplifyException) {
                 Log.e("MyAmplifyApp", "Could not initialize Amplify", error)

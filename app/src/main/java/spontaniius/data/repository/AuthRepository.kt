@@ -39,9 +39,6 @@ class AuthRepository @Inject constructor(
     private val _isUserSignedIn = MutableLiveData<Boolean>()
     val isUserSignedIn: LiveData<Boolean> = _isUserSignedIn
 
-    private val _authResult = MutableLiveData<Boolean>()
-    val authResult: LiveData<Boolean> = _authResult
-
     private val _resetPasswordResult = MutableLiveData<Boolean>()
     val resetPasswordResult: LiveData<Boolean> = _resetPasswordResult
 
@@ -131,11 +128,12 @@ class AuthRepository @Inject constructor(
                 password,
                 {
                     Log.i("AuthRepository", "Sign in successful")
-                    continuation.resume(Result.success(true)) // ✅ Return Boolean
+                    _isUserSignedIn.postValue(true)
+                    continuation.resume(Result.success(true)) // ✅ Success (already handled in MainActivity)
                 },
                 { error ->
                     Log.e("AuthRepository", "Sign in failed", error)
-                    continuation.resume(Result.failure(error))
+                    continuation.resume(Result.failure(error)) // ✅ Only error is sent back
                 }
             )
         }
@@ -197,6 +195,7 @@ class AuthRepository @Inject constructor(
                     val signInResult = signIn(username, password)
                     if (signInResult.isSuccess) {
                         Log.i("AuthRepository", "User confirmed and signed in successfully")
+                        _isUserSignedIn.postValue(true)
                         Result.success(true)
                     } else {
                         Result.failure(Exception("Sign-in after confirmation failed"))

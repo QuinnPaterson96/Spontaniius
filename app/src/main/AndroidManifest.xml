@@ -37,10 +37,6 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
 
-    <activity
-        android:name="spontaniius.ui.sign_up.SignUpConfirmActivity"
-        android:label="@string/title_activity_confirm_signup"
-        android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
         android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"
@@ -49,9 +45,10 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="myapp" />
+            <data android:scheme="com.spontaniius" />
         </intent-filter>
     </activity>
+
 
     <activity android:name="spontaniius.ui.report_user.ReportUserActivity" />
 
@@ -77,13 +74,6 @@
         android:value="@string/google_maps_key" />
 
 
-    <activity android:name="spontaniius.ui.card_editing.CardEditingActivity" />
-    <activity android:name="spontaniius.ui.sign_up.SignUpActivity2" />
-
-
-    <activity android:name="spontaniius.ui.sign_up.SignUpActivity" />
-
-
     <activity
         android:name="spontaniius.ui.SplashScreenActivity"
         android:exported="true"
@@ -92,7 +82,6 @@
 
     <activity android:name="spontaniius.ui.promotions.PromotionTab" />
     <activity android:name="spontaniius.ui.landing_screen.LandingScreenActivity" />
-    <activity android:name="spontaniius.ui.phone_login.ResetPasswordActivity" />
 
 
     <!-- Any inner elements would go here. -->

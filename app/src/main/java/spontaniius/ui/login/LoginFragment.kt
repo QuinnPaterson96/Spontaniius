@@ -38,15 +38,6 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.phoneLoginFragment)
         }
 
-        // Observe login success
-        viewModel.authResult.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess) {
-                Toast.makeText(requireContext(), "Sign-In Successful!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Sign-In Failed", Toast.LENGTH_SHORT).show()
-            }
-        }
-
         return view
     }
 

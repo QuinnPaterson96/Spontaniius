@@ -5,10 +5,8 @@ import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
@@ -19,7 +17,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,12 +25,8 @@ import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.common.AuthViewModel
 import spontaniius.common.UserViewModel
-import spontaniius.data.EventEntity
 import spontaniius.data.remote.models.UserResponse
 import spontaniius.ui.card_collection.CardCollectionFragment
-import spontaniius.ui.create_event.CreateEventFragment
-import spontaniius.ui.create_event.MapsFragment
-import spontaniius.ui.event_management.EventManagementFragment
 import spontaniius.ui.find_event.FindEventFragment
 import spontaniius.ui.user_menu.UserOptionsActivity
 import java.time.ZonedDateTime
@@ -43,7 +36,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
-    EventManagementFragment.OnEventManagementFragmentInteractionListener,
+    EventChatFragment.OnEventManagementFragmentInteractionListener,
     FindEventFragment.OnFindEventFragmentInteractionListener,
     CardCollectionFragment.OnCardCollectionFragmentInteractionListener{
     private val userViewModel: UserViewModel by viewModels()

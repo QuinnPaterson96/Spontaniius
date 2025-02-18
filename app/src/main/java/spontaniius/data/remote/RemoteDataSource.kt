@@ -42,6 +42,10 @@ class RemoteDataSource @Inject constructor(
         return safeApiCall { apiService.extendEvent(eventId, request) }
     }
 
+    suspend fun endEvent(eventId: Int): Result<EventResponse> {
+        return safeApiCall { apiService.endEvent(eventId) }
+    }
+
     /**
      * Update an event's card IDs.
      */

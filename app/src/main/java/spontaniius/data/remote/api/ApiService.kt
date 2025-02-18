@@ -30,11 +30,18 @@ interface ApiService {
         @Body request: ExtendEventRequest
     ): Response<EventResponse>
 
+    @PATCH("events/{event_id}/end")
+    suspend fun endEvent(
+        @Path("event_id") eventId: Int
+    ): Response<EventResponse>
+
     @PATCH("events/{event_id}/update_cards")
     suspend fun updateEventCards(
         @Path("event_id") eventId: Int,
         @Body request: UpdateEventCardsRequest
     ): Response<EventResponse>
+
+
 
     /** PROMOTIONS **/
     @POST("promotions/create")

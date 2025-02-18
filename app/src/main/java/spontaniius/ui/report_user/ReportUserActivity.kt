@@ -10,7 +10,6 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import org.json.JSONObject
 import com.spontaniius.R
-import spontaniius.di.VolleySingleton
 import spontaniius.ui.MainActivity
 
 const val CARD_ID = "spontaniius.ui.sign_up.MESSAGE4"

@@ -17,7 +17,6 @@ import com.android.volley.toolbox.StringRequest
 import org.json.JSONArray
 import org.json.JSONObject
 import com.spontaniius.R
-import spontaniius.di.VolleySingleton
 import spontaniius.ui.report_user.CARD_ID
 import spontaniius.ui.report_user.ReportUserActivity
 import spontaniius.ui.sign_up.*

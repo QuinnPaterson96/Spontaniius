@@ -13,7 +13,6 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.amplifyframework.auth.AuthUserAttribute
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
@@ -32,7 +31,6 @@ import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
 import org.json.JSONObject
 import com.spontaniius.R
-import spontaniius.di.VolleySingleton
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZonedDateTime

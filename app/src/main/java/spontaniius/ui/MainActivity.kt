@@ -14,13 +14,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 
 
-import com.amplifyframework.core.Amplify
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.amplifyframework.auth.options.AuthSignOutOptions
-
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
@@ -32,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.common.AuthViewModel
 import spontaniius.common.UserViewModel
 import spontaniius.data.EventEntity
-import spontaniius.di.VolleySingleton
+import spontaniius.data.remote.models.UserResponse
 import spontaniius.ui.card_collection.CardCollectionFragment
 import spontaniius.ui.create_event.CreateEventFragment
 import spontaniius.ui.create_event.MapsFragment
@@ -46,11 +43,9 @@ import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
-    CreateEventFragment.OnCreateEventFragmentInteractionListener,
     EventManagementFragment.OnEventManagementFragmentInteractionListener,
     FindEventFragment.OnFindEventFragmentInteractionListener,
-    CardCollectionFragment.OnCardCollectionFragmentInteractionListener,
-    MapsFragment.MapsInteractionListener {
+    CardCollectionFragment.OnCardCollectionFragmentInteractionListener{
     private val userViewModel: UserViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
     private var latLng: LatLng? = null
@@ -61,7 +56,7 @@ class MainActivity : AppCompatActivity(),
     var meetupOwner = false
     var eventid = 0
     var eventEnds = ""
-    var userDetails: JSONObject? = null
+    var userDetails: UserResponse? = null
 
     private var navController: NavController? = null
 
@@ -165,114 +160,7 @@ class MainActivity : AppCompatActivity(),
         navController?.popBackStack()
     }
 
-    override fun onLocationSelected(latLng: LatLng) {
-        this.latLng = latLng
-        navController?.navigate(R.id.createEventFragment)
-        Toast.makeText(
-            this,
-            "latitude is " + latLng.latitude + " and longitude is " + latLng.longitude,
-            Toast.LENGTH_LONG
-        ).show()
-    }
 
-
-    override fun selectLocation() {
-        navController?.navigate(R.id.mapsFragment)
-    }
-
-    override fun googleLocationSelect(latLng: LatLng) {
-        this.latLng = latLng
-        Toast.makeText(
-            this,
-            "latitude is " + latLng.latitude + " and longitude is " + latLng.longitude,
-            Toast.LENGTH_LONG
-        ).show()
-    }
-
-
-    override fun createEvent(
-        title: String,
-        description: String,
-        icon: String,
-        startTime: String,
-        endTime: String,
-        gender: String,
-        invitation: Int,
-        cardId: Int,
-        loadingProgress: ProgressBar // Kludge to get around not being able to make work on resume
-    ) {
-
-
-        eventEnds = endTime
-        val latLong = latLng
-        if (latLong == null) {
-            Toast.makeText(this, R.string.warning_no_location, Toast.LENGTH_LONG).show()
-        } else {
-            var thisEvent = EventEntity(
-                title,
-                description,
-                gender,
-                "Null address",
-                icon,
-                startTime,
-                endTime,
-                latLong.latitude,
-                latLong.longitude,
-                invitation,
-                cardId
-            )
-
-            currentEvent = thisEvent.toJSON()
-            val url = "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent"
-            val getLocationRequest = JsonObjectRequest(
-                Request.Method.POST, url, thisEvent.toJSON(),
-                { response ->
-                    val JSONResponse = JSONObject(response.toString())
-                    eventid = JSONResponse.get("eventid") as Int
-                    meetupOwner = true
-                    loadingProgress.visibility=GONE
-
-                    val bundle = Bundle().apply {
-                        putString("event_id", eventid.toString())
-                        putBoolean("is_event_owner", meetupOwner)
-                    }
-                    navController?.navigate(R.id.eventManagementFragment, bundle)
-                },
-                { error ->
-                    loadingProgress.visibility=GONE
-                    error.printStackTrace()
-                }
-
-            )
-            val queue = this.let { VolleySingleton.getInstance(it).requestQueue }
-            queue.add(getLocationRequest)
-            /*
-           GlobalScope.launch {
-                repository.saveEvent(
-                    EventEntity(
-                        title,
-                        description,
-                        gender,
-                        "Null address",
-                        icon,
-                        startTime,
-                        endTime,
-                        latLong.latitude,
-                        latLong.longitude,
-                        invitation
-                    )
-                )
-           }
-            Toast.makeText(
-                this,
-                "Event Created",
-                Toast.LENGTH_LONG
-            ).show()
-            */
-
-
-        }
-    }
     override fun endEvent(){
         val currtime = Calendar.getInstance().time
         val url =

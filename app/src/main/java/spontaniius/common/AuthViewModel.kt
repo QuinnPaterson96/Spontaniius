@@ -26,7 +26,7 @@ class AuthViewModel @Inject constructor(
     // Function to sign out
     fun signOut() {
         viewModelScope.launch {
-            authRepository.signOutUser()
+            authRepository.signOut()
         }
     }
 }

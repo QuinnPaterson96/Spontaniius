@@ -2,8 +2,11 @@ package spontaniius.common
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import spontaniius.data.remote.models.UserResponse
 import spontaniius.data.repository.UserRepository
 import javax.inject.Inject
 
@@ -13,10 +16,12 @@ class UserViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Expose LiveData from repository
-    val userAttributes: LiveData<JSONObject?> = userRepository.userDetails
+    val userAttributes: LiveData<UserResponse?> = userRepository.userDetails
 
     // Refresh user data manually if needed
     fun refreshUserAttributes() {
-        userRepository.fetchUserAttributes()
+        viewModelScope.launch {
+            userRepository.fetchUserDetails()
+        }
     }
 }

@@ -1,62 +1,41 @@
 package spontaniius.data.repository
 
-import android.util.Log
-import com.amplifyframework.auth.AuthUserAttribute
-import com.amplifyframework.auth.AuthUserAttributeKey
-import com.amplifyframework.core.Amplify
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import kotlinx.coroutines.suspendCancellableCoroutine
-import org.json.JSONException
-import org.json.JSONObject
-import spontaniius.di.VolleySingleton
+import spontaniius.data.remote.api.ApiService
+import spontaniius.data.remote.models.CardCreateRequest
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 class CardRepository @Inject constructor(
-    private val volleySingleton: VolleySingleton
+    private val apiService: ApiService // ✅ Inject Retrofit API
 ) {
 
-    suspend fun createCard(userId: String?, name: String?, backgroundId: Int, phone: String?): Result<Boolean> {
-        if (userId == null || name == null || phone == null) {
+    suspend fun createCard(userId: Int?, name: String?, backgroundId: Int): Result<Int> {
+        if (userId == null || name == null) {
             return Result.failure(Exception("Invalid user data"))
         }
 
-        return suspendCancellableCoroutine { continuation ->
-            val url = "https://1j8ss7fj13.execute-api.us-west-2.amazonaws.com/default/createCard"
-            val cardObject = JSONObject()
-            try {
-                cardObject.put("userid", userId)
-                cardObject.put("cardtext", name)
-                cardObject.put("background", backgroundId)
-                cardObject.put("backgroundAddress", "")
-                cardObject.put("phone", phone)
-                cardObject.put("greeting", name)
-            } catch (e: JSONException) {
-                continuation.resume(Result.failure(Exception("Error creating card JSON")))
-                return@suspendCancellableCoroutine
-            }
+        val request = CardCreateRequest(
+            user_id = userId,
+            card_text = name,
+            background = backgroundId.toString(),
+            background_address = "",
+        )
 
-            val createUserRequest = JsonObjectRequest(
-                Request.Method.POST, url, cardObject,
-                { response ->
-                    try {
-                        val cardId = response.getInt("cardid")
-                        val cardAttribute = AuthUserAttribute(AuthUserAttributeKey.custom("custom:cardid"), cardId.toString())
-                        Amplify.Auth.updateUserAttribute(cardAttribute,
-                            { Log.i("CardRepository", "Updated user attribute = $it") },
-                            { Log.e("CardRepository", "Failed to update user attribute", it) }
-                        )
-                        continuation.resume(Result.success(true))
-                    } catch (e: JSONException) {
-                        continuation.resume(Result.failure(Exception("Failed to parse server response")))
-                    }
-                },
-                { error ->
-                    continuation.resume(Result.failure(Exception("Failed to create card: ${error.message}")))
+        return try {
+            val response = apiService.createCard(request)
+
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                val cardId = (responseBody?.get("card_id") as? Double)?.toInt() // ✅ Extract card_id
+                if (cardId != null) {
+                    Result.success(cardId) // ✅ Return card ID
+                } else {
+                    Result.failure(Exception("card_id missing from response"))
                 }
-            )
-            volleySingleton.requestQueue.add(createUserRequest)
+            } else {
+                Result.failure(Exception("Failed to create card: ${response.errorBody()?.string()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

@@ -39,7 +39,6 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import org.json.JSONArray
 import org.json.JSONObject
 import com.spontaniius.R
-import spontaniius.di.VolleySingleton
 import spontaniius.ui.MainActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter

@@ -1,4 +1,5 @@
 package spontaniius.ui.sign_up_confirm
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,10 +17,14 @@ class SignUpConfirmViewModel @Inject constructor(
     private val _confirmState = MutableLiveData<Result<Boolean>>()
     val confirmState: LiveData<Result<Boolean>> = _confirmState
 
-    fun confirmSignUp(username: String, confirmationCode: String, password: String) {
+    fun confirmSignUp(verificationId: String, code: String) {
         viewModelScope.launch {
-            val result = authRepository.confirmSignUp(username, confirmationCode, password)
-            _confirmState.value = result
+            try {
+                val result = authRepository.verifyPhoneCode(verificationId, code)
+                _confirmState.postValue(Result.success(result)) // ✅ Update success state
+            } catch (e: Exception) {
+                _confirmState.postValue(Result.failure(e)) // ✅ Handle failure
+            }
         }
     }
 }

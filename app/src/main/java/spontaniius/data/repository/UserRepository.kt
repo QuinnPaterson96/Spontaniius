@@ -1,13 +1,13 @@
 package spontaniius.data.repository
-
-import UserDao
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import spontaniius.data.local.dao.UserDao
 import spontaniius.data.local.entities.UserEntity
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.models.UserResponse
+import spontaniius.domain.models.User
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
@@ -52,8 +52,8 @@ class UserRepository @Inject constructor(
     /**
      * Retrieves user details from local database.
      */
-    suspend fun getUserFromLocal(): UserEntity? = withContext(Dispatchers.IO) {
-        userDao.getUser()
+    suspend fun getUserFromLocal(): User? = withContext(Dispatchers.IO) {
+        userDao.getUser()?.toDomainModel() // No explicit `return`
     }
 
     /**
@@ -66,6 +66,10 @@ class UserRepository @Inject constructor(
 
     suspend fun getUserCardId(): Int? = withContext(Dispatchers.IO) {
         userDao.getUser()?.card_id
+    }
+
+    suspend fun getUserId(): String? {
+        return userDao.getUser()?.id
     }
 
 }

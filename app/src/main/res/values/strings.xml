@@ -93,5 +93,9 @@
     <string name="activation_code_label">Activation Code</string>
     <string name="login">Log in</string>
     <string name="sign_up">Sign Up</string>
+    <string name="exit_event">Exit Event</string>
+    <string name="join_event">Join Event</string>
+    <string name="event_chat">Event Chat</string>
+    <string name="event_details">Event Details\n</string>
 
 </resources>

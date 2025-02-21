@@ -12,4 +12,12 @@ interface GoogleApiService {
         @Query("address") address: String,
         @Query("key") apiKey: String
     ): Response<GoogleMapsResponse>
+
+    @GET("maps/api/directions/json")
+    suspend fun getDirections(
+        @Query("origin") origin: String,
+        @Query("destination") destination: String,
+        @Query("key") apiKey: String
+    ): Response<GoogleMapsResponse>
+
 }

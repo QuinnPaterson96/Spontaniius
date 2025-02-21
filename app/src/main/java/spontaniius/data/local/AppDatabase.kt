@@ -1,3 +1,6 @@
+package spontaniius.data.local
+
+import spontaniius.data.local.dao.UserDao
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
@@ -18,7 +21,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // ✅ Auto-migrates for now (if schema changes)
+                    .build()
                 INSTANCE = instance
                 instance
             }

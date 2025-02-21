@@ -35,8 +35,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(),
-    EventChatFragment.OnEventManagementFragmentInteractionListener,
+class MainActivity : AppCompatActivity(), 
     FindEventFragment.OnFindEventFragmentInteractionListener,
     CardCollectionFragment.OnCardCollectionFragmentInteractionListener{
     private val userViewModel: UserViewModel by viewModels()
@@ -153,61 +152,6 @@ class MainActivity : AppCompatActivity(),
         navController?.popBackStack()
     }
 
-
-    override fun endEvent(){
-        val currtime = Calendar.getInstance().time
-        val url =
-            "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime="+currtime;
-        val endEventRequest = StringRequest(Request.Method.PUT, url,
-            { _ ->
-                navController?.navigate(R.id.findEventFragment)
-                meetupOwner = false
-            },
-            { error ->
-                error.printStackTrace()
-                //#TODO add logging
-            }
-        )
-        val queue = this.let { VolleySingleton.getInstance(it).requestQueue }
-        queue.add(endEventRequest)
-    }
-
-    override fun add15Mins(){
-        val newEndTime = ZonedDateTime.parse(
-            eventEnds as CharSequence?, DateTimeFormatter.ofPattern(
-                "yyyy-[M][MM]-[d][dd]['T'][ ][HH][H]:[m][mm]:ssz"
-            )
-        )
-
-        val eventEndsTime = newEndTime.plusMinutes(15)
-
-
-        eventEnds = eventEndsTime.format(DateTimeFormatter.ofPattern(
-            "yyyy-M-dd HH:mm:ssz"
-        )).toString()
-
-
-
-        val url =
-            "https://217wfuhnk6.execute-api.us-west-2.amazonaws.com/default/createSpontaniiusEvent?eventid=$eventid&newEndTime=$eventEnds";
-        val extendEventRequest = StringRequest(Request.Method.PUT, url,
-            { response ->
-                Toast.makeText(
-                    this,
-                    "Event extended by 15 mins",
-                    Toast.LENGTH_LONG
-                ).show()
-            },
-            { error ->
-                error.printStackTrace()
-            }
-        )
-        val queue = this?.let { VolleySingleton.getInstance(it).requestQueue }
-        queue?.add(extendEventRequest)
-        }
-
-
-
     override fun openEventChatroom(eventid: String, event: JSONObject) {
         val bundle = Bundle().apply {
             putString("event_id", eventid)
@@ -218,19 +162,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun switchToCreate() {
         navController?.navigate(R.id.createEventFragment)
-
-    }
-
-    override fun exitEvent(){
-        navController?.navigate(R.id.findEventFragment)
-    }
-
-    override fun getEventID(): Int {
-        return eventid
-    }
-
-    override fun whatIsCurrentEvent():JSONObject{
-        return currentEvent
     }
 
     // This was created to streamline the process of accessing user attributes and to reduce code

@@ -1,6 +1,7 @@
 package spontaniius.di
 
 import android.content.Context
+import androidx.room.Room
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Module
@@ -11,6 +12,8 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import spontaniius.data.local.AppDatabase
+import spontaniius.data.local.dao.UserDao
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.api.ApiService
 import spontaniius.data.remote.api.GoogleApiService
@@ -40,20 +43,35 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCardRepository(apiService: ApiService): CardRepository {
-        return CardRepository(apiService) // ✅ Pass ApiService to CardRepository
+    fun provideCardRepository(remoteDataSource: RemoteDataSource, userRepository: UserRepository): CardRepository {
+        return CardRepository(remoteDataSource = remoteDataSource, userRepository=userRepository) // ✅ Pass ApiService to CardRepository
     }
 
     @Provides
     @Singleton
-    fun provideUserRepository(remoteDataSource: RemoteDataSource): UserRepository {
-        return UserRepository(remoteDataSource)
+    fun provideUserRepository(remoteDataSource: RemoteDataSource, userDao: UserDao): UserRepository {
+        return UserRepository(remoteDataSource, userDao = userDao)
     }
 
     @Provides
     @Singleton
     fun provideAuthRepository(@ApplicationContext context: Context, remoteDataSource: RemoteDataSource): AuthRepository {
         return AuthRepository(context, remoteDataSource )
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "app_database"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    fun provideUserDao(database: AppDatabase): UserDao {
+        return database.userDao()
     }
 
     @Provides

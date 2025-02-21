@@ -23,11 +23,11 @@ class CardEditingViewModel @Inject constructor(
     private val _cardCreated = MutableLiveData<Boolean>()
     val cardCreated: LiveData<Boolean> = _cardCreated
 
-    fun createCard(userId: String?, name: String?, backgroundId: Int, phone: String?) {
+    fun createCard(cardText: String?, backgroundId: Int) {
         _loading.value = true
 
         viewModelScope.launch {
-            val result = cardRepository.createCard(userId, name, backgroundId, phone)
+            val result = cardRepository.createCard(card_text, backgroundId)
             result.onSuccess {
                 _cardCreated.value = true
             }.onFailure { error ->

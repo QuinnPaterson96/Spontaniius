@@ -40,8 +40,6 @@ class CardEditingFragment : Fragment() {
         cardGreetingEdit = view.findViewById(R.id.card_greeting_edit)
 
         val name = arguments?.getString("USER_NAME") ?: "User"
-        val phone = arguments?.getString("PHONE_NUMBER")
-        val userId = arguments?.getString("USER_ID")
         newUserCard = arguments?.getBoolean("CARD_EDIT_NEW", true) ?: true
 
         view.findViewById<TextView>(R.id.selected_card_user_name).text = name
@@ -60,7 +58,7 @@ class CardEditingFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.done_button3).setOnClickListener {
-            viewModel.createCard(userId, name, backgroundID, phone)
+            viewModel.createCard(name, backgroundID)
         }
 
         // Observe ViewModel state

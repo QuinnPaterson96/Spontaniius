@@ -148,6 +148,7 @@ class FindEventFragment : Fragment() {
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener() {
             if(::currLatLng.isInitialized)
+                swipeContainer.isRefreshing = true
                 viewModel.fetchEvents(lat = currLatLng.latitude, lng = currLatLng.longitude, gender = null) // Todo maybe fix gender stuff
         }
         // Configure the refreshing colors
@@ -199,6 +200,7 @@ class FindEventFragment : Fragment() {
 
         viewModel.currentLocation.observe(viewLifecycleOwner){ latLng->
             if (latLng != null) {
+                swipeContainer.isRefreshing = true
                 viewModel.fetchEvents(lat = latLng.latitude, lng = latLng.longitude, gender = null) // Todo maybe fix gender stuff
                 currLatLng = latLng
             }
@@ -267,7 +269,6 @@ class FindEventFragment : Fragment() {
 
 
     private fun processEventTiles(eventTiles: List<EventTile>) {
-        swipeContainer.isRefreshing = true
         val oldSize = eventList.size  // Store previous size before clearing
 
         eventList.clear()

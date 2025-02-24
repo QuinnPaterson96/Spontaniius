@@ -7,24 +7,17 @@ import android.location.Location
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.json.JSONObject
 import spontaniius.data.remote.RemoteDataSource
-import spontaniius.data.remote.models.LatLngResponse
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class LocationRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val fusedLocationClient: FusedLocationProviderClient,
     private val remoteDataSource: RemoteDataSource
 ) {
-    private val locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// TODO Maybe have this stored in secrets
-
 
 
     fun hasLocationPermission(): Boolean {
@@ -32,7 +25,7 @@ class LocationRepository @Inject constructor(
                 ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun fetchLastKnownLocation(onSuccess: (LatLng) -> Unit, onFailure: (Exception) -> Unit) {
+    fun fetchUserLocation(onSuccess: (LatLng) -> Unit, onFailure: (Exception) -> Unit) {
         if (!hasLocationPermission()) {
             onFailure(SecurityException("Location permissions not granted"))
             return
@@ -69,9 +62,8 @@ class LocationRepository @Inject constructor(
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-    suspend fun getLocationFromAddress(address: String): Result<LatLng> {
+    suspend fun getLocationFromAddress(address: String, apiKey: String): Result<LatLng> {
         return try {
-            val apiKey = "YOUR_GOOGLE_MAPS_API_KEY"
             val response = remoteDataSource.getLocationFromAddress(address, apiKey)
 
             response.map { location ->

@@ -94,7 +94,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
                 Log.i("CreateEventFragment", "Place selected: ${place.name}")
                 place.latLng?.let {
                     userLatLng = it
-                    viewModel.getLocationFromAddress("${it.latitude}, ${it.longitude}")
+                    viewModel.getLocationFromAddress("${it.latitude}, ${it.longitude}", apiKey = getString(R.string.google_api_key))
                 }
             }
 

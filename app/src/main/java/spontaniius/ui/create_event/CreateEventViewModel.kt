@@ -45,7 +45,7 @@ class CreateEventViewModel @Inject constructor(
 
     fun getCurrentLocation() {
         viewModelScope.launch {
-            locationRepository.fetchLastKnownLocation(
+            locationRepository.fetchUserLocation(
                 onSuccess = { latLng -> _location.postValue(latLng) },
                 onFailure = { locationPermissionNeeded.postValue(true) }
             )
@@ -56,9 +56,9 @@ class CreateEventViewModel @Inject constructor(
         _locationPermissionNeeded.postValue(false) // Reset permission state after granted
     }
 
-    fun getLocationFromAddress(address: String) {
+    fun getLocationFromAddress(address: String, apiKey: String) {
         viewModelScope.launch {
-            val result = locationRepository.getLocationFromAddress(address)
+            val result = locationRepository.getLocationFromAddress(address, apiKey)
             result.onSuccess { latLng ->
                 _location.postValue(latLng)
             }

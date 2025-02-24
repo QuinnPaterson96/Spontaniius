@@ -17,5 +17,6 @@ data class Event(
     val latitude: Double,
     val longitude: Double,
     val invitation: Int,
-    val cardId: Int
+    val cardId: Int,
+    val distance: Double? = null
 )

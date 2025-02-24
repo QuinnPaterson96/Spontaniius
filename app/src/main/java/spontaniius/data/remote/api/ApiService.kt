@@ -17,9 +17,9 @@ interface ApiService {
     suspend fun getNearbyEvents(
         @Query("lat") lat: Double,
         @Query("lng") lng: Double,
-        @Query("current_time") currentTime: String,
-        @Query("gender") gender: String = "Any"
-    ): Response<List<Any>>
+        @Query("currentTime") currentTime: String,
+        @Query("gender") gender: String?
+    ): Response<List<NearbyEventResponse>>
 
     @GET("events/{event_id}")
     suspend fun getEventById(@Path("event_id") eventId: Int): Response<Any>

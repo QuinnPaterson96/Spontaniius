@@ -18,6 +18,12 @@ class EventRepository @Inject constructor(
     /**
      * Calls the API to create an event.
      */
+    suspend fun getNearbyEvents(lat: Double, lng: Double, gender: String?): Result<List<Event>> {
+        return remoteDataSource.getNearbyEvents(lat, lng, gender).map { nearbyEventResponses ->
+            nearbyEventResponses.map { it.toDomain() }
+        }
+    }
+
     suspend fun createEvent(request: CreateEventRequest): Result<EventResponse> {
         return remoteDataSource.createEvent(request)
     }

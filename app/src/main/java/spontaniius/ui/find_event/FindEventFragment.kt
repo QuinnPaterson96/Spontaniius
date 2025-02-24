@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -48,7 +49,6 @@ import kotlin.collections.ArrayList
 
 class FindEventFragment : Fragment() {
     private val findEventViewModel: FindEventViewModel by viewModels()
-    private var listenerFindEvent: FindEventFragment.OnFindEventFragmentInteractionListener? = null
 
 
 
@@ -58,7 +58,7 @@ class FindEventFragment : Fragment() {
     private lateinit var viewManager: RecyclerView.LayoutManager
     lateinit var swipeContainer:SwipeRefreshLayout
     lateinit var streetName:String
-    lateinit var currLatLng:String
+    lateinit var currLatLng: LatLng
     lateinit var mapFragment: SupportMapFragment
     private var googleMap: GoogleMap? = null
     lateinit var mapButton: Button
@@ -69,7 +69,6 @@ class FindEventFragment : Fragment() {
     var ViewList=1 // either 1 for list mode or 0 for map mode
 
 
-    var locationAPIKey="AIzaSyDftsoTlkMRu33vd6FLeWh-rzc0p0Ttt6k"// Make this refeence google maps api key
 
     companion object {
         fun newInstance() = FindEventFragment()
@@ -113,7 +112,6 @@ class FindEventFragment : Fragment() {
 
         // Inflate the layout for this fragment
 
-
         val view: View = inflater.inflate(R.layout.fragment_find_event, container, false)
         swipeContainer = view.findViewById(R.id.swipeContainer)
         recyclerView = view.findViewById(R.id.recyclerview)
@@ -133,31 +131,24 @@ class FindEventFragment : Fragment() {
 
 
         hintButton.setOnClickListener {
-            getEventsNearCurrentLocation()
-
+            getCurrentLocation()
         }
-
-
-
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(view.context)
 
         recyclerView.setLayoutManager(LinearLayoutManager(view.context))
         recyclerView.adapter = viewAdapter
 
-        /*
-        streetName="909 Thistle Place, Britannia Beach, BC"
-        getLocationFromAddress(streetName)
-        */
+
         val locateMeButton = view.findViewById<ImageView>(R.id.locate_me_button);
         locateMeButton.setOnClickListener {
-            getEventsNearCurrentLocation()
+            getCurrentLocation()
         }
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener() {
             if(::currLatLng.isInitialized)
-            getEvents(currLatLng)
+                viewModel.fetchEvents(lat = currLatLng.latitude, lng = currLatLng.longitude, gender = null) // Todo maybe fix gender stuff
         }
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(
@@ -169,13 +160,8 @@ class FindEventFragment : Fragment() {
 
         // Initialize Places.
 
-        // Initialize Places.
-        Places.initialize(view.context, locationAPIKey)
 
-// Create a new Places client instance.
-
-// Create a new Places client instance.
-        val placesClient = Places.createClient(view.context)
+        // Create a new Places client instance.
         val autocompleteFragment: AutocompleteSupportFragment =
             childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
 
@@ -205,23 +191,28 @@ class FindEventFragment : Fragment() {
 
         })
 
+        viewModel.locationPermissionNeeded.observe(viewLifecycleOwner) { needed ->
+            if (needed) {
+                requestLocationPermissions()
+            }
+        }
+
+        viewModel.currentLocation.observe(viewLifecycleOwner){ latLng->
+            if (latLng != null) {
+                viewModel.fetchEvents(lat = latLng.latitude, lng = latLng.longitude, gender = null) // Todo maybe fix gender stuff
+                currLatLng = latLng
+            }
+        }
+
+        viewModel.events.observe(viewLifecycleOwner) { events ->
+
+        }
+
+
         return view
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
-        mapFragment?.getMapAsync(callback)
-        mapFragment.view?.visibility = View.GONE
-    }
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        // TODO: Use the ViewModel
-    }
-
-
-    fun getEventsNearCurrentLocation(){
+    private fun requestLocationPermissions() {
         if (this.context?.let {
                 ActivityCompat.checkSelfPermission(
                     it,
@@ -246,51 +237,32 @@ class FindEventFragment : Fragment() {
 
             return
         }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                if (location != null) {
-                    currLatLng = (location.latitude.toString()+","+location.longitude.toString())
-                    getEvents(currLatLng)
-                }
+    }
 
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
+        mapFragment?.getMapAsync(callback)
+        mapFragment.view?.visibility = GONE
+    }
 
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        // TODO: Use the ViewModel
+    }
+
+
+    fun getCurrentLocation(){
+        viewModel.getCurrentLocation()
     }
 
     // Not needed as google autocomplete returns coordinate, will keep if we ever want to move away from using google's api + fragment
-    fun getLocationFromAddress(strAddress: String?){
-
-        val url = "https://maps.googleapis.com/maps/api/geocode/json?address="+strAddress+"&key="+locationAPIKey
-        val getLocationRequest = StringRequest(Request.Method.GET, url,
-            { response ->
-                val JSONResponse = JSONObject(response.toString())
-                val resultJSONArray: JSONArray = JSONResponse.get("results") as JSONArray
-                val resultJSON: JSONObject = resultJSONArray.getJSONObject(0)
-                val geometryJSON: JSONObject = resultJSON.get("geometry") as JSONObject
-                val locationJSON: JSONObject = geometryJSON.get("location") as JSONObject
-                currLatLng =
-                    locationJSON.get("lat").toString() + ", " + locationJSON.get("lng").toString()
-
-                getEvents(currLatLng)
-
-
-            },
-            { error ->
-                error.printStackTrace()
-            }
-
-        )
-        val queue = this.context?.let { VolleySingleton.getInstance(it).requestQueue }
-        queue?.add(getLocationRequest)
+    fun getLocationFromAddress(strAddress: String){
+        viewModel.getLocationFromAddress(strAddress, getString(R.string.google_api_key))
     }
 
-    /*
-    fun getIconFromString(iconName:String){
-        if(iconName=="bike"){}
 
-
-    }
-*/
 
     fun getEvents(userAddress: String){
         swipeContainer.isRefreshing = true
@@ -303,7 +275,7 @@ class FindEventFragment : Fragment() {
         var streetAddress =userAddress // "49.627795, -123.199644"
         if (this.getContext()?.let { ContextCompat.checkSelfPermission(
                 it,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION
             ) } != PackageManager.PERMISSION_GRANTED )
 
             fusedLocationClient.lastLocation
@@ -327,12 +299,11 @@ class FindEventFragment : Fragment() {
 
                     hintButton.visibility = VISIBLE
                     hintText.visibility= VISIBLE
-                    hintButton.text = "Create An Event"
+                    hintButton.text = getString(R.string.create_an_event_hint_prompt)
                     hintButton.setOnClickListener {
-                        listenerFindEvent?.switchToCreate()
                         hintText.visibility= GONE
                         hintButton.visibility = GONE
-
+                        findNavController().navigate(R.id.createEventFragment)
                     }
                 }
                 for (i in 0 until eventJSONArray.length()) {
@@ -361,16 +332,16 @@ class FindEventFragment : Fragment() {
                     val minutesFromEnd = milliseconds.toInt() / 60
 
 
-                    milliseconds =   eventStartTime - currentTime
+                    milliseconds = eventStartTime - currentTime
 
 
                     val minutesFromStart = milliseconds.toInt() / 60
 
-                    var releventTimerString =""
-                    if(minutesFromStart<0){
+                    var releventTimerString = ""
+                    if (minutesFromStart < 0) {
                         // Event has already started so we're going to show when event ends
-                        releventTimerString ="ends in " + minutesFromEnd.toString() + " mins"
-                    }else{
+                        releventTimerString = "ends in " + minutesFromEnd.toString() + " mins"
+                    } else {
                         // Event has yet to start, so we're going to show how long it is until start
                         releventTimerString = "starts in " + minutesFromStart.toString() + " mins"
 
@@ -394,21 +365,6 @@ class FindEventFragment : Fragment() {
                     } finally {
 
                     }
-
-                    /*
-                    * "cardids": null,
-                      "eventid": 1,
-                      "eventtitle": "Lamb party",
-                      "eventtext": "Test from Lambda",
-                      "genderrestrict": "any",
-                      "streetaddress": {
-                        "x": 48.4335854,
-                        "y": -123.3371036
-                      },
-                      "icon": "01.jpg",
-                      "maxradius": 100,
-                      "eventstarts": "11:39:27.331481",
-                      "eventends": "11:39:27.331481"*/
                 }
 
                 eventList.addAll(newList)
@@ -429,7 +385,11 @@ class FindEventFragment : Fragment() {
                             if (holder != null) {
                                 val cardView = holder as EventFindAdapter.EventCardViewHolder
                                 cardView.details.setOnClickListener {
-                                    listenerFindEvent?.openEventChatroom(holder.eventid, holder.event)
+                                    val action = FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
+                                        eventId = holder.eventid,
+                                        isEventOwner = false,
+                                    )
+                                    findNavController().navigate(action)
                                 }
                             }
 
@@ -487,48 +447,18 @@ class FindEventFragment : Fragment() {
     }
 
     fun switchToMap(){
-        mapFragment.view?.visibility = View.VISIBLE
-        swipeContainer.visibility=View.GONE
+        mapFragment.view?.visibility = VISIBLE
+        swipeContainer.visibility= GONE
         listButton.setBackgroundColor(getResources().getColor(R.color.colorNeutral))
         mapButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary))
     }
 
     fun switchToList(){
-        mapFragment.view?.visibility = View.GONE
-        swipeContainer.visibility=View.VISIBLE
+        mapFragment.view?.visibility = GONE
+        swipeContainer.visibility= VISIBLE
         listButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary))
         mapButton.setBackgroundColor(getResources().getColor(R.color.colorNeutral))
 
 
     }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is FindEventFragment.OnFindEventFragmentInteractionListener) {
-            listenerFindEvent = context
-        } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
-    interface OnFindEventFragmentInteractionListener {
-        fun openEventChatroom(eventid: String, event: JSONObject)
-        fun switchToCreate()
-        fun getCurrentUserAttributes(): JSONObject?
-    }
-
-    /*
-     override fun onMapReady(googleMap: GoogleMap) {
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
-        val sydney = LatLng(-33.852, 151.211)
-        googleMap.addMarker(
-            MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney")
-        )
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-    }
-
-     */
 }

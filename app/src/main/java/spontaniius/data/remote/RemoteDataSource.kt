@@ -25,14 +25,13 @@ class RemoteDataSource @Inject constructor(
         apiService.joinEvent(request)
     }
 
-    suspend fun getNearbyEvents(request: NearbyEventsRequest): Result<List<Any>> = safeApiCall {
-        apiService.getNearbyEvents(
-            lat = request.lat,
-            lng = request.lng,
-            currentTime = request.current_time,
-            gender = request.gender
-        )
+    suspend fun getNearbyEvents(lat: Double, lng: Double, gender: String?): Result<List<NearbyEventResponse>> {
+        val currentTime = System.currentTimeMillis().toString()
+        return safeApiCall {
+            apiService.getNearbyEvents(lat, lng, currentTime, gender)
+        }
     }
+
 
     suspend fun getEventById(eventId: Int): Result<Any> = safeApiCall {
         apiService.getEventById(eventId)

@@ -160,9 +160,6 @@ class MainActivity : AppCompatActivity(),
         navController?.navigate(R.id.eventManagementFragment, bundle)
     }
 
-    override fun switchToCreate() {
-        navController?.navigate(R.id.createEventFragment)
-    }
 
     // This was created to streamline the process of accessing user attributes and to reduce code
     // duplication across program. It fetches the user attributes and returns them as a JSON object

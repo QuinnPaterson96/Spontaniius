@@ -205,8 +205,10 @@ class FindEventFragment : Fragment() {
         }
 
         viewModel.events.observe(viewLifecycleOwner) { events ->
-
+            val eventTiles = events.map { EventTile.fromDomain(it) }
+            processEventTiles(eventTiles)
         }
+
 
 
         return view
@@ -264,187 +266,67 @@ class FindEventFragment : Fragment() {
 
 
 
-    fun getEvents(userAddress: String){
+    private fun processEventTiles(eventTiles: List<EventTile>) {
         swipeContainer.isRefreshing = true
-        val queue = this.context?.let { VolleySingleton.getInstance(it).requestQueue }
+        val oldSize = eventList.size  // Store previous size before clearing
 
-        // ...
+        eventList.clear()
 
-        // Add a request (in this example, called stringRequest) to your RequestQueue.
+        if (oldSize > 0) {
+            viewAdapter.notifyItemRangeRemoved(0, oldSize)
+        }
 
-        var streetAddress =userAddress // "49.627795, -123.199644"
-        if (this.getContext()?.let { ContextCompat.checkSelfPermission(
-                it,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) } != PackageManager.PERMISSION_GRANTED )
+        eventList.addAll(eventTiles)
 
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    streetAddress=location.toString()
-                }
-
-        val currtime = Calendar.getInstance().time
-        val url =
-            "https://2xhan6hu38.execute-api.us-west-2.amazonaws.com/default/GetEventsInArea?streetAddress=" +
-                    "$streetAddress&currentTime=$currtime&gender=${listenerFindEvent?.getCurrentUserAttributes()?.get("gender")}";
-        val getEventsRequest = StringRequest(Request.Method.GET, url,
-            { response ->
-                eventList.clear()
-                val newList: ArrayList<EventTile> = ArrayList()
-                val eventJSONArray = JSONArray(response.toString())
-                    hintButton.visibility=GONE
-
-                if (eventJSONArray.length()==0){
-                    // We suggest creating an event if there's no events near you.
-
-                    hintButton.visibility = VISIBLE
-                    hintText.visibility= VISIBLE
-                    hintButton.text = getString(R.string.create_an_event_hint_prompt)
-                    hintButton.setOnClickListener {
-                        hintText.visibility= GONE
-                        hintButton.visibility = GONE
-                        findNavController().navigate(R.id.createEventFragment)
-                    }
-                }
-                for (i in 0 until eventJSONArray.length()) {
-
-                    val event: JSONObject = eventJSONArray.getJSONObject(i)
-                    val endTimeString = event.get("eventends")
-                    val endTime = ZonedDateTime.parse(
-                        endTimeString as CharSequence?, DateTimeFormatter.ofPattern(
-                            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-                        )
-                    )
-
-                    val eventStartString = event.get("eventstarts")
-                    val startTime = ZonedDateTime.parse(
-                        eventStartString as CharSequence?, DateTimeFormatter.ofPattern(
-                            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-                        )
-                    )
-
-                    val currentTime = currtime.time / 1000
-                    val eventEndTime = endTime.toEpochSecond()
-                    val eventStartTime = startTime.toEpochSecond()
+        if (eventTiles.isNotEmpty()) {
+            viewAdapter.notifyItemRangeInserted(0, eventTiles.size)
+        }
 
 
-                    var milliseconds = eventEndTime - currentTime
-                    val minutesFromEnd = milliseconds.toInt() / 60
-
-
-                    milliseconds = eventStartTime - currentTime
-
-
-                    val minutesFromStart = milliseconds.toInt() / 60
-
-                    var releventTimerString = ""
-                    if (minutesFromStart < 0) {
-                        // Event has already started so we're going to show when event ends
-                        releventTimerString = "ends in " + minutesFromEnd.toString() + " mins"
-                    } else {
-                        // Event has yet to start, so we're going to show how long it is until start
-                        releventTimerString = "starts in " + minutesFromStart.toString() + " mins"
-
-                    }
-
-
-                    try {
-                        var hangout = EventTile(
-                            event.get("icon").toString().toInt(),
-                            event.get("eventtitle").toString(),
-                            event.get("eventtext").toString(),
-                            event.get("distance").toString(),
-                            releventTimerString,
-                            event.get("streetaddress").toString(),
-                            event.get("eventid").toString(),
-                            event,
-                            this.context
-                        )
-
-                        newList.add(hangout)
-                    } finally {
-
-                    }
-                }
-
-                eventList.addAll(newList)
-                recyclerView.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-                    override fun onLayoutChange(
-                        v: View,
-                        left: Int,
-                        top: Int,
-                        right: Int,
-                        bottom: Int,
-                        oldLeft: Int,
-                        oldTop: Int,
-                        oldRight: Int,
-                        oldBottom: Int
-                    ) {
-                        for (i in 0 until recyclerView.getChildCount()) {
-                            val holder = recyclerView.findViewHolderForAdapterPosition(i)
-                            if (holder != null) {
-                                val cardView = holder as EventFindAdapter.EventCardViewHolder
-                                cardView.details.setOnClickListener {
-                                    val action = FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
-                                        eventId = holder.eventid,
-                                        isEventOwner = false,
-                                    )
-                                    findNavController().navigate(action)
-                                }
-                            }
-
+        recyclerView.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(
+                v: View, left: Int, top: Int, right: Int, bottom: Int,
+                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+            ) {
+                for (i in 0 until recyclerView.childCount) {
+                    val holder = recyclerView.findViewHolderForAdapterPosition(i)
+                    if (holder != null) {
+                        val eventView = holder as EventFindAdapter.EventCardViewHolder
+                        eventView.details.setOnClickListener {
+                            val action =
+                                FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
+                                    eventId = eventView.eventid,
+                                    isEventOwner = false
+                                )
+                            findNavController().navigate(action)
                         }
                     }
-                })
-
-                viewAdapter.notifyDataSetChanged()
-
-                for (i in 0 until eventList.size) {
-                    var event = eventList.get(i)
-
-                    val latlong = JSONObject(event.location)
-                    val location = LatLng(latlong.getDouble("x"), latlong.getDouble("y"))
-                    googleMap?.addMarker(
-                        MarkerOptions()
-                            .position(location)
-                            .title(event.title)
-                        // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
-                    )
                 }
-
-
-                if (mapFragment != null) {
-                    val latlong = streetAddress.split(",".toRegex()).toTypedArray()
-                    val latitude = latlong[0].toDouble()
-                    val longitude = latlong[1].toDouble()
-                    val location = LatLng(latitude, longitude)
-                    val zoomLevel = 10.0f
-
-                    if (googleMap != null) {
-                        googleMap!!.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                        googleMap!!.getUiSettings().setMyLocationButtonEnabled(false);
-                        googleMap!!.setMyLocationEnabled(false);
-                        googleMap!!.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                location,
-                                zoomLevel
-                            )
-                        )
-                    }
-                }
-
-
-                swipeContainer.isRefreshing = false
-
-
-            },
-            { error ->
-                error.printStackTrace()
-                swipeContainer.isRefreshing = false
             }
-        )
-        queue?.add(getEventsRequest)
+        })
+
+        for (event in eventTiles) {
+            val location = LatLng(event.latitude, event.longitude)
+            googleMap?.addMarker(
+                MarkerOptions()
+                    .position(location)
+                    .title(event.title)
+            )
+        }
+
+        if (eventTiles.isNotEmpty()) {
+            val firstEvent = eventTiles.first()
+            val location = LatLng(firstEvent.latitude, firstEvent.longitude)
+            val zoomLevel = 10.0f
+
+            googleMap?.apply {
+                setMapType(GoogleMap.MAP_TYPE_NORMAL)
+                moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
+            }
+        }
+        swipeContainer.isRefreshing = false
     }
+
 
     fun switchToMap(){
         mapFragment.view?.visibility = VISIBLE

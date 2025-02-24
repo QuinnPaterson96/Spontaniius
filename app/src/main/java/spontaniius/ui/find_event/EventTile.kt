@@ -1,74 +1,52 @@
-package spontaniius.ui.find_event;
+package spontaniius.ui.find_event
 
-import android.content.Context;
+import com.spontaniius.R
+import spontaniius.domain.models.Event
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
-import org.json.JSONObject;
+data class EventTile(
+    val imageResource: Int,
+    val title: String,
+    val description: String,
+    val distance: String,
+    val timeRemaining: String,
+    val location: String,
+    val eventId: String,
+    val latitude: Double,
+    val longitude: Double,
+    val event: Event
+) {
+    companion object {
+        fun fromDomain(event: Event): EventTile {
+            return EventTile(
+                imageResource = event.icon.toIntOrNull() ?: DEFAULT_ICON, // Convert icon string to Int if possible
+                title = event.title,
+                description = event.description,
+                distance = event.distance?.toString() ?: "Unknown",
+                timeRemaining = calculateTimeRemaining(event.startTime, event.endTime),
+                location = event.address,
+                eventId = event.eventId.toString(),
+                latitude = event.latitude,
+                longitude = event.longitude,
+                event = event
+            )
+        }
 
-import java.util.function.Function;
+        private fun calculateTimeRemaining(startTime: String, endTime: String): String {
+            val currTime = System.currentTimeMillis() / 1000
+            val eventStart = ZonedDateTime.parse(startTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toEpochSecond()
+            val eventEnd = ZonedDateTime.parse(endTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toEpochSecond()
 
-public class EventTile {
-    private int mImageResource;
-    private String description;
-    private String title;
+            val minutesFromStart = ((eventStart - currTime) / 60).toInt()
+            val minutesFromEnd = ((eventEnd - currTime) / 60).toInt()
 
-    private String distance;
-    private String timeStarted="";
-    private String location;
-    private String eventId;
-    private JSONObject event;
-    private Context context;
+            return when {
+                minutesFromStart < 0 -> "ends in $minutesFromEnd mins"
+                else -> "starts in $minutesFromStart mins"
+            }
+        }
 
-
-    public EventTile(int imageResource, String text1, String text2, String text3, String text4, String eventlocation, String eventid, Context context) {
-        mImageResource = imageResource;
-        title = text1;
-        description = text2;
-        distance=text3;
-        timeStarted=text4;
-        location=eventlocation;
-        eventId=eventid;
+        private var DEFAULT_ICON = R.drawable.activity_other // Replace with an actual default icon
     }
-
-    public EventTile(int imageResource, String text1, String text2, String text3, String text4, String eventlocation, String eventid, JSONObject thisEvent, Context context) {
-        mImageResource = imageResource;
-        title = text1;
-        description = text2;
-        distance=text3;
-        timeStarted=text4;
-        location=eventlocation;
-        eventId=eventid;
-        event=thisEvent;
-
-    }
-    public int getImageResource() {
-        return mImageResource;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getDistance() {
-        return distance;
-    }
-
-    public String getTime_started() {
-        return timeStarted;
-    }
-    public String getLocation() {
-        return location;
-    }
-    public String getEventId() {
-        return eventId;
-    }
-    public Context getContext() {
-        return context;
-    }
-    public JSONObject getEvent(){return event;}
-
-
 }

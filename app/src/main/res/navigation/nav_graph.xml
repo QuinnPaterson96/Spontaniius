@@ -32,7 +32,18 @@
     <fragment
         android:id="@+id/cardCollectionFragment"
         android:name="spontaniius.ui.card_collection.CardCollectionFragment"
-        android:label="Card Collection" />
+        android:label="Card Collection" >
+        <action
+            android:id="@+id/action_cardCollectionFragment_to_reportUserFragment">
+            <argument
+                android:name="cardId"
+                app:argType="integer"
+                android:defaultValue="-1" />
+        </action>
+
+    </fragment>
+
+
 
     <!-- Promotions -->
     <fragment
@@ -67,24 +78,23 @@
     <fragment
         android:id="@+id/phoneLoginFragment"
         android:name="spontaniius.ui.phone_login.PhoneLoginFragment"
-        android:label="Phone Login" />
-
-    <!-- Sign Up Confirmation Fragment (Fixing Arguments) -->
-    <fragment
-        android:id="@+id/signUpConfirmFragment"
-        android:name="spontaniius.ui.sign_up_confirm.SignUpConfirmFragment"
-        android:label="Confirm Sign Up">
-
-        <argument
-            android:name="username"
-            app:argType="string"
-            android:defaultValue="" />
-
-        <argument
-            android:name="password"
-            app:argType="string"
-            android:defaultValue="" />
+        android:label="Phone Login">
+        <action
+            android:id="@+id/action_phoneLoginFragment_to_OTPVerificationFragment"
+            app:destination="@id/OTPVerificationFragment">
+            <argument
+                android:name="verificationId"
+                app:argType="string" />
+            <argument
+                android:name="phoneNumber"
+                app:argType="string" />
+        </action>
     </fragment>
+
+    <fragment
+        android:id="@+id/OTPVerificationFragment"
+        android:name="spontaniius.ui.phone_login.OTPVerificationFragment"
+        android:label="Enter OTP" />
 
     <!-- Sign Up Fragment (Action Should Be Inside Here) -->
     <fragment
@@ -92,11 +102,35 @@
         android:name="spontaniius.ui.sign_up.SignUpFragment"
         android:label="Sign Up Fragment">
 
+        <argument
+            android:name="externalId"
+            app:argType="string"
+            android:defaultValue="" />
+
+        <argument
+            android:name="authProvider"
+            app:argType="string"
+            android:defaultValue="" />
+
         <action
             android:id="@+id/action_signUpFragment_to_signUpConfirmFragment"
-            app:destination="@id/signUpConfirmFragment"/>
+            app:destination="@id/findEventFragment"/>
     </fragment>
 
 
+    <fragment
+        android:id="@+id/reportUserFragment"
+        android:name="spontaniius.ui.report_user.ReportUserFragment"
+        android:label="Report User">
+        <argument
+            android:name="cardId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/userOptionsFragment"
+        android:name="spontaniius.ui.user_options.UserOptionsFragment"
+        android:label="User Settings" />
 
 </navigation>

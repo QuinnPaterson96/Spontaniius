@@ -11,6 +11,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.spontaniius.BuildConfig
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,6 +23,15 @@ class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
     private val RC_SIGN_IN = 100 // Request code for Google Sign-In
+    private val googleSignInClient: GoogleSignInClient by lazy {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(BuildConfig.GOOGLE_CLIENT_ID)
+            .requestEmail()
+            .build()
+        GoogleSignIn.getClient(requireContext(), gso)
+    }
+    fun getGoogleSignInIntent(): Intent = googleSignInClient.signInIntent
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +42,7 @@ class LoginFragment : Fragment() {
         // Google Sign-In button
         val googleSignInButton = view.findViewById<Button>(R.id.btn_google_signin)
         googleSignInButton.setOnClickListener {
-            val signInIntent = viewModel.getGoogleSignInIntent()
+            val signInIntent = getGoogleSignInIntent()
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
 

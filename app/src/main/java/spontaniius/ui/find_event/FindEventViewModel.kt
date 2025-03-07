@@ -5,16 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import spontaniius.data.repository.EventRepository
 import spontaniius.data.repository.LocationRepository
 import spontaniius.domain.models.Event
 import javax.inject.Inject
 
+@HiltViewModel
 class FindEventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val locationRepository: LocationRepository
-) : ViewModel() {
+) : ViewModel(){
 
     private val _events = MutableLiveData<List<Event>>()
     val events: LiveData<List<Event>> get() = _events

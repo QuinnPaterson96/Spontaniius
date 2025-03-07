@@ -1,13 +1,54 @@
 package spontaniius.data.repository
 
+import spontaniius.data.local.dao.CardDao
+import spontaniius.data.local.entities.CardEntity
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.models.CardCreateRequest
+import spontaniius.data.remote.models.CardResponse
+import spontaniius.domain.models.Card
 import javax.inject.Inject
 
 class CardRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource, // ✅ Use RemoteDataSource instead
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val cardDao: CardDao
 ) {
+    suspend fun getCardDetails(cardIds: List<Int>): List<Card> {
+        return try {
+            // ✅ Get cached cards & ensure proper List<Card> return type
+            val cachedCards: List<Card> = cardDao.getCardsByIds(cardIds)
+                .map { it.toDomain() } // ✅ Ensure non-null conversion
+
+            val cachedCardIds: Set<Int> = cachedCards.map { it.id }.toSet() // ✅ Fast lookup
+
+            // ✅ Identify missing card IDs
+            val missingCardIds: List<Int> = cardIds.filter { it !in cachedCardIds }
+
+            if (missingCardIds.isNotEmpty()) {
+                // ✅ Fetch remote cards safely (unwraps Result)
+                val response: List<CardResponse> = remoteDataSource.getCardDetails(missingCardIds)
+                    .getOrElse { emptyList() } // ✅ Extracts value from Result safely
+
+                if (response.isNotEmpty()) {
+                    val newCards: List<Card> = response.map { it.toDomain() } // ✅ Convert to domain
+                    val newCardEntities: List<CardEntity> = response.map { it.toEntity() } // ✅ Convert to entity
+
+                    cardDao.insertCards(newCardEntities) // ✅ Insert only if new cards exist
+
+                    return (cachedCards + newCards).distinctBy { it.id } // ✅ Merge and remove duplicates
+                }
+            }
+
+            return cachedCards // ✅ Always return a valid list
+        } catch (e: Exception) {
+            emptyList<Card>() // ✅ Safe fallback
+        }
+    }
+
+
+
+
+
 
     suspend fun createCard(card_text: String?, backgroundId: Int): Result<Int> {
         val userId = userRepository.getUserId()
@@ -42,4 +83,6 @@ class CardRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+
 }

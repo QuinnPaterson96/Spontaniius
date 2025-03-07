@@ -14,7 +14,6 @@ import spontaniius.ui.create_event.CreateEventFragment
 
 class PromotionTabFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    private var listenerFindPromos: CreateEventFragment.OnCreateEventFragmentInteractionListener? = null
     private lateinit var PromoIconView: ImageButton
     private lateinit var gender: String
     private val radius1 = 100
@@ -52,7 +51,5 @@ class PromotionTabFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onDetach() {
         super.onDetach()
-        listenerFindPromos = null
     }
-
 }

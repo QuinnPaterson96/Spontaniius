@@ -3,6 +3,7 @@ package spontaniius.data.remote.api
 import retrofit2.Response
 import retrofit2.http.*
 import spontaniius.data.remote.models.*
+import spontaniius.domain.models.User
 
 interface ApiService {
 
@@ -61,26 +62,35 @@ interface ApiService {
     @GET("cards/{card_id}")
     suspend fun getCardById(@Path("card_id") cardId: Int): Response<Map<String, Any>>
 
+    @POST("cards/get-cards")
+    suspend fun getCardDetails(@Body request: GetCardsRequest): Response<List<CardResponse>>
+
+
 
     /** CARD COLLECTIONS **/
     @POST("card-collections/create")
-    suspend fun createOrUpdateCardCollection(): Response<Unit>
+    suspend fun createOrUpdateCardCollection(createCardCollectionRequest: CardCollectionRequest): Response<CardCollectionResponse>
 
     @GET("card-collections/{user_id}")
-    suspend fun getUserCardCollection(@Path("user_id") userId: String): Response<List<Any>>
+    suspend fun getUserCardCollections(@Path("user_id") userId: String): Response<List<CardCollectionResponse>>
 
 
     /** REPORTS **/
     @POST("reports/report")
-    suspend fun reportUser(): Response<Unit>
+    suspend fun reportUser(@Body request: ReportRequest): Response<ReportResponse>
 
 
     /** USERS **/
-    @POST("users/create")
-    suspend fun createUser(@Body request: CreateUserRequest): Response<Unit>
+    @GET("/users/check-user")
+    suspend fun checkUserExists(@Query("external_id") externalId: String): Response<UserResponse>
+    /**
+     * 2️⃣ Create a new user (Signup)
+     */
+    @POST("/users/register")
+    suspend fun createUser(@Body request: CreateUserRequest): Response<UserResponse>
 
     @PUT("users/update_card")
-    suspend fun updateUserCard(@Body request: UpdateUserCardRequest): Response<Unit>
+    suspend fun updateUserCard(@Body request: UpdateUserCardRequest): Response<UserResponse>
 
     @GET("users/get")
     suspend fun getUser(

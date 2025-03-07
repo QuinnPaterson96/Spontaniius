@@ -16,8 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.json.JSONObject
@@ -26,18 +24,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.common.AuthViewModel
 import spontaniius.common.UserViewModel
 import spontaniius.data.remote.models.UserResponse
-import spontaniius.ui.card_collection.CardCollectionFragment
-import spontaniius.ui.find_event.FindEventFragment
-import spontaniius.ui.user_menu.UserOptionsActivity
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), 
-    FindEventFragment.OnFindEventFragmentInteractionListener,
-    CardCollectionFragment.OnCardCollectionFragmentInteractionListener{
+class MainActivity : AppCompatActivity(){
     private val userViewModel: UserViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
     private var latLng: LatLng? = null
@@ -97,11 +87,7 @@ class MainActivity : AppCompatActivity(),
 
                     return when (item.itemId) {
                         R.id.user_details -> {
-                            val intentUserDetails = Intent(appContext,
-                                UserOptionsActivity::class.java).apply {
-
-                            }
-                            startActivity(intentUserDetails)
+                            navController!!.navigate(R.id.userOptionsFragment)
                             return true
                         }
                         R.id.edit_card -> {
@@ -152,22 +138,10 @@ class MainActivity : AppCompatActivity(),
         navController?.popBackStack()
     }
 
-    override fun openEventChatroom(eventid: String, event: JSONObject) {
-        val bundle = Bundle().apply {
-            putString("event_id", eventid)
-            putBoolean("is_event_owner", meetupOwner)
-        }
-        navController?.navigate(R.id.eventManagementFragment, bundle)
-    }
-
 
     // This was created to streamline the process of accessing user attributes and to reduce code
     // duplication across program. It fetches the user attributes and returns them as a JSON object
     // If the details have already been fetched it avoids calling AWS Auth again
-
-    override fun getCurrentUserAttributes(): JSONObject? {
-         return userDetails
-       }
 
 }
 

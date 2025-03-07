@@ -12,12 +12,16 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import spontaniius.data.data_source.local.EventDao
+import spontaniius.data.data_source.local.EventDatabase
 import spontaniius.data.local.AppDatabase
+import spontaniius.data.local.dao.CardDao
 import spontaniius.data.local.dao.UserDao
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.api.ApiService
 import spontaniius.data.remote.api.GoogleApiService
 import spontaniius.data.repository.AuthRepository
+import spontaniius.data.repository.CardCollectionRepository
 import spontaniius.data.repository.CardRepository
 import spontaniius.data.repository.EventRepository
 import spontaniius.data.repository.LocationRepository
@@ -43,8 +47,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCardRepository(remoteDataSource: RemoteDataSource, userRepository: UserRepository): CardRepository {
-        return CardRepository(remoteDataSource = remoteDataSource, userRepository=userRepository) // ✅ Pass ApiService to CardRepository
+    fun provideCardRepository(remoteDataSource: RemoteDataSource, userRepository: UserRepository, cardDao: CardDao): CardRepository {
+        return CardRepository(remoteDataSource = remoteDataSource, userRepository=userRepository, cardDao = cardDao) // ✅ Pass ApiService to CardRepository
+    }
+
+    @Provides
+    @Singleton
+    fun provideCardCollectionRepository(remoteDataSource: RemoteDataSource, userRepository: UserRepository): CardCollectionRepository {
+        return CardCollectionRepository(remoteDataSource = remoteDataSource, userRepository=userRepository)
     }
 
     @Provides
@@ -56,7 +66,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(@ApplicationContext context: Context, remoteDataSource: RemoteDataSource): AuthRepository {
-        return AuthRepository(context, remoteDataSource )
+        return AuthRepository(remoteDataSource )
     }
 
     @Provides
@@ -72,6 +82,18 @@ object AppModule {
     @Provides
     fun provideUserDao(database: AppDatabase): UserDao {
         return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventDao(database: AppDatabase): EventDao {
+        return database.eventDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCardDao(database: AppDatabase): CardDao {
+        return database.cardDao()
     }
 
     @Provides
@@ -92,19 +114,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGoogleRetrofit(): Retrofit {
+    fun provideGoogleApiService(@ApplicationContext context: Context): GoogleApiService {
         return Retrofit.Builder()
             .baseUrl(BASE_URL_GOOGLE)
             .addConverterFactory(GsonConverterFactory.create())
             .client(OkHttpClient.Builder().build())
             .build()
+            .create(GoogleApiService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideGoogleApiService(googleRetrofit: Retrofit): GoogleApiService {
-        return googleRetrofit.create(GoogleApiService::class.java)
-    }
 
     @Provides
     @Singleton

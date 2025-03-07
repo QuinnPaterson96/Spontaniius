@@ -40,15 +40,16 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import org.json.JSONArray
 import org.json.JSONObject
 import com.spontaniius.R
+import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.ui.MainActivity
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
-
+@AndroidEntryPoint
 class FindEventFragment : Fragment() {
-    private val findEventViewModel: FindEventViewModel by viewModels()
+
 
 
 
@@ -74,7 +75,7 @@ class FindEventFragment : Fragment() {
         fun newInstance() = FindEventFragment()
     }
 
-    private lateinit var viewModel: FindEventViewModel
+    private val viewModel: FindEventViewModel by viewModels()
     lateinit var fusedLocationClient: FusedLocationProviderClient
     private val callback = OnMapReadyCallback { googleMap ->
         /**
@@ -296,7 +297,7 @@ class FindEventFragment : Fragment() {
                         eventView.details.setOnClickListener {
                             val action =
                                 FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
-                                    eventId = eventView.eventid,
+                                    eventId = eventView.eventId,
                                     isEventOwner = false
                                 )
                             findNavController().navigate(action)

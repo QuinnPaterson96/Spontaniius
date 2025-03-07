@@ -22,12 +22,6 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
 
-
-    <activity
-        android:name="spontaniius.ui.user_menu.UserOptionsActivity"
-        android:label="@string/title_activity_user_details"
-        android:theme="@style/AppTheme.NoActionBar" />
-
     <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -37,20 +31,6 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
 
-
-    <activity
-        android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="com.spontaniius" />
-        </intent-filter>
-    </activity>
-
-
-    <activity android:name="spontaniius.ui.report_user.ReportUserActivity" />
 
     <activity android:name="spontaniius.ui.MainActivity"
         android:exported="true">
@@ -74,11 +54,6 @@
         android:value="@string/google_maps_key" />
 
 
-    <activity
-        android:name="spontaniius.ui.SplashScreenActivity"
-        android:exported="true"
-        android:theme="@style/SplashTheme">
-    </activity>
 
     <activity android:name="spontaniius.ui.promotions.PromotionTab" />
     <activity android:name="spontaniius.ui.landing_screen.LandingScreenActivity" />

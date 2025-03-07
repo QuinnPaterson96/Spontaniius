@@ -97,5 +97,18 @@
     <string name="join_event">Join Event</string>
     <string name="event_chat">Event Chat</string>
     <string name="event_details">Event Details\n</string>
+    <string name="welcome_to_spontaniius">Welcome To Spontaniius</string>
+    <string name="report_label">What Happened?</string>
+    <string name="report_hint">Describe the issue here...</string>
+    <string name="go_back">Back</string>
+    <string name="send_report">Send Report</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="enter_otp_sent">OTP Sent</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="add_details">Add Details</string>
+    <string name="skip">Skip Card Creation</string>
+    <string name="enter_name">Enter name</string>
 
 </resources>

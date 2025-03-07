@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import spontaniius.data.local.dao.UserDao
 import spontaniius.data.local.entities.UserEntity
 import spontaniius.data.remote.RemoteDataSource
+import spontaniius.data.remote.models.CreateUserRequest
 import spontaniius.data.remote.models.UserResponse
 import spontaniius.domain.models.User
 import javax.inject.Inject
@@ -70,6 +71,38 @@ class UserRepository @Inject constructor(
 
     suspend fun getUserId(): String? {
         return userDao.getUser()?.id
+    }
+
+    suspend fun createUser(request: CreateUserRequest): Result<UserResponse> {
+         val response = remoteDataSource.createUser(request)
+          response.onSuccess { result ->
+              _userDetails.postValue(result)
+          }
+        return response
+    }
+
+    suspend fun updateUser(name: String?, phone: String?, gender: String?): Result<UserResponse> {
+        return try {
+            // Fetch current user to retain unchanged fields
+            val currentUserResult = userDao.getUser()
+            val currentUser = currentUserResult!!.toDomainModel()
+
+            // Merge old and new values
+
+            val updatedUser = CreateUserRequest(
+                name = name ?: currentUser.name,
+                phone = phone ?: currentUser.phone,
+                gender = gender ?: currentUser.gender,
+                card_id = currentUser.cardId.toString(),
+                auth_provider = currentUser.authProvider,
+                external_id = currentUser.externalId
+            )
+
+            // Send update request
+            remoteDataSource.createUser(updatedUser)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
 }

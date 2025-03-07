@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context="spontaniius.ui.report_user.ReportUserFragment">
+
+    <!-- Apology Message -->
+    <TextView
+        android:id="@+id/text_apology_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/apology_message"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="8dp" />
+
+    <!-- Report Text Input -->
+    <TextView
+        android:id="@+id/text_report_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/report_label"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/text_apology_message"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="12dp" />
+
+    <EditText
+        android:id="@+id/report_text"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:drawable/editbox_background"
+        android:hint="@string/report_hint"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:inputType="textMultiLine"
+        android:maxLines="6"
+        android:gravity="top"
+        app:layout_constraintTop_toBottomOf="@id/text_report_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Buttons Layout -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/report_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:weightSum="2">
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/report_go_back"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/go_back"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:elevation="2dp" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
+
+        <!-- Submit Report Button -->
+        <Button
+            android:id="@+id/send_report_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/send_report"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:elevation="2dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

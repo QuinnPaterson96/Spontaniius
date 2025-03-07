@@ -77,27 +77,41 @@ class RemoteDataSource @Inject constructor(
 
 
     /** CARD COLLECTIONS **/
-    suspend fun createOrUpdateCardCollection(): Result<Unit> = safeApiCall {
-        apiService.createOrUpdateCardCollection()
+    suspend fun createOrUpdateCardCollection(collectionRequest: CardCollectionRequest): Result<CardCollectionResponse> = safeApiCall {
+        apiService.createOrUpdateCardCollection(collectionRequest)
     }
 
     suspend fun getUserCardCollection(userId: String): Result<List<Any>> = safeApiCall {
-        apiService.getUserCardCollection(userId)
+        apiService.getUserCardCollections(userId)
     }
 
+    suspend fun getCardDetails(cardIds: List<Int>): Result<List<CardResponse>> = safeApiCall {
+        apiService.getCardDetails(GetCardsRequest(cardIds))
+    }
+
+    suspend fun getUserCardCollections(userId: String): Result<List<CardCollectionResponse>> = safeApiCall {
+        apiService.getUserCardCollections(userId)
+    }
 
     /** REPORTS **/
-    suspend fun reportUser(): Result<Unit> = safeApiCall {
-        apiService.reportUser()
+    suspend fun reportUser(reportRequest: ReportRequest): Result<ReportResponse> = safeApiCall {
+        apiService.reportUser(reportRequest)
     }
 
 
     /** USERS **/
-    suspend fun createUser(request: CreateUserRequest): Result<Unit> = safeApiCall {
+    suspend fun checkUserExists(externalId: String): Result<UserResponse> = safeApiCall {
+        apiService.checkUserExists(externalId)
+    }
+
+    /**
+     * 2️⃣ Create a new user (Signup)
+     */
+    suspend fun createUser(request: CreateUserRequest): Result<UserResponse> = safeApiCall {
         apiService.createUser(request)
     }
 
-    suspend fun updateUserCard(request: UpdateUserCardRequest): Result<Unit> = safeApiCall {
+    suspend fun updateUserCard(request: UpdateUserCardRequest): Result<UserResponse> = safeApiCall {
         apiService.updateUserCard(request)
     }
 

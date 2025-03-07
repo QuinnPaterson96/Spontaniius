@@ -27,7 +27,7 @@ class CardEditingViewModel @Inject constructor(
         _loading.value = true
 
         viewModelScope.launch {
-            val result = cardRepository.createCard(card_text, backgroundId)
+            val result = cardRepository.createCard(cardText, backgroundId)
             result.onSuccess {
                 _cardCreated.value = true
             }.onFailure { error ->

@@ -8,10 +8,10 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import com.spontaniius.R
 import com.spontaniius.databinding.FragmentSignUpBinding
-import com.hbb20.CountryCodePicker
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -20,6 +20,7 @@ class SignUpFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: SignUpViewModel by viewModels()
+    private val args: SignUpFragmentArgs by navArgs()  // ✅ Get externalId and authProvider from arguments
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,57 +33,49 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val username = binding.userName
-        val phone = binding.phoneNumber
-        val password = binding.password
+        val userName = binding.userName
         val genderSpinner = binding.gender
-        val signUpButton = binding.doneButton
-        val loginButton = binding.loginButton
+        val doneButton = binding.doneButton
+        //val skipButton = binding.skipButton
         val loading = binding.loading
-        val ccp = binding.ccp
-        val errorText = binding.errorText
 
         // Gender dropdown
         val genderOptions = arrayOf("Male", "Female", "Other")
         genderSpinner.adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, genderOptions)
 
-        viewModel.signUpState.observe(viewLifecycleOwner) { result ->
+        // Observe sign-up result
+        viewModel.signUpResult.observe(viewLifecycleOwner) { result ->
             loading.visibility = View.GONE
             result.fold(
-                onSuccess = { userId ->
-                    val action = SignUpFragmentDirections.actionSignUpFragmentToSignUpConfirmFragment(userId, password.text.toString())
-                    findNavController().navigate(action)
+                onSuccess = {
+                    findNavController().navigate(R.id.findEventFragment)  // ✅ Navigate to Find Events
                 },
                 onFailure = { error ->
-                    errorText.text = when {
-                        error.message?.contains("password", ignoreCase = true) == true ->
-                            "Your password must be 6 characters long, with at least one capital letter and one number."
-                        error.message?.contains("phone", ignoreCase = true) == true ->
-                            "Phone number isn't valid."
-                        else -> "Sign up failed. Please try again."
-                    }
+                    Toast.makeText(requireContext(), "Signup failed: ${error.message}", Toast.LENGTH_SHORT).show()
                 }
             )
         }
 
-        signUpButton.setOnClickListener {
-            val nameText = username.text.toString()
-            val phoneText = phone.text.toString()
-            val passwordText = password.text.toString()
+        // On "Done" (proceed with sign-up)
+        doneButton.setOnClickListener {
+            val nameText = userName.text.toString().trim()
             val gender = genderSpinner.selectedItem.toString()
 
-            if (nameText.isNotEmpty() && phoneText.isNotEmpty() && passwordText.isNotEmpty()) {
+            if (nameText.isNotEmpty()) {
                 loading.visibility = View.VISIBLE
-                viewModel.signUp(nameText, gender, ccp.selectedCountryCodeWithPlus + phoneText, passwordText)
+                viewModel.registerUser(args.externalId, args.authProvider, nameText, gender)
             } else {
-                Toast.makeText(requireContext(), "Please fill out all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Please enter your name", Toast.LENGTH_SHORT).show()
             }
         }
 
-        loginButton.setOnClickListener {
-            findNavController().navigate(R.id.phoneLoginFragment)
+        // On "Skip" (skip customization and go directly to event finding)
+        /*
+        skipButton.setOnClickListener {
+            findNavController().navigate(R.id.findEventFragment)
         }
+         */
     }
 
     override fun onDestroyView() {

@@ -5,28 +5,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import spontaniius.data.EventEntity
+import spontaniius.data.data_source.local.EventDao
+import spontaniius.data.local.dao.CardDao
+import spontaniius.data.local.entities.CardEntity
 import spontaniius.data.local.entities.UserEntity
 
-@Database(entities = [UserEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [UserEntity::class, CardEntity::class, EventEntity::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
-
-    companion object {
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
-        fun getDatabase(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "app_database"
-                )
-                    .fallbackToDestructiveMigration() // ✅ Auto-migrates for now (if schema changes)
-                    .build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
+    abstract fun cardDao(): CardDao
+    abstract fun eventDao(): EventDao
 }

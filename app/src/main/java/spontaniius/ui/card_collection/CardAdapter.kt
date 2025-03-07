@@ -1,6 +1,5 @@
 package spontaniius.ui.card_collection
 
-import com.spontaniius.R
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,56 +7,52 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.spontaniius.R
+import spontaniius.domain.models.Card
 
+class CardAdapter(
+    private val context: Context,
+    private val userCards: List<Card>
+) : BaseAdapter() {
 
-class CardAdapter(books: List<UserCard>) :
-    BaseAdapter() {
-    private var userCards: List<UserCard> = books
+    override fun getCount(): Int = userCards.size
 
-    // 2
-    override fun getCount(): Int {
-        return userCards.size
-    }
+    override fun getItem(position: Int): Card = userCards[position]
 
-    // 3
-    override fun getItemId(position: Int): Long {
-        return 0
-    }
-
-    // 4
-    override fun getItem(position: Int): Any? {
-        return null
-    }
-
-
+    override fun getItemId(position: Int): Long = userCards[position].id.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val userCard: UserCard = userCards.get(position)
-        val inflater = parent?.context?.
-        getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.user_card, null)
+        val viewHolder: ViewHolder
+        val view: View
 
-        // Get the custom view widgets reference
-        val userName = view.findViewById<TextView>(R.id.textview_user_name)
-        val userGreeting = view.findViewById<TextView>(R.id.textview_card_greeting)
-        val cardBackground = view.findViewById<ImageView>(R.id.card_background)
-
-
-
-        // 4
-
-        // 0 is the identifyer that there is no background
-        if(userCard.getBackground()!=0){
-            cardBackground.setImageResource(userCard.getBackground())
+        if (convertView == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.user_card, parent, false)
+            viewHolder = ViewHolder(view)
+            view.tag = viewHolder
+        } else {
+            view = convertView
+            viewHolder = view.tag as ViewHolder
         }
 
-        userName.text = (userCard.getCardOwnerName())
+        val userCard = getItem(position)
 
-        // Might choose to add this in later, for now plan to keep greeting blank unless card is clicked on and expanded.
-        userGreeting.text = userCard.getGreeting()
+        // Set card background
+        if (userCard.background != 0) {
+            userCard.background?.let { viewHolder.cardBackground.setImageResource(it) }
+        } else {
+            viewHolder.cardBackground.setImageResource(R.drawable.card_gold) // Optional default background
+        }
 
-        return view!!
-        // 2
+        // Set user name and greeting
+        viewHolder.userName.text = userCard.name
+        viewHolder.userGreeting.text = userCard.greeting ?: ""
 
+        return view
+    }
+
+    private class ViewHolder(view: View) {
+        val userName: TextView = view.findViewById(R.id.textview_user_name)
+        val userGreeting: TextView = view.findViewById(R.id.textview_card_greeting)
+        val cardBackground: ImageView = view.findViewById(R.id.card_background)
     }
 }

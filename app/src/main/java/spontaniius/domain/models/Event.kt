@@ -22,7 +22,7 @@ data class Event(
     val cardIds: List<Int>,
     val distance: Double? = null
 ){
-    fun toEntity(ownerId: String): EventEntity {
+    fun toEntity(): EventEntity {
         return EventEntity(
             title = this.title,
             ownerId = ownerId,

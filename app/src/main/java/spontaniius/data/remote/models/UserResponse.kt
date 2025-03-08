@@ -5,7 +5,7 @@ import spontaniius.domain.models.User
 data class UserResponse(
     val id: String,
     val name: String,
-    val phone: String,
+    val phone: String?,
     val gender: String?,
     val card_id: Int?,
     val external_id: String?,

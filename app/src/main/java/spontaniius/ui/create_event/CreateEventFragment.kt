@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -15,7 +16,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import dagger.hilt.android.AndroidEntryPoint
 import com.spontaniius.R
-import spontaniius.data.remote.models.CreateEventRequest
+import spontaniius.ui.find_event.FindEventFragmentDirections
 import java.util.*
 
 val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -105,10 +106,11 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
 
         // **🔹 Title-Based Icon Prediction**
         titleField.addTextChangedListener(object : android.text.TextWatcher {
-            override fun afterTextChanged(s: android.text.Editable) {}
+            override fun afterTextChanged(s: android.text.Editable) {
+                stockTitle=false
+            }
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                predictIconFromText(s.toString())
             }
         })
 
@@ -120,8 +122,29 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
 
         viewModel.location.observe(viewLifecycleOwner) { location ->
             userLatLng = location
+            viewModel.getAddressFromLocation(location, getString(R.string.google_api_key))
         }
 
+        viewModel.address.observe(viewLifecycleOwner){ address ->
+            if (address == null){
+                autocompleteFragment.setText("${userLatLng?.latitude},${userLatLng?.longitude}")
+            }else{
+                autocompleteFragment.setText(address)
+            }
+        }
+
+        viewModel.eventCreated.observe(viewLifecycleOwner){ event ->
+            eventLoad.visibility = View.GONE
+            if(event !=null){
+                val action =
+                    FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
+                        eventId = event.eventId,
+                        isEventOwner = true
+                    )
+                findNavController().navigate(action)
+            }
+
+        }
 
         return viewLayout
     }
@@ -130,8 +153,8 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         val title = titleField.text.toString().trim()
         val description = descriptionField.text.toString().trim()
 
-        if (title.isEmpty() || description.isEmpty()) {
-            Toast.makeText(requireContext(), "Title and description cannot be empty!", Toast.LENGTH_LONG).show()
+        if (title.isEmpty()) {
+            Toast.makeText(requireContext(), "Title cannot be empty!", Toast.LENGTH_LONG).show()
             return
         }
 
@@ -140,8 +163,9 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             return
         }
 
-
-        val invitationSelectorPosition = invitationTypePicker.indexOfChild(selectedButton).coerceIn(0, INVITATION_RADIUS_OPTIONS.lastIndex)
+        val selectedId = invitationTypePicker.checkedRadioButtonId
+        val selectedRadioButton: RadioButton = (invitationTypePicker.findViewById<RadioButton>(selectedId))
+        val invitationSelectorPosition = invitationTypePicker.indexOfChild(selectedRadioButton).coerceIn(0, INVITATION_RADIUS_OPTIONS.lastIndex)
         val invitationRadius = INVITATION_RADIUS_OPTIONS[invitationSelectorPosition]
 
         eventLoad.visibility = View.VISIBLE
@@ -149,20 +173,14 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         val startDateString = getFormattedDateString(startTimePicker.hour, startTimePicker.minute)
         val endDateString = getFormattedDateString(endTimePicker.hour, endTimePicker.minute)
 
-        val request = CreateEventRequest(
-            title = title,
+        viewModel.createEvent(title = title,
             description = description,
             gender = selectedGender,
             icon = selectedIcon,
             event_starts = startDateString,
             event_ends = endDateString,
-            latitude = userLatLng!!.latitude,
-            longitude = userLatLng!!.longitude,
-            max_radius = invitationRadius,
-            card_id = 1 // TODO get card from user repository
-        )
-
-        viewModel.createEvent(request)
+            latLng = userLatLng!!,
+            max_radius = invitationRadius)
     }
 
     private fun getFormattedDateString(hour: Int, minute: Int): String {
@@ -171,19 +189,6 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
         return String.format(Locale.US, "%04d-%02d-%02dT%02d:%02d:00Z", year, month, day, hour, minute)
-    }
-
-
-
-    private fun predictIconFromText(text: String) {
-        val lowerText = text.lowercase()
-        when {
-            lowerText.contains("coffee") || lowerText.contains("tea") -> setIcon(R.drawable.activity_coffee, "Meet me for coffee")
-            lowerText.contains("walk") -> setIcon(R.drawable.activity_walk, "Let's go for a walk")
-            lowerText.contains("food") || lowerText.contains("dinner") || lowerText.contains("lunch") || lowerText.contains("breakfast") || lowerText.contains("eat") -> setIcon(R.drawable.activity_eating, "Let's grab some food")
-            lowerText.contains("bike") -> setIcon(R.drawable.activity_bike, "Let's go for a bike ride")
-            lowerText.contains("beer") || lowerText.contains("wine") -> setIcon(R.drawable.activity_drinks, "Let's go have some drinks")
-        }
     }
 
     private fun setIcon(iconRes: Int, defaultTitle: String) {
@@ -201,14 +206,14 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         popup.menuInflater.inflate(R.menu.event_icon_menu, popup.menu)
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.drinks -> setIcon(R.drawable.activity_drinks, "Let's go have some drinks")
-                R.id.bike -> setIcon(R.drawable.activity_bike, "Let's go for a bike ride")
-                R.id.eating -> setIcon(R.drawable.activity_eating, "Let's grab some food")
-                R.id.sports -> setIcon(R.drawable.activity_sports, "Let's go play")
-                R.id.walk -> setIcon(R.drawable.activity_walk, "Let's go for a walk")
-                R.id.videogame -> setIcon(R.drawable.activity_videogame, "Let's play some video games")
-                R.id.coffee -> setIcon(R.drawable.activity_coffee, "Meet me for coffee")
-                R.id.other_activity -> setIcon(R.drawable.activity_other, "Join me for something fun!")
+                R.id.drinks -> setIcon(R.drawable.activity_drinks, getString(R.string.default_text_drinks))
+                R.id.bike -> setIcon(R.drawable.activity_bike, getString(R.string.default_text_bike))
+                R.id.eating -> setIcon(R.drawable.activity_eating, getString(R.string.default_text_eating))
+                R.id.sports -> setIcon(R.drawable.activity_sports, getString(R.string.default_text_sports))
+                R.id.walk -> setIcon(R.drawable.activity_walk, getString(R.string.default_text_walk))
+                R.id.videogame -> setIcon(R.drawable.activity_videogame, getString(R.string.default_text_videogame))
+                R.id.coffee -> setIcon(R.drawable.activity_coffee, getString(R.string.default_text_coffee))
+                R.id.other_activity -> setIcon(R.drawable.activity_other, getString(R.string.default_text_other_activity))
             }
             true
         }

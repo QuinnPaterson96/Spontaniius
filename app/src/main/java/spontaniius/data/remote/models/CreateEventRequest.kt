@@ -2,6 +2,7 @@ package spontaniius.data.remote.models
 
 data class CreateEventRequest(
     val title: String,
+    val owner_id: String,
     val description: String,
     val gender: String,
     val icon: String,

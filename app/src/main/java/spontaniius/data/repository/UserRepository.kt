@@ -7,6 +7,7 @@ import spontaniius.data.local.dao.UserDao
 import spontaniius.data.local.entities.UserEntity
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.models.CreateUserRequest
+import spontaniius.data.remote.models.UpdateUserCardRequest
 import spontaniius.data.remote.models.UserResponse
 import spontaniius.domain.models.User
 import javax.inject.Inject
@@ -38,6 +39,7 @@ class UserRepository @Inject constructor(
      * Saves user details locally in Room database.
      */
     private suspend fun saveUserLocally(user: UserResponse) = withContext(Dispatchers.IO) {
+        clearUser()
         val userEntity = UserEntity(
             id = user.id,
             name = user.name,
@@ -65,8 +67,8 @@ class UserRepository @Inject constructor(
         _userDetails.postValue(null) // ✅ Also clear LiveData
     }
 
-    suspend fun getUserCardId(): Int? = withContext(Dispatchers.IO) {
-        userDao.getUser()?.card_id
+    suspend fun getUserCardId(): Int = withContext(Dispatchers.IO) {
+        userDao.getUser()!!.card_id!!
     }
 
     suspend fun getUserId(): String? {
@@ -77,6 +79,7 @@ class UserRepository @Inject constructor(
          val response = remoteDataSource.createUser(request)
           response.onSuccess { result ->
               _userDetails.postValue(result)
+              saveUserLocally(result)
           }
         return response
     }
@@ -105,6 +108,12 @@ class UserRepository @Inject constructor(
         }
     }
 
+    suspend fun updateUserCard(cardId: Int): Result<UserResponse>{
+        val request = UpdateUserCardRequest(
+            user_id = getUserId()!!, card_id = cardId
+        )
+        return remoteDataSource.updateUserCard(request)
+    }
 }
 
 

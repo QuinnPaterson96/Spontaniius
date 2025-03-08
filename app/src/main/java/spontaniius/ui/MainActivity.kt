@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBar
 
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -23,7 +24,7 @@ import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.common.AuthViewModel
 import spontaniius.common.UserViewModel
-import spontaniius.data.remote.models.UserResponse
+import spontaniius.domain.models.User
 
 
 @AndroidEntryPoint
@@ -38,36 +39,19 @@ class MainActivity : AppCompatActivity(){
     var meetupOwner = false
     var eventid = 0
     var eventEnds = ""
-    var userDetails: UserResponse? = null
+    var userDetails: User? = null
 
     private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_bottom_navigation)
+        setContentView(R.layout.activity_main)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
         navController = navHostFragment?.navController ?: throw IllegalStateException("NavController not found")
 
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigation.setupWithNavController(navController!!)
-
-        // User authentication handling
-        userViewModel.userAttributes.observe(this) { attributes ->
-            userDetails = attributes
-        }
-
-        authViewModel.isUserSignedIn.observe(this) { signedIn ->
-            if (signedIn == true) {
-                navController!!.navigate(R.id.findEventFragment)
-            } else {
-                navController!!.navigate(R.id.loginFragment)
-                userViewModel.refreshUserAttributes()
-            }
-        }
-
-        authViewModel.checkAuthState()
-
 
 
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
@@ -91,22 +75,12 @@ class MainActivity : AppCompatActivity(){
                             return true
                         }
                         R.id.edit_card -> {
-/*
-                            var currUserAttributes = getCurrentUserAttributes()
-                            val intentUserDetails =
-                                Intent(appContext, CardEditingActivity::class.java).apply {
-                                    if (currUserAttributes != null) {
-                                        putExtra(USER_NAME, currUserAttributes.get("name").toString())
-                                    }
-                                    if (currUserAttributes != null) {
-                                        putExtra(PHONE_NUMBER,
-                                            currUserAttributes.get("phone_number").toString())
-                                    }
-                                    putExtra(USER_ID, "spoof") //#TODO fix this
-                                    putExtra(CARD_EDIT_NEW, false)
-                                }
+                            val bundle = bundleOf(
+                                "name" to userDetails!!.name,
+                                "newUser" to false
+                            )
 
-                            startActivity(intentUserDetails)*/
+                            navController!!.navigate(R.id.cardEditingFragment, bundle)
                             return true
                         }
                         R.id.about_us -> {
@@ -124,6 +98,7 @@ class MainActivity : AppCompatActivity(){
                         }
                         R.id.sign_out -> {
                             authViewModel.signOut()
+                            authViewModel.checkAuthState()
                             return true
                         }
                         else -> false
@@ -132,6 +107,28 @@ class MainActivity : AppCompatActivity(){
             })
             popup.show()
         }
+
+        // User authentication handling
+        userViewModel.userAttributes.observe(this) { attributes ->
+            if (attributes!=null){
+                userDetails = attributes
+            }else{
+                // Indicates user didn't finish signup process
+                authViewModel.signOut()
+                navController!!.navigate(R.id.loginFragment)
+            }
+        }
+
+        authViewModel.externalId.observe(this) { externalId ->
+            if (externalId != null) {
+                navController!!.navigate(R.id.findEventFragment)
+                userViewModel.refreshUserAttributes(externalId)
+            } else {
+                navController!!.navigate(R.id.loginFragment)
+            }
+        }
+
+        authViewModel.checkAuthState()
     }
 
     override fun onBackPressed() {

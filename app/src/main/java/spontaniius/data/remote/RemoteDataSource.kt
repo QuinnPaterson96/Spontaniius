@@ -5,9 +5,13 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Query
 import spontaniius.data.remote.api.ApiService
 import spontaniius.data.remote.api.GoogleApiService
 import spontaniius.data.remote.models.*
+import spontaniius.domain.models.Event
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(
@@ -25,10 +29,16 @@ class RemoteDataSource @Inject constructor(
         apiService.joinEvent(request)
     }
 
-    suspend fun getNearbyEvents(lat: Double, lng: Double, gender: String?): Result<List<NearbyEventResponse>> {
-        val currentTime = System.currentTimeMillis().toString()
-        return safeApiCall {
-            apiService.getNearbyEvents(lat, lng, currentTime, gender)
+    suspend fun getNearbyEvents(request: FindEventRequest): Result<List<EventResponse>> {
+        return try {
+            val response = apiService.getNearbyEvents(request)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Failed to fetch events: ${response.errorBody()?.string()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
@@ -168,6 +178,23 @@ class RemoteDataSource @Inject constructor(
     suspend fun getUser(userId: String?, externalId: String?): Result<UserResponse> {
         return safeApiCall {
             apiService.getUser(userId, externalId)
+        }
+    }
+
+    suspend fun checkUser(externalId: String): Result<UserResponse> {
+        return safeApiCall {
+            apiService.getUser(externalId)
+        }
+    }
+
+
+
+    suspend fun getAddressFromCoordinates(
+        @Query("latlng") latlng: String, // Format: "latitude,longitude"
+        @Query("key") apiKey: String
+    ): Result<GeocodingResponse>{
+        return safeApiCall {
+            googleApiService.getAddressFromCoordinates(latlng, apiKey)
         }
     }
 }

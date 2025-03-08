@@ -3,6 +3,7 @@ package spontaniius.data.remote.api
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import spontaniius.data.remote.models.GeocodingResponse
 import spontaniius.data.remote.models.GoogleMapsResponse
 
 interface GoogleApiService {
@@ -19,5 +20,11 @@ interface GoogleApiService {
         @Query("destination") destination: String,
         @Query("key") apiKey: String
     ): Response<GoogleMapsResponse>
+
+    @GET("maps/api/geocode/json")
+    suspend fun getAddressFromCoordinates(
+        @Query("latlng") latlng: String, // Format: "latitude,longitude"
+        @Query("key") apiKey: String
+    ): Response<GeocodingResponse>
 
 }

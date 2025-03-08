@@ -8,10 +8,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.spontaniius.R
 import com.spontaniius.databinding.FragmentOtpVerificationBinding
 import dagger.hilt.android.AndroidEntryPoint
+import spontaniius.data.model.AuthProvider
 import spontaniius.ui.otp_verification.OTPVerificationViewModel
-import com.spontaniius.R
 
 @AndroidEntryPoint
 class OTPVerificationFragment : Fragment() {
@@ -22,6 +23,8 @@ class OTPVerificationFragment : Fragment() {
     private val viewModel: OTPVerificationViewModel by viewModels()
     private lateinit var verificationId: String
     private lateinit var phoneNumber: String
+    private lateinit var external_id: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,14 +57,33 @@ class OTPVerificationFragment : Fragment() {
 
         }
 
-        viewModel.verificationStatus.observe(viewLifecycleOwner){
+        viewModel.firebaseId.observe(viewLifecycleOwner){ id ->
             loading.visibility = View.GONE
+            external_id = id
+            viewModel.checkNewUser(id)
 
         }
 
         viewModel.error.observe(viewLifecycleOwner){
             loading.visibility = View.GONE
         }
+
+        viewModel.newUser.observe(viewLifecycleOwner){ newUser ->
+            if (newUser){
+                // New user so navigate to get some extra details
+                val action = OTPVerificationFragmentDirections
+                    .actionOTPVerificationFragmentToSignupFragment(
+                        externalId = external_id,  // Replace with actual value
+                        authProvider = AuthProvider.FIREBASE.providerName
+                    )
+                findNavController().navigate(action)
+            }else{
+
+                // Existing user so go to find event fragment
+                findNavController().navigate(R.id.findEventFragment)
+            }
+        }
+
     }
 
     override fun onDestroyView() {

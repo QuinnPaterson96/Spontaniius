@@ -14,7 +14,7 @@
             app:destination="@id/eventManagementFragment">
             <argument
                 android:name="eventId"
-                app:argType="string" />
+                app:argType="int" />
             <argument
                 android:name="isEventOwner"
                 app:argType="boolean"
@@ -26,7 +26,19 @@
     <fragment
         android:id="@+id/createEventFragment"
         android:name="spontaniius.ui.create_event.CreateEventFragment"
-        android:label="Create Event" />
+        android:label="Create Event">
+        <action
+            android:id="@+id/action_createEventFragment_to_eventManagementFragment"
+            app:destination="@id/eventManagementFragment">
+            <argument
+                android:name="eventId"
+                app:argType="int" />
+            <argument
+                android:name="isEventOwner"
+                app:argType="boolean"
+                android:defaultValue="true" />
+        </action>
+    </fragment>
 
     <!-- Card Collection -->
     <fragment
@@ -94,7 +106,12 @@
     <fragment
         android:id="@+id/OTPVerificationFragment"
         android:name="spontaniius.ui.phone_login.OTPVerificationFragment"
-        android:label="Enter OTP" />
+        android:label="Enter OTP">
+
+        <action
+            android:id="@+id/action_OTPVerificationFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
 
     <!-- Sign Up Fragment (Action Should Be Inside Here) -->
     <fragment
@@ -111,10 +128,9 @@
             android:name="authProvider"
             app:argType="string"
             android:defaultValue="" />
-
         <action
-            android:id="@+id/action_signUpFragment_to_signUpConfirmFragment"
-            app:destination="@id/findEventFragment"/>
+            android:id="@+id/action_signupFragment_to_cardEditingFragment"
+            app:destination="@id/cardEditingFragment" />
     </fragment>
 
 
@@ -132,5 +148,17 @@
         android:id="@+id/userOptionsFragment"
         android:name="spontaniius.ui.user_options.UserOptionsFragment"
         android:label="User Settings" />
+
+    <fragment
+        android:id="@+id/cardEditingFragment"
+        android:name="spontaniius.ui.card_editing.CardEditingFragment"
+        android:label="Card editing fragment">
+        <argument
+            android:name="name"
+            app:argType="string"/>
+        <argument
+            android:name="newUser"
+            app:argType="boolean" />
+    </fragment>
 
 </navigation>

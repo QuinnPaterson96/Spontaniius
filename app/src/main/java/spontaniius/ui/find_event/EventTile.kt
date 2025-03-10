@@ -19,18 +19,35 @@ data class EventTile(
 ) {
     companion object {
         fun fromDomain(event: Event): EventTile {
-            return EventTile(
-                imageResource = event.icon.toIntOrNull() ?: DEFAULT_ICON, // Convert icon string to Int if possible
-                title = event.title,
-                description = event.description,
-                distance = event.distance?.toString() ?: "Unknown",
-                timeRemaining = calculateTimeRemaining(event.startTime, event.endTime),
-                location = event.address,
-                eventId = event.eventId.toString(),
-                latitude = event.latitude,
-                longitude = event.longitude,
-                event = event
-            )
+            if (event.description != null){
+                return EventTile(
+                    imageResource = event.icon.toIntOrNull() ?: DEFAULT_ICON, // Convert icon string to Int if possible
+                    title = event.title,
+                    description = event.description,
+                    distance = event.distance?.toString() ?: "Unknown",
+                    timeRemaining = calculateTimeRemaining(event.startTime, event.endTime),
+                    location = event.address,
+                    eventId = event.eventId.toString(),
+                    latitude = event.latitude,
+                    longitude = event.longitude,
+                    event = event
+                )
+
+            }else {
+                return EventTile(
+                    imageResource = event.icon.toIntOrNull()
+                        ?: DEFAULT_ICON, // Convert icon string to Int if possible
+                    title = event.title,
+                    description = "",
+                    distance = event.distance?.toString() ?: "Unknown",
+                    timeRemaining = calculateTimeRemaining(event.startTime, event.endTime),
+                    location = event.address,
+                    eventId = event.eventId.toString(),
+                    latitude = event.latitude,
+                    longitude = event.longitude,
+                    event = event
+                )
+            }
         }
 
         private fun calculateTimeRemaining(startTime: String, endTime: String): String {

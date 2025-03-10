@@ -26,7 +26,19 @@
     <fragment
         android:id="@+id/createEventFragment"
         android:name="spontaniius.ui.create_event.CreateEventFragment"
-        android:label="Create Event" />
+        android:label="Create Event" >
+        <action
+            android:id="@+id/action_createEventFragment_to_eventManagementFragment"
+            app:destination="@id/eventManagementFragment" >
+            <argument
+                android:name="eventId"
+                app:argType="string" />
+            <argument
+                android:name="isEventOwner"
+                app:argType="boolean"
+                android:defaultValue="false" />
+        </action>
+    </fragment>
 
     <!-- Card Collection -->
     <fragment

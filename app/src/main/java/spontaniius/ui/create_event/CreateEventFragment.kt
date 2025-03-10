@@ -137,7 +137,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             eventLoad.visibility = View.GONE
             if(event !=null){
                 val action =
-                    FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
+                    CreateEventFragmentDirections.actionCreateEventFragmentToEventManagementFragment(
                         eventId = event.eventId.toString(),
                         isEventOwner = true
                     )

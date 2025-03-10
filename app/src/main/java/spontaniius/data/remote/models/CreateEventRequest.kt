@@ -1,15 +1,16 @@
 package spontaniius.data.remote.models
+import com.google.gson.annotations.SerializedName
 
 data class CreateEventRequest(
-    val title: String,
-    val owner_id: String,
-    val description: String,
-    val gender: String,
-    val icon: String,
-    val event_starts: String,  // ISO 8601 format: YYYY-MM-DDTHH:mm:ssZ
-    val event_ends: String,
-    val latitude: Double,
-    val longitude: Double,
-    val max_radius: Int,
-    val card_id: Int
+    @SerializedName("owner_id") val ownerId: String,
+    @SerializedName("card_ids") val cardIds: List<Int>,
+    @SerializedName("event_title") val eventTitle: String,
+    @SerializedName("event_text") val eventText: String,
+    @SerializedName("gender_restrict") val genderRestrict: String,
+    @SerializedName("latitude") val latitude: Double,
+    @SerializedName("longitude") val longitude: Double,
+    @SerializedName("icon") val icon: String,
+    @SerializedName("max_radius") val maxRadius: Int,
+    @SerializedName("event_starts") val eventStarts: String,
+    @SerializedName("event_ends") val eventEnds: String
 )

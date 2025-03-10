@@ -1,19 +1,21 @@
 package spontaniius.data.remote.models
 
+import com.google.gson.annotations.SerializedName
 import spontaniius.domain.models.Event
 
 data class EventResponse(
-    val eventId: Int,
-    val ownerId: String,
-    val cardIds: List<Int>,
-    val eventTitle: String,
-    val eventText: String,
-    val genderRestrict: String?,
-    val streetAddress: Pair<Double, Double>?, // ✅ Now matches the server (Tuple[float, float])
-    val icon: String?,
-    val maxRadius: Int?,
-    val eventStarts: String?, // ✅ May be nullable
-    val eventEnds: String?    // ✅ May be nullable
+    @SerializedName("event_id") val eventId: Int,
+    @SerializedName("owner_id") val ownerId: String,
+    @SerializedName("card_ids") val cardIds: List<Int>,
+    @SerializedName("event_title") val eventTitle: String,
+    @SerializedName("event_text") val eventText: String?,
+    @SerializedName("gender_restrict") val genderRestrict: String?,
+    @SerializedName("street_address") val streetAddress: List<Double>?, // Maps directly to JSON array
+    @SerializedName("icon") val icon: String?,
+    @SerializedName("max_radius") val maxRadius: Int?,
+    @SerializedName("event_starts") val eventStarts: String?,
+    @SerializedName("event_ends") val eventEnds: String?,
+    @SerializedName("distance") val distance: Double? // Matches JSON field
 ) {
     /**
      * Converts API response to domain model (Event)
@@ -24,15 +26,16 @@ data class EventResponse(
             ownerId = ownerId,
             title = eventTitle,
             description = eventText,
-            gender = genderRestrict ?: "Any", // Default to "Any" if null
-            address = "Unknown Location",  // No longer stores PostGIS POINT
-            icon = icon ?: "default_icon", // Default icon if null
+            gender = genderRestrict ?: "Any",
+            address = "Unknown Location",  // No explicit address field in JSON
+            icon = icon ?: "default_icon",
             startTime = eventStarts ?: "Unknown Start Time",
             endTime = eventEnds ?: "Unknown End Time",
-            latitude = streetAddress?.first ?: 0.0,  // Use first value from tuple
-            longitude = streetAddress?.second ?: 0.0, // Use second value from tuple
-            invitation = maxRadius ?: 1000, // Default invitation radius
-            cardIds = cardIds // Use first card ID, or -1 if none exist
+            latitude = streetAddress?.getOrNull(1) ?: 0.0,  // JSON format: [longitude, latitude]
+            longitude = streetAddress?.getOrNull(0) ?: 0.0, // Swap order to match lat/lng
+            invitation = maxRadius ?: 1000,
+            cardIds = cardIds,
+            distance = distance
         )
     }
 }

@@ -43,17 +43,17 @@ class EventRepository @Inject constructor(
         val userId = userRepository.getUserId()
 
         val request = CreateEventRequest(
-            title = title,
-            owner_id = userId!!,
-            description = description,
-            gender = gender,
+            eventTitle = title,
+            ownerId = userId!!,
+            eventText = description,
+            genderRestrict = gender,
             icon = icon,
-            event_starts = event_starts,
-            event_ends = event_ends,
+            eventStarts = event_starts,
+            eventEnds = event_ends,
             latitude = latLng.latitude,
             longitude = latLng.longitude,
-            max_radius = max_radius,
-            card_id = userCardId
+            maxRadius = max_radius,
+            cardIds = listOf(userCardId)
         )
         return remoteDataSource.createEvent(request)
     }

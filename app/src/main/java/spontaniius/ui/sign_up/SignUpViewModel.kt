@@ -1,31 +1,35 @@
 package spontaniius.ui.sign_up
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import spontaniius.data.repository.AuthRepository
-import java.util.*
+import spontaniius.data.remote.models.CreateUserRequest
+import spontaniius.data.repository.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _signUpState = MutableLiveData<Result<String>>()
-    val signUpState: LiveData<Result<String>> = _signUpState
+    private val _signUpResult = MutableLiveData<Result<Unit>>()
+    val signUpResult: LiveData<Result<Unit>> = _signUpResult
 
-    fun signUp(name: String, gender: String, phone: String, password: String) {
-        val randomSuffix = Random().nextInt(100000).toString()
-        val username = name.replace(" ", "") + randomSuffix
-
+    fun registerUser(externalId: String, authProvider: String, name: String, gender: String) {
         viewModelScope.launch {
-            val result = authRepository.signUp(username, password, name, gender, phone)
-            _signUpState.value = result
+            val request = CreateUserRequest(
+                name = name,
+                phone = "",  // Firebase does not provide phone number for all auth methods
+                gender = gender,
+                external_id = externalId,
+                auth_provider = authProvider
+            )
+
+            val result = userRepository.createUser(request)
+            _signUpResult.postValue(result.map { Unit }) // ✅ Convert result to `Unit`
         }
     }
 }

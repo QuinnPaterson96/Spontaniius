@@ -8,98 +8,91 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.spontaniius.R
 import org.json.JSONObject
+import spontaniius.domain.models.Event
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
-
-class EventFindAdapter(private val myDataset: ArrayList<EventTile>) :
+class EventFindAdapter(private var eventList: List<EventTile>) :
     RecyclerView.Adapter<EventFindAdapter.EventCardViewHolder>() {
 
-
-
-     var EventTileList: ArrayList<EventTile>? = myDataset
-
     class EventCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var mImageView: ImageView
-        var mTextView1: TextView
-        var mTextView2: TextView
-        var mTextViewDistance: TextView
-        var mTextViewTime: TextView
-        var direction_button: ImageView
-        var details: ConstraintLayout
-        var timeRemainIndicator: Button
-        lateinit var eventid: String
-        lateinit var event: JSONObject
+        val mImageView: ImageView = itemView.findViewById(R.id.imageView)
+        val mTextView1: TextView = itemView.findViewById(R.id.textView)
+        val mTextView2: TextView = itemView.findViewById(R.id.textView2)
+        val mTextViewDistance: TextView = itemView.findViewById(R.id.textView3)
+        val mTextViewTime: TextView = itemView.findViewById(R.id.textView4)
+        val directionButton: ImageView = itemView.findViewById(R.id.directionButton)
+        val details: ConstraintLayout = itemView.findViewById(R.id.details)
+        val timeRemainIndicator: Button = itemView.findViewById(R.id.time_indicator)
 
-        init {
-            mImageView = itemView.findViewById(R.id.imageView)
-            mTextView1 = itemView.findViewById(R.id.textView)
-            mTextView2 = itemView.findViewById(R.id.textView2)
-            mTextViewDistance = itemView.findViewById(R.id.textView3)
-            mTextViewTime = itemView.findViewById(R.id.textView4)
-            direction_button = itemView.findViewById(R.id.directionButton)
-            details=itemView.findViewById(R.id.details)
-            timeRemainIndicator=itemView.findViewById(R.id.time_indicator)
-
-        }
-    }
-
-    fun ExampleAdapter(exampleList: ArrayList<EventTile>?) {
-        EventTileList = exampleList
+        lateinit var eventId: String
+        lateinit var event: Event
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventCardViewHolder {
-        val v: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.event_tile, parent, false)
+        val v: View = LayoutInflater.from(parent.context).inflate(R.layout.event_tile, parent, false)
         return EventCardViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: EventCardViewHolder, position: Int) {
-        val currentItem: EventTile = EventTileList!![position]
-        holder.mImageView.setImageResource(currentItem.getImageResource())
-        holder.mTextView1.setText(currentItem.title)
-        holder.mTextView2.setText(currentItem.description)
-        holder.eventid=currentItem.eventId
-        holder.event=currentItem.event
+        val currentItem = eventList[position]
 
+        holder.mImageView.setImageResource(currentItem.imageResource)
+        holder.mTextView1.text = currentItem.title
+        holder.mTextView2.text = currentItem.description
+        holder.eventId = currentItem.eventId
+        holder.event = currentItem.event
 
-        var distance = currentItem.distance.toDoubleOrNull()
-        distance = distance?.div(100)
-        if (distance != null) {
-            distance = distance.roundToInt().toDouble()
-        }
-        distance = distance?.div(10)
+        // Convert and format distance
+        val formattedDistance = currentItem.distance.toDoubleOrNull()?.let {
+            (it / 1000).roundToInt().toDouble()
+        }?.toString() ?: "N/A"
 
-
-        var locationpointJSON = JSONObject(currentItem.location)
-        var locationPoint = locationpointJSON.get("x").toString() + ", "+locationpointJSON.get("y").toString()
-
-        holder.mTextViewDistance.setText(distance.toString() + " km")
-        holder.mTextViewTime.setText(currentItem.time_started)
-        if(currentItem.time_started.contains("starts")){
-            holder.timeRemainIndicator.setBackgroundColor(Color.parseColor("#9ffc58"))
-        }else{
-            holder.timeRemainIndicator.setBackgroundColor(Color.parseColor("#fafa9b"))
+        holder.mTextViewDistance.text = "$formattedDistance km"
+        val eventStartTime = try {
+            ZonedDateTime.parse(currentItem.event.startTime, DateTimeFormatter.ISO_DATE_TIME)
+        } catch (e: Exception) {
+            null
         }
 
+        val isUpcoming = eventStartTime?.isAfter(ZonedDateTime.now()) ?: false
 
-        holder.direction_button.setOnClickListener{
-
-            val url = "https://www.google.com/maps/dir/?api=1&destination=${locationPoint}"
-            startActivity(holder.direction_button.context, Intent(Intent.ACTION_VIEW, Uri.parse(url)),null)
+// Set the text and indicator color based on whether the event is upcoming
+        holder.mTextViewTime.text = if (isUpcoming) {
+            "Starts at ${eventStartTime?.toLocalTime()}"
+        } else {
+            "Ongoing"
         }
 
+        holder.timeRemainIndicator.setBackgroundColor(
+            if (isUpcoming)
+                Color.parseColor("#9ffc58")  // Green for future events
+            else
+                Color.parseColor("#fafa9b")  // Yellow for ongoing events
+        )
 
+        // Handle directions
+        holder.directionButton.setOnClickListener {
+            val locationPoint = try {
+                val locationJSON = JSONObject(currentItem.location)
+                "${locationJSON.getDouble("x")},${locationJSON.getDouble("y")}"
+            } catch (e: Exception) {
+                null
+            }
+
+            locationPoint?.let {
+                val url = "https://www.google.com/maps/dir/?api=1&destination=$it"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                holder.directionButton.context.startActivity(intent)
+            }
+        }
     }
 
-    override fun getItemCount(): Int {
-        return EventTileList?.size!!
-    }
-
+    override fun getItemCount(): Int = eventList.size
 }

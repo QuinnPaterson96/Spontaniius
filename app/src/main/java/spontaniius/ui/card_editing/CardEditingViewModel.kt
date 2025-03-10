@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import spontaniius.data.repository.CardRepository
+import spontaniius.data.repository.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class CardEditingViewModel @Inject constructor(
-    private val cardRepository: CardRepository
+    private val cardRepository: CardRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _loading = MutableLiveData<Boolean>()
@@ -23,12 +25,13 @@ class CardEditingViewModel @Inject constructor(
     private val _cardCreated = MutableLiveData<Boolean>()
     val cardCreated: LiveData<Boolean> = _cardCreated
 
-    fun createCard(userId: String?, name: String?, backgroundId: Int, phone: String?) {
+    fun createCard(cardText: String?, backgroundId: Int) {
         _loading.value = true
 
         viewModelScope.launch {
-            val result = cardRepository.createCard(userId, name, backgroundId, phone)
-            result.onSuccess {
+            val result = cardRepository.createCard(cardText, backgroundId)
+            result.onSuccess { card_id ->
+                userRepository.updateUserCard(card_id)
                 _cardCreated.value = true
             }.onFailure { error ->
                 _error.value = error.message

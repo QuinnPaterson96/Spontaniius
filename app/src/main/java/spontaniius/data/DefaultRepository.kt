@@ -18,7 +18,7 @@ class DefaultRepository @Inject constructor(
                 localDataSource.saveEvent(eventEntity)
             }
             launch {
-                remoteDataSource.saveEvent(eventEntity)
+                localDataSource.saveEvent(eventEntity)
             }
         }
     }

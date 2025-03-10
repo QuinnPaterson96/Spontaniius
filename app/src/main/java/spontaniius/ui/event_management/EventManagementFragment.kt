@@ -1,6 +1,5 @@
 package spontaniius.ui.event_management
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,12 +11,13 @@ import android.widget.*
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
-import com.amplifyframework.auth.AuthUserAttribute
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
-import com.firebase.ui.database.FirebaseListAdapter
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -32,7 +32,10 @@ import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
 import org.json.JSONObject
 import com.spontaniius.R
-import spontaniius.di.VolleySingleton
+import dagger.hilt.android.AndroidEntryPoint
+import spontaniius.data.remote.models.JoinEventRequest
+import spontaniius.domain.models.Event
+import spontaniius.domain.models.User
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZonedDateTime
@@ -51,14 +54,11 @@ private const val ARG_PARAM2 = "is_event_owner"
  * Use the [EventManagementFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class EventManagementFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var listenerManageEvent: EventManagementFragment.OnEventManagementFragmentInteractionListener? = null
-
-
-
+    private val viewModel: EventManagementViewModel by viewModels()
     lateinit var messagesRef: DatabaseReference
-
+    var currentUser: User? = null
 
     lateinit var listOfMessages: RecyclerView
     private var chatAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder>? = null
@@ -70,15 +70,16 @@ class EventManagementFragment : Fragment() {
     lateinit var add15MinsButton : Button
     lateinit var detailsToggleButton: Button
     lateinit var chatroomToggleButton:Button
-    lateinit var joinFromDetailsButon:Button
+    lateinit var joinFromDetailsButton:Button
     lateinit var getDirectionsButton: Button
     lateinit var chatRoomView: Group
     lateinit var detailsView: LinearLayout
     lateinit var eventMemberCards: JSONArray
     var manager = false
-
+    var eventId: Int? = null
     private var googleMap: GoogleMap? = null
     lateinit var mapFragment: SupportMapFragment
+    lateinit var currentEvent: Event
     private val callback = OnMapReadyCallback { googleMap ->
         /**
          * Manipulates the map once available.
@@ -123,7 +124,6 @@ class EventManagementFragment : Fragment() {
         googleMap.setOnMapLongClickListener { latLng ->
 
         }
-        populateDetails(fragmentView)
     }
     var viewingDetails = true
 
@@ -142,47 +142,47 @@ class EventManagementFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         super.onCreate(savedInstanceState)
         fragmentView = inflater.inflate(R.layout.fragment_event_management, container, false)
 
-        var args = arguments
-        var eventID = args!!.getString(ARG_PARAM1, "0")
-        manager = args!!.getBoolean(ARG_PARAM2, false)
-        messagesRef = FirebaseDatabase.getInstance().getReference(eventID)
+        val eventId: Int = arguments?.getInt("eventId") ?: 0  // Default value if null
 
-        listOfMessages = fragmentView?.findViewById<View>(R.id.list_of_messages) as RecyclerView
+
+        messagesRef = FirebaseDatabase.getInstance().getReference(eventId.toString())
+
+        listOfMessages = fragmentView.findViewById<View>(R.id.list_of_messages) as RecyclerView
         fab = fragmentView.findViewById<View>(R.id.fab) as FloatingActionButton
         fab.setOnClickListener {
             sendMessage()
         }
 
         if(manager){ // if you created this event you have control options
-            endEventButton = fragmentView?.findViewById<View>(R.id.endButton) as Button
+            endEventButton = fragmentView.findViewById<View>(R.id.endButton) as Button
             endEventButton.setOnClickListener{
-                sayGoodbye()
+
             }
 
-            add15MinsButton = fragmentView?.findViewById<View>(R.id.addButton) as Button
+            add15MinsButton = fragmentView.findViewById<View>(R.id.addButton) as Button
             add15MinsButton.setOnClickListener{
-                listenerManageEvent?.add15Mins()
+                viewModel.add15Mins(eventId = currentEvent.eventId, currentEndTime = currentEvent.endTime)
             }
             viewingDetails=false
 
         }
         else // if you're joining somebody else's event
         {
-            endEventButton = fragmentView?.findViewById<View>(R.id.endButton) as Button
-            endEventButton.text = "Exit Event"
+            endEventButton = fragmentView.findViewById<View>(R.id.endButton) as Button
+            endEventButton.text = getString(R.string.exit_event)
             endEventButton.setOnClickListener{
-                listenerManageEvent?.exitEvent()
-            }
+                findNavController().navigate(R.id.findEventFragment)
 
-            add15MinsButton = fragmentView?.findViewById<View>(R.id.addButton) as Button
-            add15MinsButton.text = "Join in"
+            }
+            add15MinsButton = fragmentView.findViewById<View>(R.id.addButton) as Button
+            add15MinsButton.text = getString(R.string.join_event)
             add15MinsButton.setOnClickListener{
-                joinIn()
+                viewModel.joinEvent(eventId)
                 chatDetailsToggle()
             }
         }
@@ -201,65 +201,78 @@ class EventManagementFragment : Fragment() {
         if(viewingDetails){ // We start event managers at chatroom, and event joinees to event details
             setGroupVisibility(fragmentView, chatRoomView, GONE)
             detailsView.visibility=VISIBLE
-            detailsToggleButton.text = "Event Chat"
+            detailsToggleButton.text = getString(R.string.event_chat)
 
-          //  setGroupVisibility(fragmentView,chatRoomView, VISIBLE)
+            //  setGroupVisibility(fragmentView,chatRoomView, VISIBLE)
         }else{
             setGroupVisibility(fragmentView, chatRoomView, VISIBLE)
             detailsView.visibility= GONE
-            detailsToggleButton.text = "Event Details"
-
+            detailsToggleButton.text = getString(R.string.event_details)
         }
+
         mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
         mapFragment.getMapAsync(callback)
         // Load chat room contents
-
         displayChatMessages();
-
 
         chatroomToggleButton = fragmentView.findViewById<View>(R.id.chatroomToggle) as Button
         chatroomToggleButton.setOnClickListener{
             chatDetailsToggle()
         }
-        joinFromDetailsButon = fragmentView.findViewById<View>(R.id.chatroomAndJoin) as Button
+        joinFromDetailsButton = fragmentView.findViewById<View>(R.id.chatroomAndJoin) as Button
         if(manager){
-            joinFromDetailsButon.visibility= GONE
+            joinFromDetailsButton.visibility= GONE
         }
-        joinFromDetailsButon.setOnClickListener{
-            joinIn()
+        joinFromDetailsButton.setOnClickListener{
+            viewModel.joinEvent(eventId)
             chatDetailsToggle()
         }
 
         // makes it so you have your own card already collected.
 
         var ownCardJsonArray = JSONArray()
-        ownCardJsonArray.put(0, listenerManageEvent!!.getCurrentUserAttributes()!!.get("cardid"))
-        eventMemberCards = ownCardJsonArray
+
+        viewModel.userDetails.observe(viewLifecycleOwner){ user ->
+            if (user != null) {
+                currentUser = user
+                ownCardJsonArray.put(0, user.cardId)
+            }
+        }
+
+        viewModel.eventJoined.observe(viewLifecycleOwner){joined ->
+            if(joined){
+                joinFromDetailsButton.visibility = View.GONE
+                add15MinsButton.visibility = View.GONE
+            }
+        }
+
+
+        viewModel.eventDetails.observe(viewLifecycleOwner){ event ->
+            if (event != null) {
+                currentEvent = event
+                populateDetails(fragmentView)
+
+            }
+        }
+
         return fragmentView
     }
 
-    fun joinIn(){
-        sendCardGetCards() // Adds card to event register
 
-        if(input.text.toString()==""){
-            input.setText("Hey, I'm coming to join in")
-            sendMessage()
-        }
-    }
     fun chatDetailsToggle(){
 
         viewingDetails = !viewingDetails  // We flip the logical statement
         if(viewingDetails){ // We start event managers at chatroom, and event joinees to event details
             setGroupVisibility(fragmentView, chatRoomView, GONE)
             detailsView.visibility=VISIBLE
-            detailsToggleButton.text = "Event Chat"
-            eventUpdate()
+            detailsToggleButton.text = getString(R.string.event_chat)
+            eventUpdate(currentEvent.eventId)
 
             //  setGroupVisibility(fragmentView,chatRoomView, VISIBLE)
         }else{
             setGroupVisibility(fragmentView, chatRoomView, VISIBLE)
             detailsView.visibility= GONE
-            detailsToggleButton.text = "Event Details"
+            detailsToggleButton.text = getString(R.string.event_details)
 
         }
     }
@@ -289,73 +302,6 @@ class EventManagementFragment : Fragment() {
         // Set adapter
         listOfMessages.adapter = chatAdapter
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    fun convertLongToTime(time: Long): String {
-        val date = Date(time)
-        val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
-        return format.format(date)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is EventManagementFragment.OnEventManagementFragmentInteractionListener) {
-            listenerManageEvent = context
-        } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
-    fun sendCardGetCards(){
-
-        var userAttributes: List<AuthUserAttribute?>? = null
-        val cardExchangeDetails = JSONObject()
-        val format = SimpleDateFormat("yyyy.MM.dd")
-        var currDate = format.format(Calendar.getInstance().time)
-
-        var aboutUser = listenerManageEvent?.getCurrentUserAttributes()
-
-        var eventID = requireArguments().getString(ARG_PARAM1)
-        cardExchangeDetails.put("eventid", eventID)
-        cardExchangeDetails.put("cardid", aboutUser?.getString("cardid"))
-        cardExchangeDetails.put("userid", aboutUser?.getString("userid"))
-        cardExchangeDetails.put("meetingdate", currDate)
-
-        val url = "https://1outrf3pp4.execute-api.us-west-2.amazonaws.com/default/joinEvent"
-        val getLocationRequest = JsonObjectRequest(
-            Request.Method.POST, url, cardExchangeDetails,
-            { response ->
-                val JSONResponse = JSONObject(response.toString())
-
-                // We keep track of what cards are available when you join the event
-                eventMemberCards = JSONResponse.get("cardids") as JSONArray
-
-
-                alertCardReceived()
-                joinFromDetailsButon.visibility= GONE
-                add15MinsButton.visibility= GONE
-
-            },
-            { error ->
-                error.printStackTrace()
-            }
-
-        )
-        val queue = this?.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
-        queue?.add(getLocationRequest)
-
-    }
-
-    // Meant to alert users when event has ended
-    private fun sayGoodbye(){
-        input.setText("Hope everyone had a good time, this event has ended")
-        sendMessage()
-        listenerManageEvent?.endEvent()
-    }
-
-
 
     private fun sendMessage(){
 
@@ -366,7 +312,7 @@ class EventManagementFragment : Fragment() {
             .setValue(
                 ChatMessage(
                     input.text.toString(),
-                    listenerManageEvent?.getCurrentUserAttributes()?.get("name").toString()
+                    currentUser?.name
                 )
             )
 
@@ -383,21 +329,16 @@ class EventManagementFragment : Fragment() {
 
     // Basically fills the details screen
     private fun populateDetails(fragmentView: View) {
-        var currentEvent = listenerManageEvent?.whatIsCurrentEvent()
-        var eventTitle = fragmentView?.findViewById<View>(R.id.event_title) as TextView
-        var eventDescription = fragmentView?.findViewById<View>(R.id.event_description) as TextView
-        var eventStarts = fragmentView?.findViewById<View>(R.id.event_started) as TextView
-        var eventEnds = fragmentView?.findViewById<View>(R.id.event_ends) as TextView
+        var eventTitle = fragmentView.findViewById<View>(R.id.event_title) as TextView
+        var eventDescription = fragmentView.findViewById<View>(R.id.event_description) as TextView
+        var eventStarts = fragmentView.findViewById<View>(R.id.event_started) as TextView
+        var eventEnds = fragmentView.findViewById<View>(R.id.event_ends) as TextView
 
-        eventTitle.text = currentEvent?.get("eventtitle").toString()
-        eventDescription.text = currentEvent?.get("eventtext").toString()
+        eventTitle.text = currentEvent.title
+        eventDescription.text = currentEvent.description
 
-        val endTimeString = currentEvent?.get("eventends")
-        val startTimeString = currentEvent?.get("eventstarts")
-
-
-
-
+        val endTimeString = currentEvent.endTime
+        val startTimeString = currentEvent.startTime
 
         var endTime = ZonedDateTime.parse(
             endTimeString as CharSequence?, DateTimeFormatter.ofPattern(
@@ -437,14 +378,14 @@ class EventManagementFragment : Fragment() {
 
         // There's slight differences between how street address is stored in local object vs when retrieved from database, this handles that differece.
 
-         var location: LatLng? = null
+        var location: LatLng? = null
         if(manager) {
-            val latlong = currentEvent?.get("streetaddress").toString().split(",".toRegex()).toTypedArray()
+            val latlong = currentEvent.address
             val latitude = latlong[0].toDouble()
             val longitude = latlong[1].toDouble()
             location = LatLng(latitude, longitude)
         }else{
-            val latlong = JSONObject(currentEvent?.get("streetaddress").toString())
+            val latlong = JSONObject(currentEvent.address)
             location = LatLng(latlong.getDouble("x"), latlong.getDouble("y"))
         }
 
@@ -475,90 +416,23 @@ class EventManagementFragment : Fragment() {
             }
         }
 
-        getDirectionsButton = fragmentView?.findViewById<View>(R.id.directions) as Button
-        getDirectionsButton.setOnClickListener{
-            val url = "https://www.google.com/maps/dir/?api=1&destination=${currentEvent?.get("streetaddress")}"
-            this?.context?.let { it1 ->
-                ContextCompat.startActivity(
-                    it1,
-                    Intent(Intent.ACTION_VIEW, Uri.parse(url)),
-                    null
-                )
+        getDirectionsButton = fragmentView.findViewById<View>(R.id.directions) as Button
+        getDirectionsButton.setOnClickListener {
+            val streetAddress = currentEvent.address as? String
+            val mapsUrl = viewModel.getGoogleMapsUrl(streetAddress)
+
+            mapsUrl?.let {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                startActivity(intent)
             }
         }
+
 
     }
 
     // Refreshes event details for event in Event Management Section
-    fun eventUpdate(){
-        var currEvent = listenerManageEvent?.whatIsCurrentEvent()
-        val url = "https://i3ykarzwd5.execute-api.us-west-2.amazonaws.com/default/GetEventFromId?eventid="+requireArguments().getString(ARG_PARAM1);
-        val getEventDetailsRequest = StringRequest(Request.Method.GET, url,
-            { response ->
-                val JSONResponse = JSONObject(response.toString())
-                val potentialCards = JSONResponse.get("cardids") as JSONArray
-
-                // Because you can't remove cards from an event, the number can only A) stay the same, so no new cards or B) increase meaning check and add missing cards
-                if (eventMemberCards.length() != potentialCards.length()) {
-
-                    var newCards = "array["
-                    var commaBefore = false
-                    // If there is a difference then we iterate through cards and find out what doesn't match
-                    for (i in 0 until potentialCards.length()) {
-                        val card  = potentialCards.get(i)
-                        val new = true
-                        for (j in 0 until eventMemberCards.length()){
-                            val oldCard  = potentialCards.get(j)
-                            if(oldCard.equals(card)) {
-                                val new = false
-                            }
-                        }
-                        if(new){
-                            // We add the card id to the insertion string if its new
-                            if (commaBefore == false){
-                                commaBefore = true
-                            }else{
-                                newCards += ","
-                            }
-                            newCards += card.toString()
-                        }
-                    }
-                    newCards +="]"
-
-                    val format = SimpleDateFormat("yyyy.MM.dd")
-                    var currDate = format.format(Calendar.getInstance().time)
-                    var cardUpdateDetails = JSONObject()
-                    var aboutUser = listenerManageEvent?.getCurrentUserAttributes()
-
-                    cardUpdateDetails.put("userid", aboutUser?.getString("userid"))
-                    cardUpdateDetails.put("cardids", newCards)
-                    cardUpdateDetails.put("meetingdate", currDate)
-
-
-                    val url = "https://0cfxpfaiy7.execute-api.us-west-2.amazonaws.com/default/addCardsToCollection"
-                    val updateCardCollectionRequest = JsonObjectRequest(
-                        Request.Method.POST, url, cardUpdateDetails,
-                        { _ ->
-                            alertCardReceived()
-                        },
-                        { error ->
-                            error.printStackTrace()
-                        })
-
-                    val queue = this.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
-                    queue?.add(updateCardCollectionRequest)
-                }
-                // We keep track of what cards are available when you join the event
-
-            },
-            { error ->
-                error.printStackTrace()
-            }
-
-        )
-        val queue = this?.let { this.context?.let { it1 -> VolleySingleton.getInstance(it1).requestQueue } }
-        queue?.add(getEventDetailsRequest)
-
+    fun eventUpdate(event_id: Int){
+        viewModel.loadEventDetails(event_id)
     }
 
     fun alertCardReceived(){
@@ -581,7 +455,7 @@ class EventManagementFragment : Fragment() {
             if (chatMessage.messageText!!.contains("Hey, I'm coming to join in") ||
                 chatMessage.messageText!!.contains("Hope everyone had a good time, this event has ended")
             ) {
-             // #TODO Fix this later   eventUpdate()
+                // #TODO Fix this later   eventUpdate()
             }
 
         }
@@ -593,19 +467,6 @@ class EventManagementFragment : Fragment() {
             return format.format(date)
         }
     }
-
-
-
-    interface OnEventManagementFragmentInteractionListener {
-        fun endEvent()
-        fun add15Mins()
-        fun exitEvent()
-        fun getEventID():Int
-        fun whatIsCurrentEvent():JSONObject
-        fun getCurrentUserAttributes(): JSONObject?
-    }
-
-
 }
 
 

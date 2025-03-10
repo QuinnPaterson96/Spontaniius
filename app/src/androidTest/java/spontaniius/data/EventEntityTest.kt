@@ -19,7 +19,8 @@ class EventEntityTest {
             "1970-01-01 00:00:00",
             1.0,
             1.0,
-            100
+            100,
+            cardId = 1
         )
         val year = now.get((Calendar.YEAR))
         val month = now.get((Calendar.MONTH)) + 1

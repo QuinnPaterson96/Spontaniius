@@ -3,23 +3,23 @@
     "project_number": "936564001493",
     "firebase_url": "https://spontaniius-b37d5.firebaseio.com",
     "project_id": "spontaniius-b37d5",
-    "storage_bucket": "spontaniius-b37d5.appspot.com"
+    "storage_bucket": "spontaniius-b37d5.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:936564001493:android:f04b06a186b591eb7ef05c",
+        "mobilesdk_app_id": "1:936564001493:android:35ad3ed0bd5247c17ef05c",
         "android_client_info": {
           "package_name": "com.spontaniius"
         }
       },
       "oauth_client": [
         {
-          "client_id": "936564001493-9pjmv7f7c82uq7uc173td7hal6uso6as.apps.googleusercontent.com",
+          "client_id": "936564001493-gjq4pvmonav2904tgromi8gv8kp5p0f0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.spontaniius",
-            "certificate_hash": "2f3498063f025f5cb141337f0686e89ead78ed56"
+            "certificate_hash": "32bb9244917ede3c5c1e163903464c39ad3f0afb"
           }
         },
         {
@@ -29,7 +29,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCv9UNLkg06qtHJOR8iT5_-8cGCUb7eOuQ"
+          "current_key": "AIzaSyBqL8DqDXJsNCF5puBIS6ApKXOfpdKxBLs"
         }
       ],
       "services": {

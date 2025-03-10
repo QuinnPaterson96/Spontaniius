@@ -4,15 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.hbb20.CountryCodePicker
 import dagger.hilt.android.AndroidEntryPoint
 import com.spontaniius.R
 import com.spontaniius.databinding.FragmentPhoneLoginBinding
-import spontaniius.ui.login.PhoneLoginViewModel
-
 
 @AndroidEntryPoint
 class PhoneLoginFragment : Fragment() {
@@ -33,63 +32,38 @@ class PhoneLoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val username = binding.username
-        val password = binding.password
-        val signupButton = binding.signupButton
-        val loginButton = binding.loginButton
+        val phoneInput = binding.username
+        val verifyButton = binding.loginButton
         val loading = binding.loading
-        val forgotPasswordButton = binding.forgotPasswordButton
         val ccp = binding.ccp
-
         val phoneErrorText = binding.phoneError
-        val passwordErrorText = binding.passwordError
 
-        // ✅ Observe only login errors
-        viewModel.loginError.observe(viewLifecycleOwner) { error ->
-            loading.visibility = View.GONE
-            if (error != null) {
-                passwordErrorText.text = "Login failed: ${error.message}"
-                passwordErrorText.visibility = View.VISIBLE
-            }
-        }
 
-        // Login button click listener
-        loginButton.setOnClickListener {
-            val phoneNumber = ccp.selectedCountryCodeWithPlus + username.text.toString().trim()
-            val passwordText = password.text.toString().trim()
+        verifyButton.setOnClickListener {
+            val phoneNumber = ccp.selectedCountryCodeWithPlus + phoneInput.text.toString().trim()
 
             // Reset previous errors
             phoneErrorText.visibility = View.GONE
-            passwordErrorText.visibility = View.GONE
-
-            var isValid = true
 
             if (phoneNumber.isEmpty() || phoneNumber.length < 10) {
-                phoneErrorText.text = "Invalid phone number"
+                phoneErrorText.text = getString(R.string.invalid_phone_number)
                 phoneErrorText.visibility = View.VISIBLE
-                isValid = false
+                return@setOnClickListener
             }
 
-            if (passwordText.length < 6) {
-                passwordErrorText.text = "Password must be at least 6 characters"
-                passwordErrorText.visibility = View.VISIBLE
-                isValid = false
-            }
+            loading.visibility = View.VISIBLE
 
-            if (isValid) {
-                loading.visibility = View.VISIBLE
-                viewModel.login(phoneNumber, passwordText)
-            }
-        }
-
-        // Navigate to SignUpFragment
-        signupButton.setOnClickListener {
-            findNavController().navigate(R.id.signupFragment)
-        }
-
-        // Navigate to ForgotPasswordFragment
-        forgotPasswordButton.setOnClickListener {
-            findNavController().navigate(R.id.passwordResetFragment)
+            viewModel.sendOtp(phoneNumber, requireActivity(), { result ->
+                loading.visibility = View.GONE
+                result.onSuccess { verificationId ->
+                    // ✅ Navigate to OTP verification screen with the verificationId
+                    val action = PhoneLoginFragmentDirections
+                        .actionPhoneLoginFragmentToOTPVerificationFragment(verificationId, phoneNumber)
+                    findNavController().navigate(action)
+                }.onFailure { error ->
+                    Toast.makeText(requireContext(), "Error: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
+                }
+            })
         }
     }
 

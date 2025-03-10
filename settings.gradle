@@ -1,2 +1,18 @@
+
+
+pluginManagement {
+    repositories {
+        google()  // ✅ Ensure this is present
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositories {
+        google()  // ✅ Ensure this is present
+        mavenCentral()
+    }
+}
+
 include ':app'
 rootProject.name = "Spontaniius"

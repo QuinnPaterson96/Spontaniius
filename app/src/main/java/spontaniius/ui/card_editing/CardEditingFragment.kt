@@ -8,20 +8,22 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import com.spontaniius.R
+import spontaniius.ui.sign_up.SignUpFragmentArgs
 
 @AndroidEntryPoint
 class CardEditingFragment : Fragment() {
 
     private val viewModel: CardEditingViewModel by viewModels()
+    private val args: CardEditingFragmentArgs by navArgs()
     private lateinit var greetingView: TextView
     private lateinit var selectedCardBackground: ImageView
     private lateinit var cardGreetingEdit: EditText
     private lateinit var loadingBar: ProgressBar
 
     private var backgroundID = 0
-    private var newUserCard = true
     private val cardBackgrounds = arrayOf(
         R.drawable.card_gold, R.drawable.card_bubbles, R.drawable.card_sunrise,
         R.drawable.card_ocean, R.drawable.card_rose, R.drawable.card_trees, R.drawable.card_circuit
@@ -39,19 +41,15 @@ class CardEditingFragment : Fragment() {
         loadingBar = view.findViewById(R.id.loading)
         cardGreetingEdit = view.findViewById(R.id.card_greeting_edit)
 
-        val name = arguments?.getString("USER_NAME") ?: "User"
-        val phone = arguments?.getString("PHONE_NUMBER")
-        val userId = arguments?.getString("USER_ID")
-        newUserCard = arguments?.getBoolean("CARD_EDIT_NEW", true) ?: true
 
-        view.findViewById<TextView>(R.id.selected_card_user_name).text = name
+        view.findViewById<TextView>(R.id.selected_card_user_name).text = args.name
         selectedCardBackground.setImageResource(cardBackgrounds[0])
         backgroundID = cardBackgrounds[0]
 
         // Set up card selection buttons
         setupCardSelection(view)
 
-        if (newUserCard) {
+        if (args.newUser) {
             view.findViewById<Button>(R.id.back_button2).visibility = View.GONE
         }
 
@@ -60,7 +58,7 @@ class CardEditingFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.done_button3).setOnClickListener {
-            viewModel.createCard(userId, name, backgroundID, phone)
+            viewModel.createCard(args.name, backgroundID)
         }
 
         // Observe ViewModel state

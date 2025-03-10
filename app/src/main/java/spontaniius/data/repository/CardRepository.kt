@@ -1,62 +1,88 @@
 package spontaniius.data.repository
 
-import android.util.Log
-import com.amplifyframework.auth.AuthUserAttribute
-import com.amplifyframework.auth.AuthUserAttributeKey
-import com.amplifyframework.core.Amplify
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import kotlinx.coroutines.suspendCancellableCoroutine
-import org.json.JSONException
-import org.json.JSONObject
-import spontaniius.di.VolleySingleton
+import spontaniius.data.local.dao.CardDao
+import spontaniius.data.local.entities.CardEntity
+import spontaniius.data.remote.RemoteDataSource
+import spontaniius.data.remote.models.CardCreateRequest
+import spontaniius.data.remote.models.CardResponse
+import spontaniius.domain.models.Card
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 class CardRepository @Inject constructor(
-    private val volleySingleton: VolleySingleton
+    private val remoteDataSource: RemoteDataSource, // ✅ Use RemoteDataSource instead
+    private val userRepository: UserRepository,
+    private val cardDao: CardDao
 ) {
+    suspend fun getCardDetails(cardIds: List<Int>): List<Card> {
+        return try {
+            // ✅ Get cached cards & ensure proper List<Card> return type
+            val cachedCards: List<Card> = cardDao.getCardsByIds(cardIds)
+                .map { it.toDomain() } // ✅ Ensure non-null conversion
 
-    suspend fun createCard(userId: String?, name: String?, backgroundId: Int, phone: String?): Result<Boolean> {
-        if (userId == null || name == null || phone == null) {
+            val cachedCardIds: Set<Int> = cachedCards.map { it.id }.toSet() // ✅ Fast lookup
+
+            // ✅ Identify missing card IDs
+            val missingCardIds: List<Int> = cardIds.filter { it !in cachedCardIds }
+
+            if (missingCardIds.isNotEmpty()) {
+                // ✅ Fetch remote cards safely (unwraps Result)
+                val response: List<CardResponse> = remoteDataSource.getCardDetails(missingCardIds)
+                    .getOrElse { emptyList() } // ✅ Extracts value from Result safely
+
+                if (response.isNotEmpty()) {
+                    val newCards: List<Card> = response.map { it.toDomain() } // ✅ Convert to domain
+                    val newCardEntities: List<CardEntity> = response.map { it.toEntity() } // ✅ Convert to entity
+
+                    cardDao.insertCards(newCardEntities) // ✅ Insert only if new cards exist
+
+                    return (cachedCards + newCards).distinctBy { it.id } // ✅ Merge and remove duplicates
+                }
+            }
+
+            return cachedCards // ✅ Always return a valid list
+        } catch (e: Exception) {
+            emptyList<Card>() // ✅ Safe fallback
+        }
+    }
+
+
+
+
+
+
+    suspend fun createCard(card_text: String?, backgroundId: Int): Result<Int> {
+        val userId = userRepository.getUserId()
+        if (userId == null) {
             return Result.failure(Exception("Invalid user data"))
         }
 
-        return suspendCancellableCoroutine { continuation ->
-            val url = "https://1j8ss7fj13.execute-api.us-west-2.amazonaws.com/default/createCard"
-            val cardObject = JSONObject()
-            try {
-                cardObject.put("userid", userId)
-                cardObject.put("cardtext", name)
-                cardObject.put("background", backgroundId)
-                cardObject.put("backgroundAddress", "")
-                cardObject.put("phone", phone)
-                cardObject.put("greeting", name)
-            } catch (e: JSONException) {
-                continuation.resume(Result.failure(Exception("Error creating card JSON")))
-                return@suspendCancellableCoroutine
-            }
+        val request = CardCreateRequest(
+            user_id = userId,
+            card_text = card_text,
+            background = backgroundId.toString(),
+            background_address = ""
+        )
 
-            val createUserRequest = JsonObjectRequest(
-                Request.Method.POST, url, cardObject,
-                { response ->
-                    try {
-                        val cardId = response.getInt("cardid")
-                        val cardAttribute = AuthUserAttribute(AuthUserAttributeKey.custom("custom:cardid"), cardId.toString())
-                        Amplify.Auth.updateUserAttribute(cardAttribute,
-                            { Log.i("CardRepository", "Updated user attribute = $it") },
-                            { Log.e("CardRepository", "Failed to update user attribute", it) }
-                        )
-                        continuation.resume(Result.success(true))
-                    } catch (e: JSONException) {
-                        continuation.resume(Result.failure(Exception("Failed to parse server response")))
+        return try {
+            val response = remoteDataSource.createCard(request) // ✅ Call RemoteDataSource
+
+            response.fold(
+                onSuccess = { responseBody ->
+                    val cardId = (responseBody["card_id"] as? Double)?.toInt()
+                    if (cardId != null) {
+                        Result.success(cardId) // ✅ Return extracted card ID
+                    } else {
+                        Result.failure(Exception("card_id missing from response"))
                     }
                 },
-                { error ->
-                    continuation.resume(Result.failure(Exception("Failed to create card: ${error.message}")))
+                onFailure = { error ->
+                    Result.failure(Exception("Failed to create card: ${error.message}"))
                 }
             )
-            volleySingleton.requestQueue.add(createUserRequest)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
+
+
 }

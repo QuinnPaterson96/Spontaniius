@@ -141,8 +141,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideEventRepository(remoteDataSource: RemoteDataSource): EventRepository{
-        return EventRepository(remoteDataSource)
+    fun provideEventRepository(remoteDataSource: RemoteDataSource, userRepository: UserRepository, eventDao: EventDao): EventRepository{
+        return EventRepository(remoteDataSource = remoteDataSource, userRepository = userRepository, eventDao = eventDao)
     }
 
 }

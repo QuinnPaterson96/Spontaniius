@@ -14,13 +14,8 @@ interface ApiService {
     @PATCH("events/join")
     suspend fun joinEvent(@Body request: JoinEventRequest): Response<Unit>
 
-    @GET("events/nearby")
-    suspend fun getNearbyEvents(
-        @Query("lat") lat: Double,
-        @Query("lng") lng: Double,
-        @Query("currentTime") currentTime: String,
-        @Query("gender") gender: String?
-    ): Response<List<NearbyEventResponse>>
+    @POST("events/nearby")
+    suspend fun getNearbyEvents(@Body request: FindEventRequest): Response<List<EventResponse>>
 
     @GET("events/{event_id}")
     suspend fun getEventById(@Path("event_id") eventId: Int): Response<Any>
@@ -98,5 +93,9 @@ interface ApiService {
         @Query("external_id") externalId: String? = null
     ): Response<UserResponse>
 
-
+    @GET("users/check-user")
+    suspend fun checkUser(
+        @Query("user_id") userId: String? = null,
+        @Query("external_id") externalId: String? = null
+    ): Response<UserResponse>
 }

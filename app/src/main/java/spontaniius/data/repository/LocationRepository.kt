@@ -11,6 +11,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.qualifiers.ApplicationContext
 import spontaniius.data.remote.RemoteDataSource
+import spontaniius.data.remote.models.GeocodingResponse
 import javax.inject.Inject
 
 class LocationRepository @Inject constructor(
@@ -73,6 +74,10 @@ class LocationRepository @Inject constructor(
             Log.e("LocationRepository", "Error fetching location: ${e.localizedMessage}")
             Result.failure(e)
         }
+    }
+
+    suspend fun getAddressFromCoordinates(latLng: LatLng, apiKey: String): Result<GeocodingResponse> {
+        return remoteDataSource.getAddressFromCoordinates("${latLng.latitude},${latLng.longitude}", apiKey)
     }
 
 }

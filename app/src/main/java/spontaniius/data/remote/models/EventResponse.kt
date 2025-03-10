@@ -4,7 +4,8 @@ import spontaniius.domain.models.Event
 
 data class EventResponse(
     val eventId: Int,
-    val cardIds: List<Int>?,
+    val ownerId: String,
+    val cardIds: List<Int>,
     val eventTitle: String,
     val eventText: String,
     val genderRestrict: String?,
@@ -20,6 +21,7 @@ data class EventResponse(
     fun toDomain(): Event {
         return Event(
             eventId = eventId,
+            ownerId = ownerId,
             title = eventTitle,
             description = eventText,
             gender = genderRestrict ?: "Any", // Default to "Any" if null
@@ -30,7 +32,7 @@ data class EventResponse(
             latitude = streetAddress?.first ?: 0.0,  // Use first value from tuple
             longitude = streetAddress?.second ?: 0.0, // Use second value from tuple
             invitation = maxRadius ?: 1000, // Default invitation radius
-            cardId = cardIds?.firstOrNull() ?: -1 // Use first card ID, or -1 if none exist
+            cardIds = cardIds // Use first card ID, or -1 if none exist
         )
     }
 }

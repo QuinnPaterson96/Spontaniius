@@ -15,14 +15,14 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     // LiveData to observe authentication state
-    val _isUserSignedIn: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val isUserSignedIn: LiveData<Boolean> = _isUserSignedIn
+    val _externalId: MutableLiveData<String> = MutableLiveData<String>()
+    val externalId: LiveData<String> = _externalId
 
     // LiveData to track sign-out result
 
     // Function to check login status
     fun checkAuthState() {
-        _isUserSignedIn.postValue(authRepository.isUserSignedIn())
+        _externalId.postValue(authRepository.isUserSignedIn())
     }
 
     // Function to sign out

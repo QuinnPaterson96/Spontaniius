@@ -12,6 +12,8 @@ import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import com.spontaniius.R
 import com.spontaniius.databinding.FragmentSignUpBinding
+import spontaniius.data.model.AuthProvider
+import spontaniius.ui.phone_login.OTPVerificationFragmentDirections
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -49,7 +51,14 @@ class SignUpFragment : Fragment() {
             loading.visibility = View.GONE
             result.fold(
                 onSuccess = {
-                    findNavController().navigate(R.id.findEventFragment)  // ✅ Navigate to Find Events
+                    val action = SignUpFragmentDirections
+                        .actionSignupFragmentToCardEditingFragment(
+                            name = userName.text.toString().trim(),  // Replace with actual value
+                            newUser = true
+                        )
+                    findNavController().navigate(action)
+
+             // ✅ Navigate to Find Events
                 },
                 onFailure = { error ->
                     Toast.makeText(requireContext(), "Signup failed: ${error.message}", Toast.LENGTH_SHORT).show()
@@ -69,13 +78,6 @@ class SignUpFragment : Fragment() {
                 Toast.makeText(requireContext(), "Please enter your name", Toast.LENGTH_SHORT).show()
             }
         }
-
-        // On "Skip" (skip customization and go directly to event finding)
-        /*
-        skipButton.setOnClickListener {
-            findNavController().navigate(R.id.findEventFragment)
-        }
-         */
     }
 
     override fun onDestroyView() {

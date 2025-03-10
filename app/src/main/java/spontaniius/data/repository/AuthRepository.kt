@@ -34,7 +34,7 @@ class AuthRepository @Inject constructor(
     /**
      * ✅ **Check if user is signed in**
      */
-    fun isUserSignedIn(): Boolean = firebaseAuth.currentUser != null
+    fun isUserSignedIn(): String? = firebaseAuth.currentUser?.uid
 
     /**
      * ✅ **Get Google Sign-In Intent**

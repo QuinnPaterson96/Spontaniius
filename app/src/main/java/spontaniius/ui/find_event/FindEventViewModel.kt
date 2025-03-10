@@ -1,5 +1,6 @@
 package spontaniius.ui.find_event
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,9 @@ class FindEventViewModel @Inject constructor(
 
     private val _events = MutableLiveData<List<Event>>()
     val events: LiveData<List<Event>> get() = _events
+
+    private val _eventError = MutableLiveData<Boolean>()
+    val eventError: LiveData<Boolean> get() = _eventError
 
     private val _currentLocation = MutableLiveData<LatLng?>()
     val currentLocation: LiveData<LatLng?> get() = _currentLocation
@@ -45,6 +49,10 @@ class FindEventViewModel @Inject constructor(
             val result = eventRepository.getNearbyEvents(lat, lng, gender)
             result.onSuccess { eventList ->
                 _events.postValue(eventList)
+            }
+            result.onFailure { exception ->
+                Log.e("Find Event Fragment", exception.toString())
+                _eventError.postValue(true)
             }
         }
     }

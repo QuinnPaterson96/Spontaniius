@@ -1,9 +1,7 @@
 package spontaniius.ui.find_event
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,15 +13,12 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -33,17 +28,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import org.json.JSONArray
-import org.json.JSONObject
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.ui.MainActivity
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -119,7 +109,9 @@ class FindEventFragment : Fragment() {
         swipeContainer = view.findViewById(R.id.swipeContainer)
         listButton = view.findViewById(R.id.listButton)
         mapButton = view.findViewById(R.id.mapButton)
-        hintButton = view.findViewById(R.id.hint_get_events_button)
+        hintButton = view.findViewById(R.id.get_events_button)
+        hintCreateEventButton = view.findViewById(R.id.create_event_hint_button)
+
         hintText = view.findViewById(R.id.hint_text)
 
         listButton.setOnClickListener{
@@ -130,9 +122,12 @@ class FindEventFragment : Fragment() {
             switchToMap()
         }
 
-
         hintButton.setOnClickListener {
             getCurrentLocation()
+        }
+
+        hintCreateEventButton.setOnClickListener {
+            findNavController().navigate(R.id.createEventFragment)
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(view.context)
@@ -208,11 +203,21 @@ class FindEventFragment : Fragment() {
         }
 
         viewModel.events.observe(viewLifecycleOwner) { events ->
+
+            if (events.isEmpty()){
+                hintText.visibility = VISIBLE
+                hintCreateEventButton.visibility = VISIBLE
+            }else{
+                hintText.visibility = GONE
+                hintCreateEventButton.visibility = GONE
+            }
             val eventTiles = events.map { EventTile.fromDomain(it) }
             processEventTiles(eventTiles)
         }
 
-
+        viewModel.eventError.observe(viewLifecycleOwner){
+            swipeContainer.isRefreshing = false
+        }
 
         return view
     }
@@ -297,7 +302,7 @@ class FindEventFragment : Fragment() {
                         eventView.details.setOnClickListener {
                             val action =
                                 FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
-                                    eventId = eventView.eventId,
+                                    eventId = eventView.eventId.toInt(),
                                     isEventOwner = false
                                 )
                             findNavController().navigate(action)

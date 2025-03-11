@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -42,9 +43,9 @@ class LoginFragment : Fragment() {
         // Google Sign-In button
         val googleSignInButton = view.findViewById<Button>(R.id.btn_google_signin)
         googleSignInButton.setOnClickListener {
-            val signInIntent = getGoogleSignInIntent()
-            startActivityForResult(signInIntent, RC_SIGN_IN)
+            googleSignInLauncher.launch(getGoogleSignInIntent())
         }
+
 
         val phoneSignInButton = view.findViewById<Button>(R.id.btn_phone_login)
         phoneSignInButton.setOnClickListener {
@@ -53,6 +54,17 @@ class LoginFragment : Fragment() {
 
         return view
     }
+
+
+    private val googleSignInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.handleGoogleSignInResult(result.data, requireActivity())
+            } else {
+                Toast.makeText(requireContext(), "Google Sign-In failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

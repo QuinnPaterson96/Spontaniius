@@ -58,7 +58,7 @@ class EventChatFragment : Fragment() {
 
 
         backButton.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().popBackStack()
         }
         displayChatMessages()
 

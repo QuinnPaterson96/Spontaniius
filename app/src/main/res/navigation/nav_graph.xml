@@ -73,20 +73,6 @@
         android:name="spontaniius.ui.password_reset.ResetPasswordFragment"
         android:label="Reset Password" />
 
-    <!-- Event Management -->
-    <fragment
-        android:id="@+id/eventManagementFragment"
-        android:name="spontaniius.ui.event_management.EventManagementFragment"
-        android:label="Event Management">
-
-        <action
-            android:id="@+id/action_eventManagementFragment_to_eventChatFragment"
-            app:destination="@id/eventChatFragment">
-            <argument
-                android:name="eventId"
-                app:argType="integer" />
-        </action>
-    </fragment>
 
     <!-- Login Fragment -->
     <fragment
@@ -171,6 +157,7 @@
         android:id="@+id/eventChatFragment"
         android:name="spontaniius.ui.event_chat.EventChatFragment"
         android:label="EventChatFragment" />
+
     <fragment
         android:id="@+id/eventJoinFragment"
         android:name="spontaniius.ui.event_join.EventJoinFragment"
@@ -179,6 +166,21 @@
             android:id="@+id/action_eventJoinFragment_to_eventChatFragment"
             app:destination="@id/eventChatFragment">
             <argument android:name="eventId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <!-- Event Management -->
+    <fragment
+        android:id="@+id/eventManagementFragment"
+        android:name="spontaniius.ui.event_management.EventManagementFragment"
+        android:label="Event Management">
+
+        <action
+            android:id="@+id/action_eventManagementFragment_to_eventChatFragment"
+            app:destination="@id/eventChatFragment">
+            <argument
+                android:name="eventId"
                 app:argType="integer" />
         </action>
     </fragment>

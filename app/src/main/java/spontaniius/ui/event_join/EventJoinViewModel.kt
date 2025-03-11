@@ -31,23 +31,18 @@ class EventJoinViewModel @Inject constructor(
     private val _eventDetails = MutableLiveData<Event?>()
     val eventDetails: LiveData<Event?> get() = _eventDetails
 
-    fun joinEvent(eventId: Int){
 
-    }
 
-    fun endEvent(eventId: Int, onSuccess: (EventResponse) -> Unit, onFailure: (Exception) -> Unit) {
+    fun joinEvent(userId: String, cardId: Int, eventId: Int) {
         viewModelScope.launch {
-            val result = eventRepository.endEvent(eventId)
-            result.onSuccess {  }
-            result.onFailure {  }
-        }
-    }
-
-    fun add15Mins(eventId: Int, currentEndTime: String) {
-        viewModelScope.launch {
-            val result = eventRepository.extendEvent15Mins(eventId, currentEndTime)
-            result.onSuccess { }
-            result.onFailure { }
+            val result = eventRepository.joinEvent(userId, cardId, eventId)
+            result.onSuccess {
+                eventJoined.postValue(true)
+            }
+            result.onFailure { error ->
+                eventJoined.postValue(false)
+                Log.e("Join Event Fragment", error.toString())
+            }
         }
     }
 

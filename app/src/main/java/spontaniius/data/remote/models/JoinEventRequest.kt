@@ -1,8 +1,11 @@
 package spontaniius.data.remote.models
 
-data class JoinEventRequest(
-    val event_id: Int,
-    val user_id: String,
-    val card_id: Int
-)
+import com.google.gson.annotations.SerializedName
+import java.util.*
 
+data class JoinEventRequest(
+    @SerializedName("user_id") val userId: String,
+    @SerializedName("card_id") val cardId: Int,
+    @SerializedName("event_id") val eventId: Int,
+    @SerializedName("meeting_date") val meetingDate: String
+)

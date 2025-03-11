@@ -127,4 +127,7 @@
     <string name="add_15_mins">Add 15 mins</string>
     <string name="about_event">About Event:</string>
     <string name="send">Send</string>
+    <string name="event_title">Event Title</string>
+    <string name="event_started">Event Started</string>
+    <string name="event_ends">Event Ends</string>
 </resources>

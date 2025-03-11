@@ -3,6 +3,7 @@ package spontaniius.data.remote.api
 import retrofit2.Response
 import retrofit2.http.*
 import spontaniius.data.remote.models.*
+import spontaniius.domain.models.Event
 import spontaniius.domain.models.User
 
 interface ApiService {
@@ -12,7 +13,7 @@ interface ApiService {
     suspend fun createEvent(@Body request: CreateEventRequest): Response<EventResponse>
 
     @PATCH("events/join")
-    suspend fun joinEvent(@Body request: JoinEventRequest): Response<Unit>
+    suspend fun joinEvent(@Body request: JoinEventRequest): Response<EventResponse>
 
     @POST("events/nearby")
     suspend fun getNearbyEvents(@Body request: FindEventRequest): Response<List<EventResponse>>

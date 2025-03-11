@@ -25,7 +25,7 @@ class RemoteDataSource @Inject constructor(
         apiService.createEvent(request)
     }
 
-    suspend fun joinEvent(request: JoinEventRequest): Result<Unit> = safeApiCall {
+    suspend fun joinEvent(request: JoinEventRequest): Result<EventResponse> = safeApiCall {
         apiService.joinEvent(request)
     }
 

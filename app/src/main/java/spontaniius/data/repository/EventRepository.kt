@@ -10,9 +10,12 @@ import spontaniius.data.remote.models.CreateEventRequest
 import spontaniius.data.remote.models.EventResponse
 import spontaniius.data.remote.models.ExtendEventRequest
 import spontaniius.data.remote.models.FindEventRequest
+import spontaniius.data.remote.models.JoinEventRequest
 import spontaniius.domain.models.Event
+import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.inject.Inject
 
 class EventRepository @Inject constructor(
@@ -78,6 +81,16 @@ class EventRepository @Inject constructor(
         }
     }
 
+    suspend fun joinEvent(userId: String, cardId: Int, eventId: Int): Result<EventResponse> {
+        return try {
+            val meetingDate = Date() // Generate current date
+
+            val request = JoinEventRequest(userId, cardId, eventId, formatDate(meetingDate))
+            remoteDataSource.joinEvent(request)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
     suspend fun saveCreatedEvent(event: Event){
         eventDao.insertEvent(event.toEntity())
     }
@@ -86,5 +99,11 @@ class EventRepository @Inject constructor(
     fun getGoogleMapsUrl(streetAddress: String?): String? {
         if (streetAddress.isNullOrEmpty()) return null
         return "https://www.google.com/maps/dir/?api=1&destination=$streetAddress"
+    }
+
+    fun formatDate(date: Date): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        formatter.timeZone = TimeZone.getTimeZone("UTC") // Ensure it's UTC
+        return formatter.format(date)
     }
 }

@@ -17,15 +17,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.domain.models.Event
 import spontaniius.domain.models.User
-import spontaniius.ui.event_join.EventJoinViewModel
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -48,8 +45,9 @@ class EventJoinFragment : Fragment() {
 
     lateinit var input: EditText
     lateinit var fragmentView: View
-    lateinit var detailsToggleButton: Button
-    lateinit var joinFromDetailsButton:Button
+    lateinit var exitButton: Button
+    lateinit var chatButton: Button
+    lateinit var joinButton: Button
     lateinit var getDirectionsButton: Button
 
     var manager = false
@@ -64,7 +62,6 @@ class EventJoinFragment : Fragment() {
 
         }
     }
-    var viewingDetails = true
 
 
     override fun onCreateView(
@@ -73,26 +70,34 @@ class EventJoinFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         super.onCreate(savedInstanceState)
-        fragmentView = inflater.inflate(R.layout.fragment_event_management, container, false)
+        fragmentView = inflater.inflate(R.layout.fragment_event_join, container, false)
 
         val eventId: Int = arguments?.getInt("eventId") ?: 0  // Default value if null
 
 
         // Both joinees and mangers go through here to initialize some details
-        detailsToggleButton = fragmentView.findViewById<View>(R.id.detailsButton) as Button
-        detailsToggleButton.setOnClickListener{
+        joinButton = fragmentView.findViewById<View>(R.id.joinButton) as Button
+        joinButton.setOnClickListener{
+            if(currentUser!=null){
+                viewModel.joinEvent(userId = currentUser!!.id, cardId = currentUser?.cardId!!, eventId = currentEvent.eventId)
+            }
+            goToEventChat()
+        }
 
+        chatButton = fragmentView.findViewById<View>(R.id.chatButton) as Button
+        chatButton.setOnClickListener{
+            goToEventChat()
+        }
+
+        exitButton = fragmentView.findViewById<View>(R.id.exitButton) as Button
+        exitButton.setOnClickListener{
+            findNavController().navigate(R.id.findEventFragment)
         }
 
 
         mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
         mapFragment.getMapAsync(callback)
 
-
-        joinFromDetailsButton.setOnClickListener{
-            viewModel.joinEvent(eventId)
-            goToEventChat()
-        }
 
         // makes it so you have your own card already collected.
 
@@ -105,20 +110,20 @@ class EventJoinFragment : Fragment() {
             }
         }
 
-        viewModel.eventJoined.observe(viewLifecycleOwner){joined ->
-            if(joined){
-                //# TODO make it so this updates button
-            }
-        }
-
 
         viewModel.eventDetails.observe(viewLifecycleOwner){ event ->
+            // Handles that if user navigates back to here after joining event
             if (event != null) {
                 currentEvent = event
+                if (currentUser?.cardId in currentEvent.cardIds){
+                    joinButton.visibility = GONE
+                    chatButton.visibility = VISIBLE
+                }
                 populateDetails(fragmentView)
-
             }
+
         }
+        viewModel.getUserDetails()
         viewModel.loadEventDetails(eventId)
 
         return fragmentView
@@ -224,14 +229,12 @@ class EventJoinFragment : Fragment() {
 
     fun goToEventChat(){
         val action =
-            eventId?.let {
+            currentEvent.eventId.let {
                 EventJoinFragmentDirections.actionEventJoinFragmentToEventChatFragment(
-                    eventId = it,
+                    eventId = currentEvent.eventId,
                 )
             }
-        if (action != null) {
-            findNavController().navigate(action)
-        }
+        findNavController().navigate(action)
     }
 
     fun alertCardReceived(){

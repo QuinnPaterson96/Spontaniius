@@ -1,9 +1,9 @@
-package spontaniius.ui.event_management
+package spontaniius.ui.event_join
 
+import androidx.lifecycle.ViewModel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,10 +14,9 @@ import spontaniius.data.repository.UserRepository
 import spontaniius.domain.models.Event
 import spontaniius.domain.models.User
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
-class EventManagementViewModel @Inject constructor(
+class EventJoinViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
@@ -26,32 +25,28 @@ class EventManagementViewModel @Inject constructor(
     private val _userDetails: MutableLiveData<User?> = MutableLiveData<User?>()
     val userDetails: LiveData<User?> = _userDetails
 
-    private val _event_ended = MutableLiveData<Boolean>()
-    val eventEnded = _event_ended
+    private val _event_joined = MutableLiveData<Boolean>()
+    val eventJoined = _event_joined
 
     private val _eventDetails = MutableLiveData<Event?>()
     val eventDetails: LiveData<Event?> get() = _eventDetails
 
+    fun joinEvent(eventId: Int){
 
-    fun endEvent(eventId: Int) {
+    }
+
+    fun endEvent(eventId: Int, onSuccess: (EventResponse) -> Unit, onFailure: (Exception) -> Unit) {
         viewModelScope.launch {
             val result = eventRepository.endEvent(eventId)
-            result.onSuccess {
-                _event_ended.postValue(true)
-            }
-            result.onFailure {
-                _event_ended.postValue(true)
-                Log.e("Event Management", "Issue ending the event")
-            }
+            result.onSuccess {  }
+            result.onFailure {  }
         }
     }
 
     fun add15Mins(eventId: Int, currentEndTime: String) {
         viewModelScope.launch {
             val result = eventRepository.extendEvent15Mins(eventId, currentEndTime)
-            result.onSuccess { event ->
-                _eventDetails.postValue(event.toDomain())
-            }
+            result.onSuccess { }
             result.onFailure { }
         }
     }

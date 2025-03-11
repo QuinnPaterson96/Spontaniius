@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
@@ -16,11 +17,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.domain.models.Event
 import spontaniius.domain.models.User
+import spontaniius.ui.event_join.EventJoinViewModel
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -39,28 +44,32 @@ private const val ARG_PARAM2 = "is_event_owner"
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class EventManagementFragment : Fragment() {
-    private val viewModel: EventManagementViewModel by viewModels()
+class EventJoinFragment : Fragment() {
+    private val viewModel: EventJoinViewModel by viewModels()
+    lateinit var messagesRef: DatabaseReference
     var currentUser: User? = null
+
+
     lateinit var input: EditText
     lateinit var fragmentView: View
-    lateinit var endEventButton: Button
-    lateinit var add15MinsButton : Button
-    lateinit var goToChatButton: Button
+    lateinit var detailsToggleButton: Button
     lateinit var joinFromDetailsButton:Button
     lateinit var getDirectionsButton: Button
+
     var manager = false
     var eventId: Int? = null
     private var googleMap: GoogleMap? = null
     lateinit var mapFragment: SupportMapFragment
     lateinit var currentEvent: Event
+    private val callback = OnMapReadyCallback { googleMap ->
 
-    private val google_maps_callback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
         googleMap.setOnMapLongClickListener { latLng ->
 
         }
     }
+    var viewingDetails = true
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,29 +82,21 @@ class EventManagementFragment : Fragment() {
         val eventId: Int = arguments?.getInt("eventId") ?: 0  // Default value if null
 
 
-// if you created this event you have control options
-        endEventButton = fragmentView.findViewById<View>(R.id.endButton) as Button
-        endEventButton.setOnClickListener{
-            viewModel.endEvent(eventId)
-        }
-
-        add15MinsButton = fragmentView.findViewById<View>(R.id.addButton) as Button
-        add15MinsButton.setOnClickListener{
-            viewModel.add15Mins(eventId = currentEvent.eventId, currentEndTime = currentEvent.endTime)
-        }
-
-
-
-
         // Both joinees and mangers go through here to initialize some details
-        goToChatButton = fragmentView.findViewById<View>(R.id.event_chat_button) as Button
-        goToChatButton.setOnClickListener{
-            goToEventChat()
+        detailsToggleButton = fragmentView.findViewById<View>(R.id.detailsButton) as Button
+        detailsToggleButton.setOnClickListener{
+
         }
 
 
         mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
-        mapFragment.getMapAsync(google_maps_callback)
+        mapFragment.getMapAsync(callback)
+
+
+        joinFromDetailsButton.setOnClickListener{
+            viewModel.joinEvent(eventId)
+            goToEventChat()
+        }
 
         // makes it so you have your own card already collected.
 
@@ -108,9 +109,9 @@ class EventManagementFragment : Fragment() {
             }
         }
 
-        viewModel.eventEnded.observe(viewLifecycleOwner){ended ->
-            if(ended){
-                findNavController().navigate(R.id.findEventFragment)
+        viewModel.eventJoined.observe(viewLifecycleOwner){joined ->
+            if(joined){
+                //# TODO make it so this updates button
             }
         }
 
@@ -221,11 +222,20 @@ class EventManagementFragment : Fragment() {
                 startActivity(intent)
             }
         }
+
+
     }
 
     fun goToEventChat(){
-        val action =  EventManagementFragmentDirections.actionEventManagementFragmentToEventChatFragment(currentEvent.eventId)
-        findNavController().navigate(action)
+        val action =
+            eventId?.let {
+                EventManagementFragmentDirections.actionEventManagementFragmentToEventChatFragment(
+                    eventId = it,
+                )
+            }
+        if (action != null) {
+            findNavController().navigate(action)
+        }
     }
 
     fun alertCardReceived(){

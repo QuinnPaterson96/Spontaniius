@@ -60,8 +60,9 @@ class EventRepository @Inject constructor(
 
     suspend fun extendEvent15Mins(eventId: Int, currentEndTime: String): Result<EventResponse> {
         val newEndTime = ZonedDateTime.parse(
-            currentEndTime, DateTimeFormatter.ofPattern("yyyy-M-dd HH:mm:ssz")
+            currentEndTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX")
         ).plusMinutes(15).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+
 
         val request = ExtendEventRequest(event_end = newEndTime)
         return remoteDataSource.extendEvent(eventId, request)

@@ -12,33 +12,23 @@
 
     <LinearLayout
         android:id="@+id/actions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        android:weightSum="1">
+        android:gravity="end">  <!-- Align content to the right -->
 
-        <Button
-            android:id="@+id/endButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.33"
-            android:text="@string/end_event"
-            />
-
-        <Button
-            android:id="@+id/addButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.33"
-            android:text="@string/add_15_mins" />
         <Button
             android:id="@+id/detailsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
-            android:text="@string/event_details" />
+            android:text="@string/join_event"
+            android:background="@drawable/spontaniius_primary_button"
+            android:padding="10dp"
+            />
     </LinearLayout>
+
 
 
 
@@ -167,7 +157,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
-            android:text="Directions" />
+            android:text="Directions"
+            android:background="@drawable/spontaniius_primary_button"/>
     </LinearLayout>
 
 

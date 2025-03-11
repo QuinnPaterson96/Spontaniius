@@ -6,7 +6,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -15,12 +14,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.spontaniius.R
-import dagger.hilt.android.AndroidEntryPoint
-import spontaniius.domain.models.Event
 import spontaniius.domain.models.User
-import spontaniius.ui.event_chat.EventChatViewModel
-import spontaniius.ui.event_management.ChatMessage
-import spontaniius.ui.event_management.EventManagementViewModel
+import spontaniius.ui.event_chat.ChatMessage
 import java.text.SimpleDateFormat
 import java.util.*
 

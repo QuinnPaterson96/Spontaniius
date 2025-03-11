@@ -1,4 +1,4 @@
-package spontaniius.ui.event_management
+package spontaniius.ui.event_chat
 
 import java.util.*
 

@@ -96,7 +96,7 @@
     <string name="exit_event">Exit Event</string>
     <string name="join_event">Join Event</string>
     <string name="event_chat">Event Chat</string>
-    <string name="event_details">Event Details\n</string>
+    <string name="event_details">Event Details</string>
     <string name="welcome_to_spontaniius">Welcome To Spontaniius</string>
     <string name="report_label">What Happened?</string>
     <string name="report_hint">Describe the issue here...</string>
@@ -123,4 +123,6 @@
     <string name="activity_coffee">Meet me for coffee</string>
     <string name="activity_other">Join me for something fun!</string>
     <string name="placeholder_event_description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</string>
+    <string name="end_event">End Event</string>
+    <string name="add_15_mins">Add 15 mins</string>
 </resources>

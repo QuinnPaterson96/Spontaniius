@@ -138,7 +138,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             if(event !=null){
                 val action =
                     CreateEventFragmentDirections.actionCreateEventFragmentToEventManagementFragment(
-                        eventId = event.eventId.toString(),
+                        eventId = event.eventId,
                         isEventOwner = true
                     )
                 findNavController().navigate(action)

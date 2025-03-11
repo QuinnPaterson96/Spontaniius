@@ -18,7 +18,7 @@ interface ApiService {
     suspend fun getNearbyEvents(@Body request: FindEventRequest): Response<List<EventResponse>>
 
     @GET("events/{event_id}")
-    suspend fun getEventById(@Path("event_id") eventId: Int): Response<Any>
+    suspend fun getEventById(@Path("event_id") eventId: Int): Response<EventResponse>
 
     @PATCH("events/{event_id}/extend")
     suspend fun extendEvent(

@@ -302,7 +302,7 @@ class FindEventFragment : Fragment() {
                         eventView.details.setOnClickListener {
                             val action =
                                 FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
-                                    eventId = eventView.eventId,
+                                    eventId = eventView.eventId.toInt(),
                                     isEventOwner = false
                                 )
                             findNavController().navigate(action)

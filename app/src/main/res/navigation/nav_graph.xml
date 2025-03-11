@@ -14,7 +14,7 @@
             app:destination="@id/eventManagementFragment">
             <argument
                 android:name="eventId"
-                app:argType="string" />
+                app:argType="integer" />
             <argument
                 android:name="isEventOwner"
                 app:argType="boolean"
@@ -32,7 +32,7 @@
             app:destination="@id/eventManagementFragment" >
             <argument
                 android:name="eventId"
-                app:argType="string" />
+                app:argType="integer" />
             <argument
                 android:name="isEventOwner"
                 app:argType="boolean"
@@ -79,6 +79,13 @@
         android:name="spontaniius.ui.event_management.EventManagementFragment"
         android:label="Event Management">
 
+        <action
+            android:id="@+id/action_eventManagementFragment_to_eventChatFragment"
+            app:destination="@id/eventChatFragment">
+            <argument
+                android:name="eventId"
+                app:argType="integer" />
+        </action>
     </fragment>
 
     <!-- Login Fragment -->
@@ -160,5 +167,10 @@
             android:name="newUser"
             app:argType="boolean" />
     </fragment>
+    <fragment
+        android:id="@+id/eventChatFragment"
+        android:name="EventChatFragment"
+        android:label="EventChatFragment" />
+
 
 </navigation>

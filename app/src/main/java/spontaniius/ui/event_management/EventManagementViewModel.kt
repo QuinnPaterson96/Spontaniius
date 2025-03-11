@@ -1,5 +1,6 @@
 package spontaniius.ui.event_management
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -63,7 +64,9 @@ class EventManagementViewModel @Inject constructor(
         viewModelScope.launch {
             val result: Result<Event> = eventRepository.fetchEventDetails(eventId)
             result.onSuccess { _eventDetails.postValue(it) }
-            result.onFailure { _eventDetails.postValue(null) } // Handle error
+            result.onFailure { error ->
+                Log.e("Manage Event Fragment", error.toString())
+                _eventDetails.postValue(null) } // Handle error
         }
     }
 

@@ -43,7 +43,7 @@ class RemoteDataSource @Inject constructor(
     }
 
 
-    suspend fun getEventById(eventId: Int): Result<Any> = safeApiCall {
+    suspend fun getEventById(eventId: Int): Result<EventResponse> = safeApiCall {
         apiService.getEventById(eventId)
     }
 

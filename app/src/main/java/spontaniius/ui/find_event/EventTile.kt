@@ -12,7 +12,7 @@ data class EventTile(
     val distance: String,
     val timeRemaining: String,
     val location: String,
-    val eventId: String,
+    val eventId: Int,
     val latitude: Double,
     val longitude: Double,
     val event: Event
@@ -27,7 +27,7 @@ data class EventTile(
                     distance = event.distance?.toString() ?: "Unknown",
                     timeRemaining = calculateTimeRemaining(event.startTime, event.endTime),
                     location = event.address,
-                    eventId = event.eventId.toString(),
+                    eventId = event.eventId,
                     latitude = event.latitude,
                     longitude = event.longitude,
                     event = event
@@ -42,7 +42,7 @@ data class EventTile(
                     distance = event.distance?.toString() ?: "Unknown",
                     timeRemaining = calculateTimeRemaining(event.startTime, event.endTime),
                     location = event.address,
-                    eventId = event.eventId.toString(),
+                    eventId = event.eventId,
                     latitude = event.latitude,
                     longitude = event.longitude,
                     event = event

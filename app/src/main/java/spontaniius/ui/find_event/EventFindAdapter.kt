@@ -31,7 +31,7 @@ class EventFindAdapter(private var eventList: List<EventTile>) :
         val details: ConstraintLayout = itemView.findViewById(R.id.details)
         val timeRemainIndicator: Button = itemView.findViewById(R.id.time_indicator)
 
-        lateinit var eventId: String
+        var eventId: Int = 0
         lateinit var event: Event
     }
 

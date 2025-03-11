@@ -1,4 +1,4 @@
-package spontaniius.ui.event_management
+package spontaniius.ui.event_join
 
 import android.content.Intent
 import android.net.Uri
@@ -32,10 +32,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "event_id"
-private const val ARG_PARAM2 = "is_event_owner"
 
 
 /**
@@ -100,7 +96,7 @@ class EventJoinFragment : Fragment() {
 
         // makes it so you have your own card already collected.
 
-        var ownCardJsonArray = JSONArray()
+        val ownCardJsonArray = JSONArray()
 
         viewModel.userDetails.observe(viewLifecycleOwner){ user ->
             if (user != null) {
@@ -133,10 +129,10 @@ class EventJoinFragment : Fragment() {
 
     // Basically fills the details screen
     private fun populateDetails(fragmentView: View) {
-        var eventTitle = fragmentView.findViewById<View>(R.id.event_title) as TextView
-        var eventDescription = fragmentView.findViewById<View>(R.id.event_description) as TextView
-        var eventStarts = fragmentView.findViewById<View>(R.id.event_started) as TextView
-        var eventEnds = fragmentView.findViewById<View>(R.id.event_ends) as TextView
+        val eventTitle = fragmentView.findViewById<View>(R.id.event_title) as TextView
+        val eventDescription = fragmentView.findViewById<View>(R.id.event_description) as TextView
+        val eventStarts = fragmentView.findViewById<View>(R.id.event_started) as TextView
+        val eventEnds = fragmentView.findViewById<View>(R.id.event_ends) as TextView
 
         eventTitle.text = currentEvent.title
         eventDescription.text = currentEvent.description
@@ -156,7 +152,7 @@ class EventJoinFragment : Fragment() {
             )
         )
 
-        var dst = Calendar.getInstance().timeZone.dstSavings // Checks to see if daylight savings
+        val dst = Calendar.getInstance().timeZone.dstSavings // Checks to see if daylight savings
 
         // Because postgres doesn't store timestamp we need to offset to local time. Currently manager keeps data from event creation, whereas fields are populated by api
         // For event joinees
@@ -168,8 +164,8 @@ class EventJoinFragment : Fragment() {
 
 
 
-        var localEndTime = endTime.toLocalTime()
-        var localStartTime = startTime.toLocalTime()
+        val localEndTime = endTime.toLocalTime()
+        val localStartTime = startTime.toLocalTime()
 
 
         eventStarts.text = LocalTime.parse(localStartTime.toString(),
@@ -183,7 +179,7 @@ class EventJoinFragment : Fragment() {
         // There's slight differences between how street address is stored in local object vs when retrieved from database, this handles that differece.
 
 
-        var location: LatLng = LatLng(currentEvent.latitude, currentEvent.longitude)
+        val location: LatLng = LatLng(currentEvent.latitude, currentEvent.longitude)
 
         location.let {
             MarkerOptions()
@@ -229,7 +225,7 @@ class EventJoinFragment : Fragment() {
     fun goToEventChat(){
         val action =
             eventId?.let {
-                EventManagementFragmentDirections.actionEventManagementFragmentToEventChatFragment(
+                EventJoinFragmentDirections.actionEventJoinFragmentToEventChatFragment(
                     eventId = it,
                 )
             }

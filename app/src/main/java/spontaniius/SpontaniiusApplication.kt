@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Logger
 import com.spontaniius.R
 import dagger.hilt.android.HiltAndroidApp
 
@@ -13,6 +15,7 @@ class SpontaniiusApplication : Application(){
         super.onCreate()
         try {
             FirebaseApp.initializeApp(this)
+
 
             var locationAPIKey = getString(R.string.google_api_key)
             Places.initialize(applicationContext, locationAPIKey)

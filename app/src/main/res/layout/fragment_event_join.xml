@@ -50,16 +50,18 @@
         android:layout_height="wrap_content"
         android:textColor="@color/quantum_black_100"
         app:layout_constraintTop_toBottomOf="@id/event_title"
-        android:text="About Event:"
+        android:text="@string/about_event"
         android:textSize="20sp" />
 
 
     <TextView
         android:id="@+id/event_description"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/quantum_black_100"
-        android:text="@string/placeholder_event_description"
+        android:text=""
+        tools:text="@string/placeholder_event_description"
         app:layout_constraintTop_toBottomOf="@id/about_event_title"/>
 
 

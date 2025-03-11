@@ -183,13 +183,28 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             max_radius = invitationRadius)
     }
 
-    private fun getFormattedDateString(hour: Int, minute: Int): String {
-        val year = Calendar.getInstance().get(Calendar.YEAR)
-        val month = Calendar.getInstance().get(Calendar.MONTH) + 1
-        val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
-        return String.format(Locale.US, "%04d-%02d-%02dT%02d:%02d:00Z", year, month, day, hour, minute)
+    private fun getFormattedDateString(hour: Int, minute: Int): String {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+        }
+
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        // Get timezone offset in "+/-HH:mm" format
+        val timeZone = calendar.timeZone
+        val offsetInMillis = timeZone.getOffset(calendar.timeInMillis)
+        val offsetHours = offsetInMillis / (1000 * 60 * 60)
+        val offsetMinutes = (offsetInMillis % (1000 * 60 * 60)) / (1000 * 60)
+        val timeZoneOffset = String.format(Locale.US, "%+03d:%02d", offsetHours, Math.abs(offsetMinutes))
+
+        return String.format(Locale.US, "%04d-%02d-%02dT%02d:%02d:00%s", year, month, day, hour, minute, timeZoneOffset)
     }
+
 
     private fun setIcon(iconRes: Int, defaultTitle: String) {
         iconSelectButton.setImageResource(iconRes)

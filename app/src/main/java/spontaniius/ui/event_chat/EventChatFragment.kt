@@ -1,4 +1,8 @@
+package spontaniius.ui.event_chat
+
+
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -6,7 +10,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -14,17 +20,18 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.spontaniius.R
+import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.domain.models.User
-import spontaniius.ui.event_chat.ChatMessage
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+@AndroidEntryPoint
 class EventChatFragment : Fragment() {
+    private val viewModel: EventChatViewModel by viewModels()
 
     lateinit var messagesRef: DatabaseReference
     lateinit var listOfMessages: RecyclerView
-    lateinit var fab: FloatingActionButton
+    lateinit var sendMessageButton: Button
     lateinit var input: EditText
     private var chatAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder>? = null
     lateinit var backButton: Button
@@ -38,24 +45,52 @@ class EventChatFragment : Fragment() {
 
         val eventId: Int = arguments?.getInt("eventId") ?: 0
         messagesRef = FirebaseDatabase.getInstance().getReference(eventId.toString())
+        Log.d("ChatFragment", "Event ID: $eventId")
+
 
         backButton = view.findViewById(R.id.button_back)
+
         listOfMessages = view.findViewById(R.id.list_of_chat_messages)
-        fab = view.findViewById(R.id.button_send)
+        listOfMessages.layoutManager = LinearLayoutManager(requireContext()) // Add this line
+
+        sendMessageButton = view.findViewById(R.id.send_message_button)
         input = view.findViewById(R.id.edit_text_message)
 
-        fab.setOnClickListener {
-            sendMessage()
-        }
 
         backButton.setOnClickListener {
             findNavController().navigateUp()
         }
         displayChatMessages()
 
+        sendMessageButton.setOnClickListener {
+            sendMessage()
+        }
 
+
+        viewModel.userDetails.observe(viewLifecycleOwner){ user ->
+            if (user != null) {
+                currentUser = user
+            }else{
+                Log.e("Chat Fragment", "Error Retrieving User")
+            }
+
+        }
+
+        viewModel.getUserDetails()
         return view
     }
+
+
+    override fun onStart() {
+        super.onStart()
+        chatAdapter?.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        chatAdapter?.stopListening()
+    }
+
 
     private fun displayChatMessages() {
         val query = messagesRef.orderByChild("messageTime")
@@ -80,12 +115,20 @@ class EventChatFragment : Fragment() {
     }
 
     private fun sendMessage() {
-        messagesRef
-            .push()
-            .setValue(ChatMessage(input.text.toString(), currentUser.name))
+        if (::currentUser.isInitialized) {
+            val message = ChatMessage(input.text.toString(), currentUser.name)
 
-        input.setText("")
+            messagesRef.push().setValue(message)
+                .addOnFailureListener { e ->
+                    Log.e("FirebaseSend", "Failed to send message", e)
+                }
+
+            input.setText("")
+        } else {
+            Log.e("FirebaseSend", "User not initialized, cannot send message")
+        }
     }
+
 
 
     // ViewHolder Class

@@ -10,8 +10,8 @@
         android:name="spontaniius.ui.find_event.FindEventFragment"
         android:label="Find Event">
         <action
-            android:id="@+id/action_findEventFragment_to_eventManagementFragment"
-            app:destination="@id/eventManagementFragment">
+            android:id="@+id/action_findEventFragment_to_eventJoinFragment"
+            app:destination="@id/eventJoinFragment">
             <argument
                 android:name="eventId"
                 app:argType="integer" />
@@ -169,8 +169,19 @@
     </fragment>
     <fragment
         android:id="@+id/eventChatFragment"
-        android:name="EventChatFragment"
+        android:name="spontaniius.ui.event_chat.EventChatFragment"
         android:label="EventChatFragment" />
+    <fragment
+        android:id="@+id/eventJoinFragment"
+        android:name="spontaniius.ui.event_join.EventJoinFragment"
+        android:label="EventJoinFragment">
+        <action
+            android:id="@+id/action_eventJoinFragment_to_eventChatFragment"
+            app:destination="@id/eventChatFragment">
+            <argument android:name="eventId"
+                app:argType="integer" />
+        </action>
+    </fragment>
 
 
 </navigation>

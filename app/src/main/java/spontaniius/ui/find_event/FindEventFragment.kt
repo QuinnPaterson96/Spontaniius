@@ -301,7 +301,7 @@ class FindEventFragment : Fragment() {
                         val eventView = holder as EventFindAdapter.EventCardViewHolder
                         eventView.details.setOnClickListener {
                             val action =
-                                FindEventFragmentDirections.actionFindEventFragmentToEventManagementFragment(
+                                FindEventFragmentDirections.actionFindEventFragmentToEventJoinFragment(
                                     eventId = eventView.eventId.toInt(),
                                     isEventOwner = false
                                 )

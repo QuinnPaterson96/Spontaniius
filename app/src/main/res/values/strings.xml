@@ -125,4 +125,6 @@
     <string name="placeholder_event_description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</string>
     <string name="end_event">End Event</string>
     <string name="add_15_mins">Add 15 mins</string>
+    <string name="about_event">About Event:</string>
+    <string name="send">Send</string>
 </resources>

@@ -12,6 +12,7 @@
 /captures
 .externalNativeBuild
 .cxx
+/idea/deploymentTargetSelector.xml
 
 #amplify
 amplify/\#current-cloud-backend

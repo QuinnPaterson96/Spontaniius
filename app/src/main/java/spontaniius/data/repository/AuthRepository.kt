@@ -43,22 +43,24 @@ class AuthRepository @Inject constructor(
     /**
      * ✅ **Handle Google Sign-In & return `externalId`**
      */
-    suspend fun handleGoogleSignInResult(data: Intent?, activity: Activity): Result<String> {
+    suspend fun handleGoogleSignInResult(idToken: String): Result<String> {
         return try {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            val account = task.getResult(ApiException::class.java)
-            val idToken = account?.idToken
-
-            if (idToken != null) {
-                val credential = GoogleAuthProvider.getCredential(idToken, null)
-                val firebaseUid = signInWithFirebase(activity, credential)
-                firebaseUid?.let { Result.success(it) } ?: Result.failure(Exception("Firebase sign-in failed"))
-            } else {
-                Result.failure(Exception("Google Sign-In data missing"))
-            }
-        } catch (e: ApiException) {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val firebaseUid = signInWithFirebase(credential)
+            firebaseUid?.let { Result.success(it) } ?: Result.failure(Exception("Firebase sign-in failed"))
+        } catch (e: Exception) {
             Log.e("AuthRepository", "Google Sign-In failed", e)
             Result.failure(e)
+        }
+    }
+
+    suspend fun signInWithFirebase(credential: com.google.firebase.auth.AuthCredential): String? {
+        return try {
+            val authResult = firebaseAuth.signInWithCredential(credential).await()
+            authResult.user?.uid // Returns Firebase UID
+        } catch (e: Exception) {
+            Log.e("FirebaseAuth", "Firebase authentication failed", e)
+            null
         }
     }
 

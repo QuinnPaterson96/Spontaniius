@@ -12,6 +12,32 @@ android {
     namespace "com.spontaniius"
     compileSdk = 34  // Use 30 or above
 
+    signingConfigs {
+        release {
+            storeFile file("C:/Users/quinn/.android/release.keystore")
+            storePassword SPONTANIUS_STORE_PASSWORD
+            keyAlias SPONTANIUS_KEY_ALIAS
+            keyPassword SPONTANIUS_KEY_PASSWORD
+        }
+        debug {
+            storeFile file("C:/Users/quinn/.android/release.keystore")
+            storePassword SPONTANIUS_STORE_PASSWORD
+            keyAlias SPONTANIUS_KEY_ALIAS
+            keyPassword SPONTANIUS_KEY_PASSWORD
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    testBuildType "debug"  // Ensures debugAndroidTest uses debug signing config
+
     viewBinding {
         enabled = true
     }
@@ -132,11 +158,17 @@ dependencies {
 
 
     // Autocomplete support for GIS
-    implementation 'com.google.android.libraries.places:places:4.1.0'
+    implementation 'com.google.android.libraries.places:places:3.2.0' // Update to latest version
 
     // dagger
 
     // Country Code Selection
     implementation 'com.hbb20:ccp:2.5.2'
+
+
+    // Google Auth
+    implementation "androidx.credentials:credentials"
+    implementation "androidx.credentials:credentials-play-services-auth"
+    implementation "com.google.android.libraries.identity.googleid:googleid"
 
 }

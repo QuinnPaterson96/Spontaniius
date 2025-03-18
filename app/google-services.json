@@ -1,42 +1,33 @@
 {
   "project_info": {
-    "project_number": "936564001493",
-    "firebase_url": "https://spontaniius-b37d5.firebaseio.com",
-    "project_id": "spontaniius-b37d5",
-    "storage_bucket": "spontaniius-b37d5.firebasestorage.app"
+    "project_number": "1009715812296",
+    "project_id": "spontaniius-abba6",
+    "storage_bucket": "spontaniius-abba6.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:936564001493:android:35ad3ed0bd5247c17ef05c",
+        "mobilesdk_app_id": "1:1009715812296:android:7f10d3350c8410ce56d2fd",
         "android_client_info": {
           "package_name": "com.spontaniius"
         }
       },
       "oauth_client": [
         {
-          "client_id": "936564001493-gjq4pvmonav2904tgromi8gv8kp5p0f0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.spontaniius",
-            "certificate_hash": "32bb9244917ede3c5c1e163903464c39ad3f0afb"
-          }
-        },
-        {
-          "client_id": "936564001493-m7ut58mipvoup7rdmn95v9f1acgptbcp.apps.googleusercontent.com",
+          "client_id": "1009715812296-140eg9okroe2p1885j79sgnnc7h1ljc3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBqL8DqDXJsNCF5puBIS6ApKXOfpdKxBLs"
+          "current_key": "AIzaSyD8afMLq2baCUnYoXDrwsuhn8ghU9WVF9E"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "936564001493-m7ut58mipvoup7rdmn95v9f1acgptbcp.apps.googleusercontent.com",
+              "client_id": "1009715812296-140eg9okroe2p1885j79sgnnc7h1ljc3.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -78,7 +78,11 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="spontaniius.ui.login.LoginFragment"
-        android:label="Login" />
+        android:label="Login" >
+        <action
+            android:id="@+id/action_loginFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/phoneLoginFragment"

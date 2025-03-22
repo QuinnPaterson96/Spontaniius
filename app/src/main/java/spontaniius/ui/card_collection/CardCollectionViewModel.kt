@@ -1,5 +1,6 @@
 package spontaniius.ui.card_collection
 
+import android.util.Log
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -30,6 +31,10 @@ class CardCollectionViewModel @Inject constructor(
                     val cards = cardRepository.getCardDetails(uniqueCardIds)
                     _userCards.postValue(cards)
                 }
+            }
+            collections.onFailure { error ->
+                Log.e("CardCollection", error.toString())
+
             }
         }
     }

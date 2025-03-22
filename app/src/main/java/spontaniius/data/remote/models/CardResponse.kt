@@ -1,15 +1,16 @@
 package spontaniius.data.remote.models
 
+import com.google.gson.annotations.SerializedName
 import spontaniius.data.local.entities.CardEntity
 import spontaniius.domain.models.Card
 
 data class CardResponse(
-    val cardId: Int,         // Unique card identifier
-    val userId: String,      // Owner of the card
-    val name: String,        // Cardholder's name
-    val phone: String,       // Cardholder's phone number
-    val background: Int?,    // Background ID (optional)
-    val greeting: String?    // Custom greeting (optional)
+    @SerializedName("card_id") val cardId: Int,  // ✅ Matches JSON
+    @SerializedName("user_id") val userId: String,
+    @SerializedName("card_text") val name: String,  // ✅ Matches JSON ("card_text" instead of "name")
+    @SerializedName("background") val background: String,  // ✅ Changed type from `Int?` to `String?`
+    @SerializedName("background_address") val backgroundAddress: String?,  // ✅ Added missing field
+    @SerializedName("greeting") val greeting: String?  // ✅ Added missing field
 ){
     // ✅ Converts DTO → Domain Model
     fun toDomain(): Card {
@@ -17,7 +18,6 @@ data class CardResponse(
             id = this.cardId,
             userId = this.userId,
             name = this.name,
-            phone = this.phone,
             background = this.background,
             greeting = this.greeting
         )
@@ -28,7 +28,6 @@ data class CardResponse(
             cardId = this.cardId,
             userId = this.userId,
             name = this.name,
-            phone = this.phone,
             background = this.background,
             greeting = this.greeting
         )
@@ -41,8 +40,8 @@ data class CardResponse(
                 cardId = card.id,
                 userId = card.userId,
                 name = card.name,
-                phone = card.phone,
                 background = card.background,
+                backgroundAddress = card.background,
                 greeting = card.greeting
             )
         }

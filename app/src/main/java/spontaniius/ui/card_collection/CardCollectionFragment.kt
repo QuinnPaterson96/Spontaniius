@@ -41,10 +41,11 @@ class CardCollectionFragment : Fragment() {
         gridView = view.findViewById(R.id.gridview)
 
         // Load user card collections
-        viewModel.loadUserCardCollections()
 
         // Observe LiveData updates
         setupObservers()
+        viewModel.loadUserCardCollections()
+
 
         return view
     }
@@ -65,7 +66,8 @@ class CardCollectionFragment : Fragment() {
         } else {
             // Set initial selected card
             val selectedCard = cards.first()
-            selectedCard.background?.let { selectedCardBackground.setImageResource(it) }
+
+            selectedCard.background?.let { selectedCardBackground.setImageResource(it.toInt()) }
             selectedCardGreeting.text = selectedCard.greeting
             selectedCardName.text = selectedCard.name
             selectedCardId = selectedCard.id.toString()
@@ -79,7 +81,7 @@ class CardCollectionFragment : Fragment() {
         gridView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             if (position % 3 != 0) { // Skip date separator cards
                 val selectedCard = userCardCollection[position]
-                selectedCard.background?.let { selectedCardBackground.setImageResource(it) }
+                selectedCard.background?.let { selectedCardBackground.setImageResource(it.toInt()) }
                 selectedCardGreeting.text = selectedCard.greeting
                 selectedCardName.text = selectedCard.name
                 selectedCardId = selectedCard.id.toString()

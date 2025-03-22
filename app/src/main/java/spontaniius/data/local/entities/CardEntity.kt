@@ -9,8 +9,7 @@ data class CardEntity(
     @PrimaryKey val cardId: Int,
     val userId: String,
     val name: String,
-    val phone: String,
-    val background: Int?,
+    val background: String,
     val greeting: String?
 ) {
     // ✅ Convert CardEntity to Domain Model
@@ -19,7 +18,6 @@ data class CardEntity(
             id = cardId,
             userId = userId,
             name = name,
-            phone = phone,
             background = background,
             greeting = greeting
         )
@@ -32,7 +30,6 @@ data class CardEntity(
                 cardId = card.id,
                 userId = card.userId,
                 name = card.name,
-                phone = card.phone,
                 background = card.background,
                 greeting = card.greeting
             )

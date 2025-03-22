@@ -1,5 +1,7 @@
 package spontaniius.data.remote.models
 
+import com.google.gson.annotations.SerializedName
+
 data class GetCardsRequest(
-    val cardIds: List<Int> // List of card IDs to fetch details for
+    @SerializedName("card_ids") val cardIds: List<Int>
 )

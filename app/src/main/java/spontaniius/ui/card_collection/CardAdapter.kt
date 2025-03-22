@@ -37,8 +37,10 @@ class CardAdapter(
         val userCard = getItem(position)
 
         // Set card background
-        if (userCard.background != 0) {
-            userCard.background?.let { viewHolder.cardBackground.setImageResource(it) }
+
+        val backgroundAsInt = userCard.background.toInt()
+        if (backgroundAsInt != 0) {
+            userCard.background?.let { viewHolder.cardBackground.setImageResource(backgroundAsInt) }
         } else {
             viewHolder.cardBackground.setImageResource(R.drawable.card_gold) // Optional default background
         }

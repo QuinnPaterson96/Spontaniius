@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="spontaniius.ui.create_event.CreateEventFragment">
+    android:padding="16dp">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,90 +15,94 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:gravity="center_horizontal">
 
-            <!-- Event Icon Selection -->
+            <!-- Event Icon & Title -->
             <LinearLayout
-                style="@style/create_event_item_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="12dp">
 
                 <ImageButton
                     android:id="@+id/event_icon"
-                    android:layout_width="62dp"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/content_description_event_icon"
                     app:srcCompat="@drawable/ic_pin_drop_black_56dp" />
 
-                <TextView
-                    android:id="@+id/prompt_select_icon"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/prompt_select_event_icon"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                    android:layout_marginStart="12dp"
+                    app:boxBackgroundMode="outline"
+                    android:layout_weight="1">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/event_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_event_title"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <!-- Event Title -->
-            <EditText
-                android:id="@+id/event_title"
-                style="@style/create_event_item_layout"
+            <!-- Event Description -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_event_title"
-                android:inputType="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:layout_marginBottom="12dp"
+                app:boxBackgroundMode="outline">
 
-            <!-- Event Description -->
-            <EditText
-                android:id="@+id/event_description"
-                style="@style/create_event_item_layout"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:hint="@string/hint_event_description"
-                android:inputType="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/event_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_event_description"
+                    android:inputType="textMultiLine"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Location Search -->
             <LinearLayout
-                style="@style/create_event_item_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_marginBottom="12dp">
 
-                <TextView
-                    android:id="@+id/pick_location_prompt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/select_location_prompt" />
-
-                <EditText
-                    android:id="@+id/locationSearchEditText"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/search_for_a_place"
-                    android:padding="10dp"
-                    android:background="@android:drawable/edit_text" />
+                    app:boxBackgroundMode="outline">
 
-                <ImageView
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/locationSearchEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/search_for_a_place"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageButton
                     android:id="@+id/locate_me_button_create"
-                    android:layout_width="47dp"
-                    android:layout_height="match_parent"
-                    android:padding="2dp"
-                    app:srcCompat="@drawable/ic_baseline_my_location_24" />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/locate_me"
+                    app:srcCompat="@drawable/ic_baseline_my_location_24"/>
             </LinearLayout>
 
-            <!-- Suggestions List -->
+            <!-- Move ListView Below for Proper Space Allocation -->
             <ListView
                 android:id="@+id/suggestionsList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone"/>
 
             <!-- Event Time Selection -->
             <com.google.android.material.textfield.TextInputLayout
@@ -112,8 +116,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/select_start_time_prompt"
-                    android:focusable="false"/>
+                    android:focusable="false"
+                    android:clickable="true"/>
             </com.google.android.material.textfield.TextInputLayout>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -126,89 +132,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/select_end_time_prompt"
-                    android:focusable="false"/>
+                    android:focusable="false"
+                    android:clickable="true"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Gender Selection -->
-            <LinearLayout
-                style="@style/create_event_item_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/pick_gender_prompt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/select_gender_prompt" />
-
-                <Spinner
-                    android:id="@+id/gender_select_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <!-- Invite Options -->
-            <LinearLayout
-                style="@style/create_event_item_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/invite_prompt" />
-
-                <RadioGroup
-                    android:id="@+id/invite_group"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <RadioButton
-                        android:id="@+id/invite_neighbours"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/radio_button_background"
-                        android:button="@android:color/transparent"
-                        android:drawableTop="@drawable/ic_location_on_black_24dp"
-                        android:text="@string/invite_neighbours" />
-
-                    <RadioButton
-                        android:id="@+id/invite_neighbourhood"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/radio_button_background"
-                        android:button="@android:color/transparent"
-                        android:drawableTop="@drawable/ic_home_black_24dp"
-                        android:text="@string/invite_neighbourhood" />
-
-                    <RadioButton
-                        android:id="@+id/invite_everyone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/radio_button_background"
-                        android:button="@android:color/transparent"
-                        android:drawableTop="@drawable/ic_brightness_1_black_24dp"
-                        android:text="@string/invite_everyone" />
-                </RadioGroup>
-            </LinearLayout>
 
             <!-- Create Event Button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/create_event_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/create_event"
-                android:background="@drawable/spontaniius_primary_button"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="center" />
+                style="@style/Widget.MaterialComponents.Button"
+                app:cornerRadius="8dp"
+                app:backgroundTint="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="20dp"/>
         </LinearLayout>
     </ScrollView>
 
@@ -222,6 +162,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
-
+        app:layout_constraintVertical_bias="0.5"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

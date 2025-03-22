@@ -20,6 +20,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -46,7 +47,6 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
     private lateinit var eventLoad: ProgressBar
     private lateinit var titleField: EditText
     private lateinit var descriptionField: EditText
-    private lateinit var genderSpinner: Spinner
     private lateinit var iconSelectButton: ImageButton
     private lateinit var invitationTypePicker: RadioGroup
     private lateinit var selectedButton: RadioButton
@@ -70,33 +70,22 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         // Initialize views
         titleField = viewLayout.findViewById(R.id.event_title)
         descriptionField = viewLayout.findViewById(R.id.event_description)
-        genderSpinner = viewLayout.findViewById(R.id.gender_select_spinner)
         eventLoad = viewLayout.findViewById(R.id.loading)
         iconSelectButton = viewLayout.findViewById(R.id.event_icon)
-        invitationTypePicker = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
         startTimeText = viewLayout.findViewById(R.id.event_start_time_picker)
         endTimeText = viewLayout.findViewById(R.id.event_end_time_picker)
 
 
+        startTimeText.setText(formatTime(selectedStartTime))
         startTimeText.setOnClickListener {
             showTimePickerDialog(true)
         }
 
         // Set up End Time Picker
+        endTimeText.setText(formatTime(selectedEndTime))
         endTimeText.setOnClickListener {
             showTimePickerDialog(false)
         }
-
-        // Set up Gender Spinner
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.gender_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            genderSpinner.adapter = adapter
-        }
-
 
 
         val searchEditText = viewLayout.findViewById<EditText>(R.id.locationSearchEditText)
@@ -188,6 +177,15 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             }
         }
 
+
+        viewModel.address.observe(viewLifecycleOwner){ address ->
+            if (address!=null){
+                isSettingText = true
+                searchEditText.setText(address)
+                isSettingText = false
+            }
+        }
+
         viewModel.getCurrentLocation()
 
         return viewLayout
@@ -206,12 +204,13 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             Toast.makeText(requireContext(), "Please select a location.", Toast.LENGTH_LONG).show()
             return
         }
+        /*
+        //val selectedId = invitationTypePicker.checkedRadioButtonId
 
-        val selectedId = invitationTypePicker.checkedRadioButtonId
         val selectedRadioButton: RadioButton = (invitationTypePicker.findViewById<RadioButton>(selectedId))
         val invitationSelectorPosition = invitationTypePicker.indexOfChild(selectedRadioButton).coerceIn(0, INVITATION_RADIUS_OPTIONS.lastIndex)
-        val invitationRadius = INVITATION_RADIUS_OPTIONS[invitationSelectorPosition]
-
+        val invitationRadius = INVITATION_RADIUS_OPTIONS[invitationSelectorPosition] # Deprecated radius buttons
+         */
         eventLoad.visibility = View.VISIBLE
 
 
@@ -219,10 +218,10 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             description = description,
             gender = selectedGender,
             icon = selectedIcon,
-            event_starts = formatTime(selectedStartTime),
-            event_ends = formatTime(selectedEndTime),
+            event_starts = getFormattedDateString(selectedStartTime.hour, selectedStartTime.minute),
+            event_ends = getFormattedDateString(selectedEndTime.hour, selectedEndTime.minute),
             latLng = userLatLng!!,
-            max_radius = invitationRadius)
+            max_radius = 5000)
     }
 
 
@@ -301,20 +300,24 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
     }
 
     fun updateSuggestionsList(places: List<PlaceSuggestion>, listView: ListView, searchEditText: EditText) {
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, places.map { it.placePrediction.text_field.fullText })
-        listView.adapter = adapter
-        listView.visibility = View.VISIBLE
 
-        listView.setOnItemClickListener { _, _, position, _ ->
-            val selectedPlace = places[position]
-            Log.i("FindEventFragment", "Selected Place: ${selectedPlace.placePrediction.text_field.fullText}")
+        if (places.isNotEmpty()){
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, places.map { it.placePrediction.text_field.fullText })
+            listView.adapter = adapter
+            listView.visibility = View.VISIBLE
 
-            // Hide the list & update EditText
+            listView.setOnItemClickListener { _, _, position, _ ->
+                val selectedPlace = places[position]
+                Log.i("FindEventFragment", "Selected Place: ${selectedPlace.placePrediction.text_field.fullText}")
+
+                // Hide the list & update EditText
+                listView.visibility = View.GONE
+                searchEditText.setText(selectedPlace.placePrediction.text_field.fullText)
+
+                placesViewModel.getPlaceDetails(selectedPlace.placePrediction.placeId, getString(R.string.google_api_key))
+            }
+        }else{
             listView.visibility = View.GONE
-            searchEditText.setText(selectedPlace.placePrediction.text_field.fullText)
-
-            placesViewModel.getPlaceDetails(selectedPlace.placePrediction.placeId, getString(R.string.google_api_key))
-
         }
     }
 
@@ -347,7 +350,4 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         return String.format(Locale.US, "%02d:%02d", time.hour, time.minute)
     }
 
-    private fun getFormattedDateString(time: LocalTime): String {
-        return formatTime(time) // Can be expanded for full date-time formatting
-    }
 }

@@ -3,18 +3,26 @@ package spontaniius.ui.find_event
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ListView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,11 +36,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import spontaniius.common.PlacesViewModel
+import spontaniius.data.remote.models.PlaceSuggestion
 import spontaniius.ui.MainActivity
 import java.util.*
 import kotlin.collections.ArrayList
@@ -40,16 +53,13 @@ import kotlin.collections.ArrayList
 @AndroidEntryPoint
 class FindEventFragment : Fragment() {
 
-
-
-
     private var eventList: ArrayList<EventTile> = ArrayList()
     private lateinit var recyclerView: RecyclerView
     private var viewAdapter: RecyclerView.Adapter<*> = EventFindAdapter(eventList)
     private lateinit var viewManager: RecyclerView.LayoutManager
     lateinit var swipeContainer:SwipeRefreshLayout
     lateinit var streetName:String
-    lateinit var currLatLng: LatLng
+    var currLatLng: LatLng? = null
     lateinit var mapFragment: SupportMapFragment
     private var googleMap: GoogleMap? = null
     lateinit var mapButton: Button
@@ -68,26 +78,6 @@ class FindEventFragment : Fragment() {
     private val viewModel: FindEventViewModel by viewModels()
     lateinit var fusedLocationClient: FusedLocationProviderClient
     private val callback = OnMapReadyCallback { googleMap ->
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-
-
 
         this.googleMap=googleMap
         googleMap.setOnMapLongClickListener { latLng ->
@@ -99,7 +89,7 @@ class FindEventFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         // Inflate the layout for this fragment
 
@@ -111,7 +101,6 @@ class FindEventFragment : Fragment() {
         mapButton = view.findViewById(R.id.mapButton)
         hintButton = view.findViewById(R.id.get_events_button)
         hintCreateEventButton = view.findViewById(R.id.create_event_hint_button)
-
         hintText = view.findViewById(R.id.hint_text)
 
         listButton.setOnClickListener{
@@ -136,16 +125,11 @@ class FindEventFragment : Fragment() {
         recyclerView.adapter = viewAdapter
 
 
-        val locateMeButton = view.findViewById<ImageView>(R.id.locate_me_button);
-        locateMeButton.setOnClickListener {
-            getCurrentLocation()
-        }
-
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener() {
-            if(::currLatLng.isInitialized)
+            if(currLatLng!=null)
                 swipeContainer.isRefreshing = true
-                viewModel.fetchEvents(lat = currLatLng.latitude, lng = currLatLng.longitude, gender = null) // Todo maybe fix gender stuff
+                viewModel.fetchEvents(lat = currLatLng!!.latitude, lng = currLatLng!!.longitude, gender = null) // Todo maybe fix gender stuff
         }
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(
@@ -155,38 +139,6 @@ class FindEventFragment : Fragment() {
             android.R.color.holo_red_light
         )
 
-        // Initialize Places.
-
-
-        // Create a new Places client instance.
-        val autocompleteFragment: AutocompleteSupportFragment =
-            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-
-        autocompleteFragment.setPlaceFields(
-            Arrays.asList(
-                Place.Field.ID,
-                Place.Field.NAME,
-                Place.Field.LAT_LNG
-            )
-        )
-
-
-
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
-
-                Log.i("AddLocationFragment.TAG", "Place: " + place.name)
-                val coords: LatLng? = place.latLng
-                if (coords != null) {
-                    getLocationFromAddress(coords.latitude.toString() + ", " + coords.longitude.toString())
-                }
-            }
-
-            override fun onError(p0: Status) {
-                p0.statusMessage?.let { Log.i("AddLocationFragment.TAG", it) }
-            }
-
-        })
 
         viewModel.locationPermissionNeeded.observe(viewLifecycleOwner) { needed ->
             if (needed) {
@@ -219,6 +171,8 @@ class FindEventFragment : Fragment() {
             swipeContainer.isRefreshing = false
         }
 
+
+        getCurrentLocation()
         return view
     }
 
@@ -268,9 +222,6 @@ class FindEventFragment : Fragment() {
     }
 
     // Not needed as google autocomplete returns coordinate, will keep if we ever want to move away from using google's api + fragment
-    fun getLocationFromAddress(strAddress: String){
-        viewModel.getLocationFromAddress(strAddress, getString(R.string.google_api_key))
-    }
 
 
 
@@ -347,7 +298,5 @@ class FindEventFragment : Fragment() {
         swipeContainer.visibility= VISIBLE
         listButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary))
         mapButton.setBackgroundColor(getResources().getColor(R.color.colorNeutral))
-
-
     }
 }

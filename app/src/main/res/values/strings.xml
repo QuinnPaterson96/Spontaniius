@@ -130,4 +130,6 @@
     <string name="event_title">Event Title</string>
     <string name="event_started">Event Started</string>
     <string name="event_ends">Event Ends</string>
+    <string name="search_for_a_place">Search for a place</string>
+    <string name="search_using_my_location">Search using my location</string>
 </resources>

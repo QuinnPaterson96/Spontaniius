@@ -10,14 +10,15 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import spontaniius.data.remote.api.ApiService
 import spontaniius.data.remote.api.GoogleApiService
+import spontaniius.data.remote.api.PlacesApiService
 import spontaniius.data.remote.models.*
 import spontaniius.domain.models.Event
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(
     private val apiService: ApiService,
-    private val googleApiService: GoogleApiService  // Google Maps API
-
+    private val googleApiService: GoogleApiService,  // Google Maps API
+    private val placesApiService: PlacesApiService
 ) {
 
     /** EVENTS **/
@@ -186,7 +187,11 @@ class RemoteDataSource @Inject constructor(
             apiService.getUser(externalId)
         }
     }
+    suspend fun getAutocompleteResults(request: AutocompleteRequest, apiKey:String ): Result<AutocompleteResponse> {
+        val fullUrl = "https://places.googleapis.com/v1/places:autocomplete" // ✅ Correct URL
 
+        return safeApiCall<AutocompleteResponse> { placesApiService.getAutocompleteResults(request = request, apiKey =  apiKey, fullUrl = fullUrl) }
+    }
 
 
     suspend fun getAddressFromCoordinates(
@@ -195,6 +200,12 @@ class RemoteDataSource @Inject constructor(
     ): Result<GeocodingResponse>{
         return safeApiCall {
             googleApiService.getAddressFromCoordinates(latlng, apiKey)
+        }
+    }
+
+    suspend fun getDetailsFromPlaceId(placeId: String, apiKey:String): Result<PlaceDetailsResponse>{
+        return  safeApiCall {
+            googleApiService.getPlaceDetails(placeId = placeId, apiKey = apiKey)
         }
     }
 }

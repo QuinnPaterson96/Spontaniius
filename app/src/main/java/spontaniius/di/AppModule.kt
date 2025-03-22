@@ -21,11 +21,13 @@ import spontaniius.data.local.dao.UserDao
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.api.ApiService
 import spontaniius.data.remote.api.GoogleApiService
+import spontaniius.data.remote.api.PlacesApiService
 import spontaniius.data.repository.AuthRepository
 import spontaniius.data.repository.CardCollectionRepository
 import spontaniius.data.repository.CardRepository
 import spontaniius.data.repository.EventRepository
 import spontaniius.data.repository.LocationRepository
+import spontaniius.data.repository.PlacesRepository
 import spontaniius.data.repository.UserRepository
 import javax.inject.Singleton
 
@@ -34,6 +36,7 @@ import javax.inject.Singleton
 object AppModule {
     private const val BASE_URL = "https://fgvdpt3hht.us-east-1.awsapprunner.com"
     private const val BASE_URL_GOOGLE = "https://maps.googleapis.com/"
+    private const val BASE_URL_GOOGLE_PLACES = "https://places.googleapis.com/v1/"
 
     @Provides
     fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
@@ -133,14 +136,32 @@ object AppModule {
             .create(GoogleApiService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun providePlacesApiService(): PlacesApiService {
+        val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL_GOOGLE_PLACES) // Ensure correct base URL
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(PlacesApiService::class.java)
+    }
+
+
 
     @Provides
     @Singleton
     fun provideRemoteDataSource(
         appApiService: ApiService,
-        googleApiService: GoogleApiService
+        googleApiService: GoogleApiService,
+        placesApiService: PlacesApiService
     ): RemoteDataSource {
-        return RemoteDataSource(appApiService, googleApiService)
+        return RemoteDataSource(appApiService, googleApiService, placesApiService)
     }
 
     @Provides
@@ -153,6 +174,13 @@ object AppModule {
     @Singleton
     fun provideEventRepository(remoteDataSource: RemoteDataSource, userRepository: UserRepository, eventDao: EventDao): EventRepository{
         return EventRepository(remoteDataSource = remoteDataSource, userRepository = userRepository, eventDao = eventDao)
+    }
+
+
+    @Provides
+    @Singleton
+    fun providePlacesRepository(remoteDataSource: RemoteDataSource): PlacesRepository{
+        return PlacesRepository(remoteDataSource)
     }
 
 }

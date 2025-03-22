@@ -114,25 +114,25 @@ class LoginFragment : Fragment() {
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-            auth.signInWithCredential(credential)
-            .addOnCompleteListener(requireActivity()) { task ->  // Use requireActivity() for Fragment
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
+        auth.signInWithCredential(credential)
+        .addOnCompleteListener(requireActivity()) { task ->  // Use requireActivity() for Fragment
+            if (task.isSuccessful) {
+                // Sign in success, update UI with the signed-in user's information
+                Log.d(TAG, "signInWithCredential:success")
 
-                    val user = auth.currentUser
-                    if (user != null) {
-                        external_id = user.uid
-                        viewModel.checkNewUser(user.uid)
-                    }
-
-                } else {
-                    // If sign in fails, display a message to the user
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    Toast.makeText(requireContext(), "Google Sign-In failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                val user = auth.currentUser
+                if (user != null) {
+                    external_id = user.uid
+                    viewModel.checkNewUser(user.uid)
                 }
+
+            } else {
+                // If sign in fails, display a message to the user
+                Log.w(TAG, "signInWithCredential:failure", task.exception)
+                Toast.makeText(requireContext(), "Google Sign-In failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
             }
         }
+    }
 
 
     private fun handleSignIn(credential: Credential) {

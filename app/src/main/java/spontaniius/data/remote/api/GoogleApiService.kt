@@ -1,10 +1,19 @@
 package spontaniius.data.remote.api
 
+import retrofit2.Call
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
+import spontaniius.data.remote.models.AutocompleteRequest
+import spontaniius.data.remote.models.AutocompleteResponse
 import spontaniius.data.remote.models.GeocodingResponse
 import spontaniius.data.remote.models.GoogleMapsResponse
+import spontaniius.data.remote.models.PlaceDetailsResponse
 
 interface GoogleApiService {
 
@@ -26,5 +35,13 @@ interface GoogleApiService {
         @Query("latlng") latlng: String, // Format: "latitude,longitude"
         @Query("key") apiKey: String
     ): Response<GeocodingResponse>
+
+    @GET("places/{placeId}")
+    suspend fun getPlaceDetails(
+        @Path("placeId") placeId: String,
+        @Header("X-Goog-Api-Key") apiKey: String,
+        @Header("X-Goog-FieldMask") fieldMask: String = "location,formattedAddress"
+    ): Response<PlaceDetailsResponse>
+
 
 }

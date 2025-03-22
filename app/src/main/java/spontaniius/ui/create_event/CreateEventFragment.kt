@@ -3,20 +3,34 @@ package spontaniius.ui.create_event
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import com.spontaniius.R
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import spontaniius.common.PlacesViewModel
+import spontaniius.data.remote.models.PlaceSuggestion
 import spontaniius.ui.find_event.FindEventFragmentDirections
+import java.time.LocalTime
 import java.util.*
 
 val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -27,23 +41,28 @@ val INVITATION_RADIUS_OPTIONS = listOf(500, 2000, 5000) // Corresponding radius 
 class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
 
     private val viewModel: CreateEventViewModel by viewModels()
+    private val placesViewModel: PlacesViewModel by viewModels()
 
     private lateinit var eventLoad: ProgressBar
     private lateinit var titleField: EditText
     private lateinit var descriptionField: EditText
     private lateinit var genderSpinner: Spinner
     private lateinit var iconSelectButton: ImageButton
-    private lateinit var autocompleteFragment: AutocompleteSupportFragment
-    private lateinit var startTimePicker: TimePicker
-    private lateinit var endTimePicker: TimePicker
     private lateinit var invitationTypePicker: RadioGroup
     private lateinit var selectedButton: RadioButton
+    private lateinit var startTimeText: TextInputEditText
+    private lateinit var endTimeText: TextInputEditText
+
 
 
     private var selectedGender: String = "Any"
     private var selectedIcon: String = ""
     private var userLatLng: LatLng? = null
     private var stockTitle = false
+    private var isSettingText = false
+    private var selectedStartTime: LocalTime = LocalTime.now()
+    private var selectedEndTime: LocalTime = LocalTime.now().plusHours(1)
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val viewLayout = inflater.inflate(R.layout.fragment_create_event, container, false)
@@ -54,10 +73,19 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         genderSpinner = viewLayout.findViewById(R.id.gender_select_spinner)
         eventLoad = viewLayout.findViewById(R.id.loading)
         iconSelectButton = viewLayout.findViewById(R.id.event_icon)
-        startTimePicker = viewLayout.findViewById<TimePicker>(R.id.event_start_time_picker)
-        endTimePicker = viewLayout.findViewById<TimePicker>(R.id.event_end_time_picker)
         invitationTypePicker = viewLayout.findViewById<RadioGroup>(R.id.invite_group)
+        startTimeText = viewLayout.findViewById(R.id.event_start_time_picker)
+        endTimeText = viewLayout.findViewById(R.id.event_end_time_picker)
 
+
+        startTimeText.setOnClickListener {
+            showTimePickerDialog(true)
+        }
+
+        // Set up End Time Picker
+        endTimeText.setOnClickListener {
+            showTimePickerDialog(false)
+        }
 
         // Set up Gender Spinner
         ArrayAdapter.createFromResource(
@@ -70,6 +98,15 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         }
 
 
+
+        val searchEditText = viewLayout.findViewById<EditText>(R.id.locationSearchEditText)
+        val suggestionsListView = viewLayout.findViewById<ListView>(R.id.suggestionsList)
+
+
+        val locateMeButton = viewLayout.findViewById<ImageView>(R.id.locate_me_button_create);
+        locateMeButton.setOnClickListener {
+            viewModel.getCurrentLocation()
+        }
 
         // Set up Create Event Button
         viewLayout.findViewById<Button>(R.id.create_event_button).setOnClickListener {
@@ -85,24 +122,6 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         iconSelectButton.setOnClickListener {
             IconSelectPopup()
         }
-
-        // Set up Google Places Autocomplete
-        Places.createClient(requireContext())
-        autocompleteFragment = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
-                Log.i("CreateEventFragment", "Place selected: ${place.name}")
-                place.latLng?.let {
-                    userLatLng = it
-                    viewModel.getLocationFromAddress("${it.latitude}, ${it.longitude}", apiKey = getString(R.string.google_api_key))
-                }
-            }
-
-            override fun onError(status: com.google.android.gms.common.api.Status) {
-                Log.e("CreateEventFragment", "Error selecting place: ${status.statusMessage}")
-            }
-        })
 
         // **🔹 Title-Based Icon Prediction**
         titleField.addTextChangedListener(object : android.text.TextWatcher {
@@ -125,13 +144,6 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             viewModel.getAddressFromLocation(location, getString(R.string.google_api_key))
         }
 
-        viewModel.address.observe(viewLifecycleOwner){ address ->
-            if (address == null){
-                autocompleteFragment.setText("${userLatLng?.latitude},${userLatLng?.longitude}")
-            }else{
-                autocompleteFragment.setText(address)
-            }
-        }
 
         viewModel.eventCreated.observe(viewLifecycleOwner){ event ->
             eventLoad.visibility = View.GONE
@@ -145,6 +157,38 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             }
 
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                placesViewModel.places.collectLatest { places ->
+                    if(places!=null){
+                        updateSuggestionsList(places, suggestionsListView, searchEditText)
+                    }
+                }
+            }
+        }
+
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (!isSettingText){
+                    placesViewModel.searchPlaces(s.toString(), location = userLatLng, apiKey = getString(R.string.google_api_key))  // Calls Places API
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        placesViewModel.placeDetails.observe(viewLifecycleOwner){ placeDetails ->
+            if (placeDetails != null) {
+                isSettingText = true
+                searchEditText.setText(placeDetails.formattedAddress)
+                userLatLng = LatLng(placeDetails.location.latitude, placeDetails.location.longitude)
+                isSettingText = false
+            }
+        }
+
+        viewModel.getCurrentLocation()
 
         return viewLayout
     }
@@ -170,15 +214,13 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
 
         eventLoad.visibility = View.VISIBLE
 
-        val startDateString = getFormattedDateString(startTimePicker.hour, startTimePicker.minute)
-        val endDateString = getFormattedDateString(endTimePicker.hour, endTimePicker.minute)
 
         viewModel.createEvent(title = title,
             description = description,
             gender = selectedGender,
             icon = selectedIcon,
-            event_starts = startDateString,
-            event_ends = endDateString,
+            event_starts = formatTime(selectedStartTime),
+            event_ends = formatTime(selectedEndTime),
             latLng = userLatLng!!,
             max_radius = invitationRadius)
     }
@@ -256,5 +298,56 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
 
     override fun onLocationSelected(latLng: LatLng) {
         this.userLatLng = latLng
+    }
+
+    fun updateSuggestionsList(places: List<PlaceSuggestion>, listView: ListView, searchEditText: EditText) {
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, places.map { it.placePrediction.text_field.fullText })
+        listView.adapter = adapter
+        listView.visibility = View.VISIBLE
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val selectedPlace = places[position]
+            Log.i("FindEventFragment", "Selected Place: ${selectedPlace.placePrediction.text_field.fullText}")
+
+            // Hide the list & update EditText
+            listView.visibility = View.GONE
+            searchEditText.setText(selectedPlace.placePrediction.text_field.fullText)
+
+            placesViewModel.getPlaceDetails(selectedPlace.placePrediction.placeId, getString(R.string.google_api_key))
+
+        }
+    }
+
+    private fun showTimePickerDialog(isStartTime: Boolean) {
+        val initialTime = if (isStartTime) selectedStartTime else selectedEndTime
+
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .setHour(initialTime.hour)
+            .setMinute(initialTime.minute)
+            .setTitleText(if (isStartTime) "Select Start Time" else "Select End Time")
+            .build()
+
+        picker.show(parentFragmentManager, "timePicker")
+
+        picker.addOnPositiveButtonClickListener {
+            val newTime = LocalTime.of(picker.hour, picker.minute)
+            val timeString = formatTime(newTime)
+
+            if (isStartTime) {
+                selectedStartTime = newTime
+                startTimeText.setText(timeString)
+            } else {
+                selectedEndTime = newTime
+                endTimeText.setText(timeString)
+            }
+        }
+    }
+    private fun formatTime(time: LocalTime): String {
+        return String.format(Locale.US, "%02d:%02d", time.hour, time.minute)
+    }
+
+    private fun getFormattedDateString(time: LocalTime): String {
+        return formatTime(time) // Can be expanded for full date-time formatting
     }
 }

@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FindEventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
 ) : ViewModel(){
 
     private val _events = MutableLiveData<List<Event>>()

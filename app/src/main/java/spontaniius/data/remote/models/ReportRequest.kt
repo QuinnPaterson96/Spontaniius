@@ -1,7 +1,9 @@
 package spontaniius.data.remote.models
 
+import com.google.gson.annotations.SerializedName
+
 data class ReportRequest(
-    val userId: String,
-    val cardId: Int,
-    val reportText: String
+    @SerializedName("card_id") val cardId: Int,
+    @SerializedName("report_text") val reportText: String,
+    @SerializedName("user_id") val userId: String
 )

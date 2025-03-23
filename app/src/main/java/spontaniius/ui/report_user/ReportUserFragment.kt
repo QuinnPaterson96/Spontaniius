@@ -34,9 +34,7 @@ class ReportUserFragment : Fragment() {
         val reportText = view.findViewById<EditText>(R.id.report_text)
         val goBackButton = view.findViewById<Button>(R.id.report_go_back)
         val sendReportButton = view.findViewById<Button>(R.id.send_report_button)
-
-        val cardId = arguments?.getInt("CARD_ID") ?: return
-        val userId = arguments?.getString("USER_ID") ?: return
+        val cardId = args.cardId // Safe Args correctly retrieves the argument
 
         goBackButton.setOnClickListener {
             findNavController().popBackStack()
@@ -47,7 +45,7 @@ class ReportUserFragment : Fragment() {
             if (reportMessage.isEmpty()) {
                 Toast.makeText(requireContext(), "Please enter a report message.", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.submitReport(userId, cardId, reportMessage)
+                viewModel.submitReport(cardId = cardId, reportText = reportMessage)
             }
         }
 

@@ -9,13 +9,16 @@ import spontaniius.data.remote.models.ReportResponse
 import javax.inject.Inject
 
 class ReportUserRepository @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val userRepository: UserRepository
 ) {
-    suspend fun reportUser(userId: String, cardId: Int, reportText: String): Result<ReportResponse> {
+    suspend fun reportUser(cardId: Int, reportText: String): Result<ReportResponse> {
         return withContext(Dispatchers.IO) {
+            val reporterId = userRepository.getUserId()
+
             try {
                 val request = ReportRequest(
-                    userId = userId,
+                    userId = reporterId!!,
                     cardId = cardId,
                     reportText = reportText
                 )

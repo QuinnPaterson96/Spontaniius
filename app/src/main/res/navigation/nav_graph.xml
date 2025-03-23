@@ -46,13 +46,8 @@
         android:name="spontaniius.ui.card_collection.CardCollectionFragment"
         android:label="Card Collection" >
         <action
-            android:id="@+id/action_cardCollectionFragment_to_reportUserFragment">
-            <argument
-                android:name="cardId"
-                app:argType="integer"
-                android:defaultValue="-1" />
-        </action>
-
+            android:id="@+id/action_cardCollectionFragment_to_reportUserFragment"
+            app:destination="@id/reportUserFragment" />
     </fragment>
 
 

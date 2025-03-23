@@ -1,54 +1,44 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    >
+<RelativeLayout android:layout_width="120dp"
+    android:layout_height="70dp"
+    android:padding="8dp"
+    android:elevation="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
+    <!-- Card Background -->
+    <ImageView
+        android:id="@+id/card_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+
+    <!-- Semi-transparent Overlay for Readability -->
+    <View
+        android:id="@+id/text_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"/>  <!-- Semi-transparent Black -->
+
+    <!-- Card Name -->
+    <TextView
+        android:id="@+id/textview_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_marginTop="6dp"
+        android:layout_centerHorizontal="true"/>
+
+    <!-- Greeting (Small Text Below Name) -->
+    <TextView
+        android:id="@+id/textview_card_greeting"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/card_background"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"/>
-        <TextView
-            android:id="@+id/textview_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            tools:text="Bob Smith"
-            android:textStyle="bold"
-            android:paddingTop="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:gravity="center_horizontal"
-            android:layout_alignLeft="@+id/card_background"
-            android:layout_alignTop="@+id/card_background"
-            android:layout_alignRight="@+id/card_background"
-            android:layout_alignBottom="@+id/card_background"
-
-            />
-
-        <TextView
-            android:id="@+id/textview_card_greeting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            tools:text="Hi"
-            android:gravity="center_horizontal"
-            android:layout_alignBottom="@+id/textview_user_name"
-            android:visibility="gone"
-            />
-
-    </RelativeLayout>
-
-
-
-
-
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_below="@id/textview_user_name"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/> <!-- Will be shown if greeting exists -->
+</RelativeLayout>

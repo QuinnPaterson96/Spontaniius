@@ -21,9 +21,9 @@ class ReportUserViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
-    fun submitReport(userId: String, cardId: Int, reportText: String) {
+    fun submitReport(cardId: Int, reportText: String) {
         viewModelScope.launch {
-            val result = repository.reportUser(userId, cardId, reportText)
+            val result = repository.reportUser(cardId, reportText)
             result.onSuccess { reportResponse ->
                 _reportResult.postValue(reportResponse) // ✅ Now returns full response
             }.onFailure { error ->

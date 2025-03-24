@@ -126,6 +126,20 @@ class RemoteDataSource @Inject constructor(
         apiService.updateUserCard(request)
     }
 
+    suspend fun updateUser(userId: String, request: UpdateUserRequest): Result<UserResponse> {
+        return safeApiCall {
+            apiService.updateUser(userId, request)
+        }
+    }
+
+    suspend fun updateUserLocation(userId: String, request: UpdateUserLocationRequest): Result<UserResponse> {
+        return safeApiCall {
+            apiService.updateUserLocation(userId, request)
+        }
+    }
+
+
+
     /** GOOGLE MAPS API **/
     suspend fun getLocationFromAddress(address: String, apiKey: String): Result<LatLng> {
         return try {

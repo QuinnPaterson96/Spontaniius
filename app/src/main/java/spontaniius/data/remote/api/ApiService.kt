@@ -99,4 +99,16 @@ interface ApiService {
         @Query("user_id") userId: String? = null,
         @Query("external_id") externalId: String? = null
     ): Response<UserResponse>
+
+    @PATCH("users/{id}")
+    suspend fun updateUser(
+        @Path("id") userId: String,
+        @Body request: UpdateUserRequest
+    ): Response<UserResponse>
+
+    @PATCH("users/{id}/location")
+    suspend fun updateUserLocation(
+        @Path("id") userId: String,
+        @Body request: UpdateUserLocationRequest
+    ): Response<UserResponse>
 }

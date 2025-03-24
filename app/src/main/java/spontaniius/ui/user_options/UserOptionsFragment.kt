@@ -8,6 +8,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,8 +21,8 @@ class UserOptionsFragment : Fragment() {
 
     private lateinit var nameEditText: EditText
     private lateinit var genderRadioGroup: RadioGroup
-    private lateinit var saveButton: FloatingActionButton
-    private lateinit var cancelButton: FloatingActionButton
+    private lateinit var saveButton: MaterialButton
+    private lateinit var cancelButton: MaterialButton
     private lateinit var loadingProgressBar: ProgressBar
 
     override fun onCreateView(

@@ -8,6 +8,7 @@ import spontaniius.data.local.entities.UserEntity
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.models.CreateUserRequest
 import spontaniius.data.remote.models.UpdateUserCardRequest
+import spontaniius.data.remote.models.UpdateUserRequest
 import spontaniius.data.remote.models.UserResponse
 import spontaniius.domain.models.User
 import javax.inject.Inject
@@ -96,17 +97,15 @@ class UserRepository @Inject constructor(
 
             // Merge old and new values
 
-            val updatedUser = CreateUserRequest(
+            val updatedUser = UpdateUserRequest(
                 name = name ?: currentUser.name,
                 phone = phone ?: currentUser.phone,
                 gender = gender ?: currentUser.gender,
-                card_id = currentUser.cardId.toString(),
-                auth_provider = currentUser.authProvider,
-                external_id = currentUser.externalId
+                cardId = currentUser.cardId.toString(),
             )
 
             // Send update request
-            remoteDataSource.createUser(updatedUser)
+            remoteDataSource.updateUser(currentUser.id, updatedUser)
         } catch (e: Exception) {
             Result.failure(e)
         }

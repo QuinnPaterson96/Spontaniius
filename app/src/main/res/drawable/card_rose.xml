@@ -1,18 +1,31 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="800dp"
-    android:height="600dp"
-    android:viewportWidth="800"
-    android:viewportHeight="600">
-  <path
-      android:pathData="M208,507.5a189.5,195.5 0,1 0,379 0a189.5,195.5 0,1 0,-379 0z"
-      android:strokeWidth="0"
-      android:fillColor="#ff5656"/>
-  <path
-      android:pathData="M549.654,418.638a230.371,178.5 117,1 0,318.089 162.075a230.371,178.5 117,1 0,-318.089 -162.075z"
-      android:strokeWidth="0"
-      android:fillColor="#ff3232"/>
-  <path
-      android:pathData="M-64.939,552.321a220.859,191.932 81,1 0,379.139 -60.05a220.859,191.932 81,1 0,-379.139 60.05z"
-      android:strokeWidth="0"
-      android:fillColor="#f21f1f"/>
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- Background Gradient: Soft Rose Pink to Pastel White -->
+  <item>
+    <shape android:shape="rectangle">
+      <gradient
+          android:type="linear"
+          android:angle="90"
+          android:startColor="#FFC1CC"
+          android:endColor="#FFF5F7"/> <!-- Light Pastel White -->
+    </shape>
+  </item>
+
+  <!-- Abstract Floral Curve (Accent 1) -->
+  <item android:top="30dp">
+    <shape android:shape="rectangle">
+      <solid android:color="#FF85A2"/> <!-- Darker Rose Accent -->
+      <corners android:radius="80dp"/>
+    </shape>
+  </item>
+
+  <!-- Abstract Floral Curve (Accent 2) -->
+  <item android:bottom="20dp">
+    <shape android:shape="rectangle">
+      <solid android:color="#FF99B5"/> <!-- Mid-tone Pink -->
+      <corners android:radius="100dp"/>
+    </shape>
+  </item>
+
+</layer-list>

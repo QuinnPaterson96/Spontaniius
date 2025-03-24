@@ -19,7 +19,6 @@ class UserOptionsFragment : Fragment() {
     private val viewModel: UserOptionsViewModel by viewModels()
 
     private lateinit var nameEditText: EditText
-    private lateinit var phoneNumberEditText: EditText
     private lateinit var genderRadioGroup: RadioGroup
     private lateinit var saveButton: FloatingActionButton
     private lateinit var cancelButton: FloatingActionButton
@@ -38,14 +37,13 @@ class UserOptionsFragment : Fragment() {
         // Initialize UI components
         nameEditText = view.findViewById(R.id.name_edittext)
         genderRadioGroup = view.findViewById(R.id.gender_selection_radioGroup)
-        saveButton = view.findViewById(R.id.save_user_details)
-        cancelButton = view.findViewById(R.id.cancel_user_details)
+        saveButton = view.findViewById(R.id.save_button)
+        cancelButton = view.findViewById(R.id.cancel_button)
         loadingProgressBar = view.findViewById(R.id.loading)
 
         // Observe user data
         viewModel.user.observe(viewLifecycleOwner) { user ->
             nameEditText.setText(user?.name ?: "")
-            phoneNumberEditText.setText(user?.phone ?: "")
 
             when (user?.gender) {
                 "Male" -> genderRadioGroup.check(R.id.male)
@@ -64,7 +62,6 @@ class UserOptionsFragment : Fragment() {
         // Save button updates user details
         saveButton.setOnClickListener {
             val name = nameEditText.text.toString().trim()
-            val phone = phoneNumberEditText.text.toString().trim()
             val selectedGender = when (genderRadioGroup.checkedRadioButtonId) {
                 R.id.male -> "Male"
                 R.id.female -> "Female"
@@ -74,7 +71,7 @@ class UserOptionsFragment : Fragment() {
             }
 
             if (name.isNotEmpty() && selectedGender != null) {
-                    viewModel.updateUser(name, phone, selectedGender)
+                    viewModel.updateUser(name = name, phone = "", gender = selectedGender)
             } else {
             }
         }

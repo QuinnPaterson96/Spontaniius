@@ -133,4 +133,8 @@
     <string name="search_for_a_place">Search for a place</string>
     <string name="search_using_my_location">Search using my location</string>
     <string name="locate_me">Use my locate\n</string>
+    <string name="list">List</string>
+    <string name="map">Map</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -1,27 +1,33 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="800dp"
-    android:height="600dp"
-    android:viewportWidth="800"
-    android:viewportHeight="600">
-  <path
-      android:strokeWidth="1"
-      android:pathData="M0,-1h804v603h-804z"
-      android:strokeAlpha="0.5"
-      android:fillColor="#2fb1ed"
-      android:strokeColor="#000"
-      android:fillAlpha="0.5"/>
-  <path
-      android:strokeWidth="1"
-      android:pathData="M0,193h801v405h-801z"
-      android:strokeAlpha="0.5"
-      android:fillColor="#088fce"
-      android:strokeColor="#000"
-      android:fillAlpha="0.5"/>
-  <path
-      android:strokeWidth="1"
-      android:pathData="M-5,389h1004v292h-1004z"
-      android:strokeAlpha="0.5"
-      android:fillColor="#0828cc"
-      android:strokeColor="#000"
-      android:fillAlpha="0.5"/>
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- Background Gradient: Deep to Light Blue -->
+  <item>
+    <shape android:shape="rectangle">
+      <gradient
+          android:type="linear"
+          android:angle="90"
+          android:startColor="#002F6C"
+          android:endColor="#00A0E9"/><!-- Lighter tropical blue -->
+    </shape>
+  </item>
+
+  <!-- Subtle Wave Pattern 1 -->
+  <item>
+    <shape android:shape="rectangle">
+      <solid android:color="@android:color/transparent"/>
+      <stroke android:width="3dp" android:color="#0087C1"/>
+      <corners android:radius="30dp"/>
+    </shape>
+  </item>
+
+  <!-- Subtle Wave Pattern 2 (Smoother) -->
+  <item>
+    <shape android:shape="rectangle">
+      <solid android:color="@android:color/transparent"/>
+      <stroke android:width="2dp" android:color="#0072A3"/>
+      <corners android:radius="40dp"/>
+    </shape>
+  </item>
+
+</layer-list>

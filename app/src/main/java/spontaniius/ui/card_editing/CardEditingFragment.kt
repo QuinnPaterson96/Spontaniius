@@ -50,14 +50,14 @@ class CardEditingFragment : Fragment() {
         setupCardSelection(view)
 
         if (args.newUser) {
-            view.findViewById<Button>(R.id.back_button2).visibility = View.GONE
+            view.findViewById<Button>(R.id.cancel_button).visibility = View.GONE
         }
 
-        view.findViewById<Button>(R.id.back_button2).setOnClickListener {
+        view.findViewById<Button>(R.id.cancel_button).setOnClickListener {
             findNavController().popBackStack()
         }
 
-        view.findViewById<Button>(R.id.done_button3).setOnClickListener {
+        view.findViewById<Button>(R.id.save_button).setOnClickListener {
             viewModel.createCard(args.name, backgroundID)
         }
 

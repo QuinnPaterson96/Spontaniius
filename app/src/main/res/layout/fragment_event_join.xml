@@ -27,6 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:padding="10dp"
+            android:backgroundTint="@color/colorNeutral"
             />
 
         <Button
@@ -185,6 +186,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
             android:text="Directions"
+            android:backgroundTint="@color/colorNeutral"
             />
     </LinearLayout>
 

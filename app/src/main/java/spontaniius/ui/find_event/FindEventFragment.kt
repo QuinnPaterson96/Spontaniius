@@ -35,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
@@ -151,17 +152,21 @@ class FindEventFragment : Fragment() {
                 swipeContainer.isRefreshing = true
                 viewModel.fetchEvents(lat = latLng.latitude, lng = latLng.longitude, gender = null) // Todo maybe fix gender stuff
                 currLatLng = latLng
+                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11.5f))
             }
         }
 
         viewModel.events.observe(viewLifecycleOwner) { events ->
 
             if (events.isEmpty()){
+                hintButton.visibility = VISIBLE
                 hintText.visibility = VISIBLE
                 hintCreateEventButton.visibility = VISIBLE
             }else{
                 hintText.visibility = GONE
                 hintCreateEventButton.visibility = GONE
+                hintButton.visibility = GONE
+
             }
             val eventTiles = events.map { EventTile.fromDomain(it) }
             processEventTiles(eventTiles)
@@ -226,6 +231,25 @@ class FindEventFragment : Fragment() {
 
 
     private fun processEventTiles(eventTiles: List<EventTile>) {
+        googleMap?.clear()  // Clear previous markers
+
+        val boundsBuilder = LatLngBounds.builder()
+
+        for (event in eventTiles) {
+            val location = LatLng(event.latitude, event.longitude)
+            googleMap?.addMarker(
+                MarkerOptions()
+                    .position(location)
+                    .title(event.title)
+            )
+            boundsBuilder.include(location)
+        }
+
+        if (currLatLng!=null){
+            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(currLatLng!!, 11.5f))
+        }
+
+
         val oldSize = eventList.size  // Store previous size before clearing
 
         eventList.clear()
@@ -262,15 +286,6 @@ class FindEventFragment : Fragment() {
                 }
             }
         })
-
-        for (event in eventTiles) {
-            val location = LatLng(event.latitude, event.longitude)
-            googleMap?.addMarker(
-                MarkerOptions()
-                    .position(location)
-                    .title(event.title)
-            )
-        }
 
         if (eventTiles.isNotEmpty()) {
             val firstEvent = eventTiles.first()

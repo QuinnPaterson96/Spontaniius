@@ -18,9 +18,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.Firebase
@@ -77,6 +80,14 @@ class LoginFragment : Fragment() {
                 findNavController().navigate(R.id.findEventFragment)
             }
         }
+
+        val viewPager = view.findViewById<ViewPager2>(R.id.view_pager)
+        val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
+
+        val images = listOf(R.drawable.onboarding1, R.drawable.onboarding2, R.drawable.onboarding3)
+        viewPager.adapter = OnboardingAdapter(images)
+
+        TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
 
         return view
     }
@@ -156,7 +167,7 @@ class LoginFragment : Fragment() {
 
 
 
-    private val TAG = "GoogleFragment"
+    private val TAG = "LoginFragment"
 
 }
 

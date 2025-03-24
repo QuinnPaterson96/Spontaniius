@@ -184,18 +184,11 @@ class EventJoinFragment : Fragment() {
         // There's slight differences between how street address is stored in local object vs when retrieved from database, this handles that differece.
 
 
-        val location: LatLng = LatLng(currentEvent.latitude, currentEvent.longitude)
-
-        location.let {
+        googleMap?.addMarker(
             MarkerOptions()
-                .position(it)
-                .title(eventTitle.text.toString())
-        }.let {
-            googleMap?.addMarker(
-                it
-                // .icon(BitmapDescriptorFactory.fromResource(R.drawable.wave)
-            )
-        }
+                .position(LatLng(currentEvent.latitude, currentEvent.longitude))
+                .title(currentEvent.title)
+        )
 
         if (::mapFragment.isInitialized) {
 
@@ -206,7 +199,7 @@ class EventJoinFragment : Fragment() {
                 googleMap!!.getUiSettings().setMyLocationButtonEnabled(false);
                 googleMap!!.moveCamera(
                     CameraUpdateFactory.newLatLngZoom(
-                        location,
+                        LatLng(currentEvent.latitude, currentEvent.longitude),
                         zoomLevel
                     )
                 )

@@ -22,23 +22,28 @@
             android:id="@+id/endButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
+            android:layout_weight="0.25"
             android:text="@string/end_event"
+            android:backgroundTint="@color/colorNeutral"
+            android:layout_marginRight="20dp"
             />
 
         <Button
             android:id="@+id/addButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
-            android:text="@string/add_15_mins" />
+            android:layout_weight="0.25"
+            android:text="@string/add_15_mins"
+            android:layout_marginRight="20dp"
+            android:backgroundTint="@color/colorNeutral"/>
         <Button
             android:id="@+id/event_chat_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
+            android:layout_weight="0.25"
             android:text="@string/event_chat"
-            android:background="@drawable/spontaniius_primary_button"/>
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_marginRight="20dp"/>
     </LinearLayout>
 
 
@@ -170,7 +175,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
-            android:text="Directions" />
+            android:text="Directions"
+            android:backgroundTint="@color/colorNeutral"/>
     </LinearLayout>
 
 

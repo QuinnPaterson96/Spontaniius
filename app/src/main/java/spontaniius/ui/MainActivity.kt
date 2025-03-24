@@ -108,6 +108,20 @@ class MainActivity : AppCompatActivity(){
             popup.show()
         }
 
+
+        navController!!.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.loginFragment, R.id.signupFragment, R.id.phoneLoginFragment, R.id.OTPVerificationFragment -> {
+                    bottomNavigation.visibility = View.GONE
+                    optionsMenu.visibility = View.GONE
+                }
+                else -> {
+                    bottomNavigation.visibility = View.VISIBLE
+                    optionsMenu.visibility = View.VISIBLE
+                }
+            }
+        }
+
         // User authentication handling
         userViewModel.userAttributes.observe(this) { attributes ->
             if (attributes!=null){
@@ -129,6 +143,9 @@ class MainActivity : AppCompatActivity(){
         }
 
         authViewModel.checkAuthState()
+
+
+
     }
 
     override fun onBackPressed() {

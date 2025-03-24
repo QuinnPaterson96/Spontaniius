@@ -56,7 +56,7 @@ class EventRepository @Inject constructor(
             latitude = latLng.latitude,
             longitude = latLng.longitude,
             maxRadius = max_radius,
-            cardIds = listOf(userCardId)
+            cardIds = listOf(userCardId!!)
         )
         return remoteDataSource.createEvent(request)
     }

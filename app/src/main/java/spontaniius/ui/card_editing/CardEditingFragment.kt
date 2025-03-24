@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -58,7 +59,7 @@ class CardEditingFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.save_button).setOnClickListener {
-            viewModel.createCard(args.name, backgroundID)
+            viewModel.createCard(cardGreetingEdit.text.toString(), backgroundID)
         }
 
         // Observe ViewModel state
@@ -84,17 +85,28 @@ class CardEditingFragment : Fragment() {
                 greetingView.text = s.toString()
             }
         })
+
+        viewModel.userCard.observe(viewLifecycleOwner){ card ->
+            if (card!=null){
+                if (card.greeting!=null){
+                    cardGreetingEdit.setText(card.greeting)
+                }
+                selectedCardBackground.setImageResource(card.background.toInt())
+            }
+        }
+        viewModel.getUserCardDetails()
+
     }
 
     private fun setupCardSelection(view: View) {
         val buttons = arrayOf(
-            view.findViewById<Button>(R.id.card0),
-            view.findViewById<Button>(R.id.card1),
-            view.findViewById<Button>(R.id.card2),
-            view.findViewById<Button>(R.id.card3),
-            view.findViewById<Button>(R.id.card4),
-            view.findViewById<Button>(R.id.card5),
-            view.findViewById<Button>(R.id.card6)
+            view.findViewById<AppCompatImageButton>(R.id.card0),
+            view.findViewById<AppCompatImageButton>(R.id.card1),
+            view.findViewById<AppCompatImageButton>(R.id.card2),
+            view.findViewById<AppCompatImageButton>(R.id.card3),
+            view.findViewById<AppCompatImageButton>(R.id.card4),
+            view.findViewById<AppCompatImageButton>(R.id.card5),
+            view.findViewById<AppCompatImageButton>(R.id.card6)
         )
 
         buttons.forEachIndexed { index, button ->

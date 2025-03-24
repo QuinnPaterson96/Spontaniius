@@ -1,5 +1,6 @@
 package spontaniius.ui.card_editing
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import spontaniius.data.repository.CardRepository
 import spontaniius.data.repository.UserRepository
+import spontaniius.domain.models.Card
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,6 +17,9 @@ class CardEditingViewModel @Inject constructor(
     private val cardRepository: CardRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
+
+    private val _userCard = MutableLiveData<Card?>()
+    val userCard: LiveData<Card?> = _userCard
 
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
@@ -37,6 +42,23 @@ class CardEditingViewModel @Inject constructor(
                 _error.value = error.message
             }
             _loading.value = false
+        }
+    }
+
+    fun getUserCardDetails(){
+        viewModelScope.launch{
+            val userCardId = userRepository.getUserCardId()
+            if (userCardId!=null){
+                val result = cardRepository.getCardDetails(listOf(userCardId))
+                if (result.size==1){
+                    _userCard.postValue(result[0])
+                }else{
+                    Log.e("Card Editting", "Card id didn't result in card retrieval")
+                    _userCard.postValue(null)
+                }
+            }else{
+                _userCard.postValue(null)
+            }
         }
     }
 }

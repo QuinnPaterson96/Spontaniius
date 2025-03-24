@@ -7,10 +7,10 @@ import spontaniius.domain.models.Card
 data class CardResponse(
     @SerializedName("card_id") val cardId: Int,  // ✅ Matches JSON
     @SerializedName("user_id") val userId: String,
-    @SerializedName("card_text") val name: String,  // ✅ Matches JSON ("card_text" instead of "name")
+    @SerializedName("user_name") val name: String,
+    @SerializedName("card_text") val card_text: String?,  // ✅ Matches JSON ("card_text" instead of "name")
     @SerializedName("background") val background: String,  // ✅ Changed type from `Int?` to `String?`
     @SerializedName("background_address") val backgroundAddress: String?,  // ✅ Added missing field
-    @SerializedName("greeting") val greeting: String?  // ✅ Added missing field
 ){
     // ✅ Converts DTO → Domain Model
     fun toDomain(): Card {
@@ -19,7 +19,7 @@ data class CardResponse(
             userId = this.userId,
             name = this.name,
             background = this.background,
-            greeting = this.greeting
+            greeting = this.card_text
         )
     }
 
@@ -29,7 +29,7 @@ data class CardResponse(
             userId = this.userId,
             name = this.name,
             background = this.background,
-            greeting = this.greeting
+            greeting = this.card_text
         )
     }
 
@@ -42,7 +42,7 @@ data class CardResponse(
                 name = card.name,
                 background = card.background,
                 backgroundAddress = card.background,
-                greeting = card.greeting
+                card_text = card.greeting
             )
         }
     }

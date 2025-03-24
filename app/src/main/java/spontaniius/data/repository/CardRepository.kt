@@ -51,13 +51,14 @@ class CardRepository @Inject constructor(
 
 
     suspend fun createCard(card_text: String?, backgroundId: Int): Result<Int> {
-        val userId = userRepository.getUserId()
-        if (userId == null) {
+        val user = userRepository.getUserDetails()
+        if (user?.id == null) {
             return Result.failure(Exception("Invalid user data"))
         }
 
         val request = CardCreateRequest(
-            user_id = userId,
+            user_id = user.id,
+            user_name = user.name,
             card_text = card_text,
             background = backgroundId.toString(),
             background_address = ""
@@ -68,7 +69,8 @@ class CardRepository @Inject constructor(
 
             response.fold(
                 onSuccess = { responseBody ->
-                    val cardId = (responseBody["card_id"] as? Double)?.toInt()
+                    cardDao.insertCards(listOf(responseBody.toEntity()))
+                    val cardId = responseBody.cardId
                     if (cardId != null) {
                         Result.success(cardId) // ✅ Return extracted card ID
                     } else {

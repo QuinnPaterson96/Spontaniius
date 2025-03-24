@@ -53,7 +53,7 @@ interface ApiService {
 
     /** CARDS **/
     @POST("cards/create")
-    suspend fun createCard(@Body request: CardCreateRequest): Response<Map<String, Any>>
+    suspend fun createCard(@Body request: CardCreateRequest): Response<CardResponse>
 
     @GET("cards/{card_id}")
     suspend fun getCardById(@Path("card_id") cardId: Int): Response<Map<String, Any>>

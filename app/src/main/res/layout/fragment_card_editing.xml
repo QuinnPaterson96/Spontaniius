@@ -39,13 +39,15 @@
                 android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@+id/design_greeting">
 
+                <!-- Background Image (Now Below Text) -->
                 <ImageView
                     android:id="@+id/selected_card_background"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:scaleType="centerCrop"
-                    android:elevation="6dp"/>
+                    android:elevation="0dp" />
 
+                <!-- User Name (Now Visible on Top) -->
                 <TextView
                     android:id="@+id/selected_card_user_name"
                     android:layout_width="wrap_content"
@@ -55,8 +57,10 @@
                     android:textColor="@color/black"
                     tools:text="Bob Smith"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="20dp"
+                    android:elevation="8dp" />
 
+                <!-- Greeting (Also Above Background) -->
                 <TextView
                     android:id="@+id/selected_card_greeting"
                     android:layout_width="wrap_content"
@@ -66,7 +70,8 @@
                     tools:text="Hi, nice to meet you"
                     android:layout_below="@id/selected_card_user_name"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginTop="8dp"
+                    android:elevation="8dp" />
             </RelativeLayout>
 
             <!-- 🔹 CARD SELECTION BAR (USING CARD BACKGROUNDS) -->
@@ -205,4 +210,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

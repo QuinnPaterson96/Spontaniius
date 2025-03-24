@@ -10,7 +10,7 @@ data class UserEntity(
     val name: String,
     val phone: String?,
     val gender: String?,
-    val card_id: Int?,
+    var card_id: Int?,
     val external_id: String?,
     val auth_provider: String?
 ) {

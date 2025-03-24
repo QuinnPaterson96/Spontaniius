@@ -78,7 +78,7 @@ class RemoteDataSource @Inject constructor(
 
 
     /** CARDS **/
-    suspend fun createCard(request: CardCreateRequest): Result<Map<String, Any>> = safeApiCall {
+    suspend fun createCard(request: CardCreateRequest): Result<CardResponse> = safeApiCall {
         apiService.createCard(request)
     }
 

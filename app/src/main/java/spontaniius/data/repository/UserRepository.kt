@@ -67,12 +67,16 @@ class UserRepository @Inject constructor(
         _userDetails.postValue(null) // ✅ Also clear LiveData
     }
 
-    suspend fun getUserCardId(): Int = withContext(Dispatchers.IO) {
-        userDao.getUser()!!.card_id!!
+    suspend fun getUserCardId(): Int? = withContext(Dispatchers.IO) {
+        userDao.getUser()?.card_id
     }
 
     suspend fun getUserId(): String? {
         return userDao.getUser()?.id
+    }
+
+    suspend fun getUserDetails():  UserEntity? {
+        return userDao.getUser()
     }
 
     suspend fun createUser(request: CreateUserRequest): Result<UserResponse> {
@@ -112,6 +116,14 @@ class UserRepository @Inject constructor(
         val request = UpdateUserCardRequest(
             user_id = getUserId()!!, card_id = cardId
         )
+        val user = userDao.getUser()
+        if (user != null) {
+            user.card_id = cardId
+        }
+        if (user != null) {
+            userDao.insertUser(user)
+        }
+
         return remoteDataSource.updateUserCard(request)
     }
 }

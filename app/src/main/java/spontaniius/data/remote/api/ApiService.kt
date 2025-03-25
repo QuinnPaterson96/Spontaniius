@@ -111,4 +111,10 @@ interface ApiService {
         @Path("id") userId: String,
         @Body request: UpdateUserLocationRequest
     ): Response<UserResponse>
+
+    @PATCH("users/{id}/fcm-token")
+    suspend fun updateUserFCMToken(
+        @Path("id") userId: String,
+        @Body request: UpdateUserFCMTokenRequest
+    ): Response<Unit>
 }

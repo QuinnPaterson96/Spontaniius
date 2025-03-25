@@ -8,6 +8,7 @@ import spontaniius.data.local.entities.UserEntity
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.models.CreateUserRequest
 import spontaniius.data.remote.models.UpdateUserCardRequest
+import spontaniius.data.remote.models.UpdateUserFCMTokenRequest
 import spontaniius.data.remote.models.UpdateUserRequest
 import spontaniius.data.remote.models.UserResponse
 import spontaniius.domain.models.User
@@ -124,6 +125,11 @@ class UserRepository @Inject constructor(
         }
 
         return remoteDataSource.updateUserCard(request)
+    }
+
+    suspend fun updateUserFCMToken(fcmToken: String) {
+        val userId = userDao.getUser()!!.id // Get user ID from local storage
+        remoteDataSource.updateUserFCMToken(userId, UpdateUserFCMTokenRequest(fcmToken))
     }
 }
 

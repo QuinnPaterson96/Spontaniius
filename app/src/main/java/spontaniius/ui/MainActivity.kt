@@ -1,30 +1,44 @@
 package spontaniius.ui
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import spontaniius.common.AuthViewModel
 import spontaniius.common.UserViewModel
+import spontaniius.data.local.dao.UserDao
+import spontaniius.data.repository.UserRepository
 import spontaniius.domain.models.User
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -40,6 +54,12 @@ class MainActivity : AppCompatActivity(){
     var eventid = 0
     var eventEnds = ""
     var userDetails: User? = null
+
+    @Inject
+    lateinit var userRepository: UserRepository // ✅ Inject user repository to update the token
+
+    @Inject
+    lateinit var userDao: UserDao
 
     private var navController: NavController? = null
 
@@ -61,6 +81,19 @@ class MainActivity : AppCompatActivity(){
         actionBarView = supportActionBar!!.customView
         optionsMenu = actionBarView.findViewById(R.id.main_menu)
         appContext = this
+
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.e("FCM_Debug", "Fetching FCM token failed", task.exception)
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+                Log.d("FCM_Debug", "FCM Token: $token")
+
+                sendTokenToServer(token) // Move token update logic here
+            }
 
         optionsMenu.setOnClickListener {
             val popup = PopupMenu(this, optionsMenu)
@@ -123,7 +156,9 @@ class MainActivity : AppCompatActivity(){
         }
 
         setupObservers()
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermission()
+        }
         authViewModel.checkAuthState()
     }
 
@@ -154,11 +189,33 @@ class MainActivity : AppCompatActivity(){
         navController?.popBackStack()
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                1001 // Request Code
+            )
+        }
+    }
     // This was created to streamline the process of accessing user attributes and to reduce code
     // duplication across program. It fetches the user attributes and returns them as a JSON object
     // If the details have already been fetched it avoids calling AWS Auth again
-
+    private fun sendTokenToServer(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try
+            {
+                userRepository.updateUserFCMToken(token)
+                Log.d("FCM_Debug", "Token successfully sent to server")
+            }
+            catch (e: Exception) {
+                Log.e("FCM_Debug", "Failed to send token to server", e)
+            }
+        }
+    }
 }
 
 

@@ -6,7 +6,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import spontaniius.data.remote.api.ApiService
 import spontaniius.data.remote.api.GoogleApiService
@@ -135,6 +137,14 @@ class RemoteDataSource @Inject constructor(
     suspend fun updateUserLocation(userId: String, request: UpdateUserLocationRequest): Result<UserResponse> {
         return safeApiCall {
             apiService.updateUserLocation(userId, request)
+        }
+    }
+
+
+
+    suspend fun updateUserFCMToken(userId: String, request: UpdateUserFCMTokenRequest): Result<Unit>{
+        return safeApiCall {
+            apiService.updateUserFCMToken(userId, request)
         }
     }
 

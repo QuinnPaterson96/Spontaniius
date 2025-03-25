@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -95,11 +96,13 @@ class FCMService : FirebaseMessagingService() {
         manager.createNotificationChannel(channel)
 
         val notificationManager = NotificationManagerCompat.from(context)
+        val largeIconBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.spontaniius_notification)
 
         // ✅ Check if permission is granted before sending notification
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             val builder = NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.spontaniiuslogo)
+                .setSmallIcon(R.drawable.ic_launcher_monochrome)
+                .setLargeIcon(largeIconBitmap)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

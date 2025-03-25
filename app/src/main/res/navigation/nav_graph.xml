@@ -167,6 +167,17 @@
             <argument android:name="eventId"
                 app:argType="integer" />
         </action>
+        <action
+            android:id="@+id/action_eventJoinFragment_to_eventManagementFragment"
+            app:destination="@id/eventManagementFragment">
+            <argument
+                android:name="eventId"
+                app:argType="integer" />
+            <argument
+                android:name="isEventOwner"
+                app:argType="boolean"
+                android:defaultValue="false" />
+        </action>
     </fragment>
 
     <!-- Event Management -->

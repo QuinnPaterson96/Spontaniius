@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import com.spontaniius.R
 import spontaniius.domain.models.Card
 
 class CardAdapter(
     private val context: Context,
-    private val userCards: List<Card>
+    private val userCards: List<Card>,
+    private var selectedCardIndex: Int = -1  // Keep track of the selected card
 ) : BaseAdapter() {
 
     override fun getCount(): Int = userCards.size
@@ -37,24 +40,31 @@ class CardAdapter(
         val userCard = getItem(position)
 
         // Set card background
+        userCard.background?.let { viewHolder.cardBackground.setImageResource(it.toInt()) }
 
-        val backgroundAsInt = userCard.background.toInt()
-        if (backgroundAsInt != 0) {
-            userCard.background?.let { viewHolder.cardBackground.setImageResource(backgroundAsInt) }
-        } else {
-            viewHolder.cardBackground.setImageResource(R.drawable.card_gold) // Optional default background
-        }
-
-        // Set user name and greeting
+        // Set user name
         viewHolder.userName.text = userCard.name
-        viewHolder.userGreeting.text = userCard.greeting ?: ""
+
+        // Highlight selected card
+        if (position == selectedCardIndex) {
+            viewHolder.cardContainer.setCardBackgroundColor(ContextCompat.getColor(context, R.color.highlight_orange))
+            viewHolder.cardContainer.cardElevation = 10f
+        } else {
+            viewHolder.cardContainer.setCardBackgroundColor(ContextCompat.getColor(context, android.R.color.white))
+            viewHolder.cardContainer.cardElevation = 6f
+        }
 
         return view
     }
 
+    fun updateSelectedCard(newSelectedIndex: Int) {
+        selectedCardIndex = newSelectedIndex
+        notifyDataSetChanged() // Refresh adapter to update UI
+    }
+
     private class ViewHolder(view: View) {
+        val cardContainer: CardView = view.findViewById(R.id.card_container)
         val userName: TextView = view.findViewById(R.id.textview_user_name)
-        val userGreeting: TextView = view.findViewById(R.id.textview_card_greeting)
         val cardBackground: ImageView = view.findViewById(R.id.card_background)
     }
 }

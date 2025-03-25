@@ -23,6 +23,7 @@ import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.domain.models.Event
 import spontaniius.domain.models.User
+import spontaniius.ui.create_event.CreateEventFragmentDirections
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -115,6 +116,15 @@ class EventJoinFragment : Fragment() {
             // Handles that if user navigates back to here after joining event
             if (event != null) {
                 currentEvent = event
+                if (currentUser?.id == event.ownerId){
+                    val action =
+                        EventJoinFragmentDirections.actionEventJoinFragmentToEventManagementFragment(
+                            eventId = event.eventId,
+                            isEventOwner = true
+                        )
+                    findNavController().navigate(action)
+                }
+
                 if (currentUser?.cardId in currentEvent.cardIds){
                     joinButton.visibility = GONE
                     chatButton.visibility = VISIBLE
@@ -129,6 +139,10 @@ class EventJoinFragment : Fragment() {
         return fragmentView
     }
 
+
+    fun setupObservers(){
+
+    }
 
 
 

@@ -64,11 +64,8 @@ class EventFindAdapter(private var eventList: List<EventTile>) :
         val isUpcoming = eventStartTime?.isAfter(ZonedDateTime.now()) ?: false
 
 // Set the text and indicator color based on whether the event is upcoming
-        holder.mTextViewTime.text = if (isUpcoming) {
-            "Starts at ${eventStartTime?.toLocalTime()}"
-        } else {
-            "Ongoing"
-        }
+        holder.mTextViewTime.text = currentItem.timeRemaining
+
 
         holder.timeRemainIndicator.setBackgroundColor(
             if (isUpcoming)

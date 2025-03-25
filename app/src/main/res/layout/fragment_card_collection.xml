@@ -7,6 +7,21 @@
     android:layout_height="match_parent"
     tools:context="spontaniius.ui.card_collection.CardCollectionFragment">
 
+    <!-- 🔹 Header Title -->
+    <TextView
+        android:id="@+id/pageHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Let's see who you've met!"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp" />
 
     <LinearLayout
         android:id="@+id/search_bar"
@@ -24,7 +39,7 @@
 
         <EditText
             android:id="@+id/editTextTextPersonName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
@@ -39,14 +54,16 @@
         android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar">
+        app:layout_constraintTop_toBottomOf="@+id/pageHeader">
 
         <ImageView
+            android:radius="8dp"
             android:id="@+id/selected_card_background"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/card_welcome"/>
+            app:srcCompat="@drawable/card_gold"
+            android:layout_margin="20dp"/>
 
         <TextView
             android:id="@+id/selected_card_user_name"

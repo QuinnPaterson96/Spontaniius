@@ -122,6 +122,12 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
+        setupObservers()
+
+        authViewModel.checkAuthState()
+    }
+
+    fun setupObservers(){
         // User authentication handling
         userViewModel.userAttributes.observe(this) { attributes ->
             if (attributes!=null){
@@ -141,12 +147,8 @@ class MainActivity : AppCompatActivity(){
                 navController!!.navigate(R.id.loginFragment)
             }
         }
-
-        authViewModel.checkAuthState()
-
-
-
     }
+
 
     override fun onBackPressed() {
         navController?.popBackStack()

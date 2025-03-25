@@ -79,14 +79,13 @@ class CardCollectionFragment : Fragment() {
 
         // Handle card selection
         gridView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            if (position % 3 != 0) { // Skip date separator cards
                 val selectedCard = userCardCollection[position]
                 selectedCard.background?.let { selectedCardBackground.setImageResource(it.toInt()) }
                 selectedCardGreeting.text = selectedCard.greeting
                 selectedCardName.text = selectedCard.name
                 selectedCardId = selectedCard.id.toString()
-            }
         }
+        cardAdapter.notifyDataSetChanged()
 
         // Setup options menu (report user)
         setupCardOptionsMenu()

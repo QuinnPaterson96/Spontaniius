@@ -3,6 +3,7 @@ package spontaniius.ui.event_management
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONArray
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +27,7 @@ import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -76,6 +79,7 @@ class EventManagementFragment : Fragment() {
 // if you created this event you have control options
         endEventButton = fragmentView.findViewById<View>(R.id.endButton) as Button
         endEventButton.setOnClickListener{
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("event_${eventId}")
             viewModel.endEvent(eventId)
         }
 
@@ -123,6 +127,14 @@ class EventManagementFragment : Fragment() {
             }
         }
         viewModel.loadEventDetails(eventId)
+        FirebaseMessaging.getInstance().subscribeToTopic("event_${eventId}")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FCM_Debug", "Subscribed to event_$eventId notifications")
+                } else {
+                    Log.e("FCM_Debug", "Failed to subscribe to event_$eventId")
+                }
+            }
 
         return fragmentView
     }

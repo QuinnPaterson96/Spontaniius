@@ -3,6 +3,7 @@ package spontaniius.ui.event_join
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONArray
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -92,6 +94,7 @@ class EventJoinFragment : Fragment() {
 
         exitButton = fragmentView.findViewById<View>(R.id.exitButton) as Button
         exitButton.setOnClickListener{
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("event_${eventId}")
             findNavController().navigate(R.id.findEventFragment)
         }
 
@@ -130,6 +133,16 @@ class EventJoinFragment : Fragment() {
                     chatButton.visibility = VISIBLE
                 }
                 populateDetails(fragmentView)
+
+                FirebaseMessaging.getInstance().subscribeToTopic("event_${eventId}")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("FCM_Debug", "Subscribed to event_$eventId notifications")
+                        } else {
+                            Log.e("FCM_Debug", "Failed to subscribe to event_$eventId")
+                        }
+                    }
+
             }
 
         }

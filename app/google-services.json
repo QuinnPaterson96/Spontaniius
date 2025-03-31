@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "1009715812296-9e01ki79c2a5do8ppglhvj37cci63j2f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spontaniius",
+            "certificate_hash": "8064dcc4d7509425232ea40c2f87bbdd1c9e4dc9"
+          }
+        },
+        {
           "client_id": "1009715812296-140eg9okroe2p1885j79sgnnc7h1ljc3.apps.googleusercontent.com",
           "client_type": 3
         }

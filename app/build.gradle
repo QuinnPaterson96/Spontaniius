@@ -14,13 +14,13 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("C:/Users/quinn/.android/release.keystore")
+            storeFile file("C:/Users/quinn/spontaniiusKey.jks")
             storePassword SPONTANIUS_STORE_PASSWORD
             keyAlias SPONTANIUS_KEY_ALIAS
             keyPassword SPONTANIUS_KEY_PASSWORD
         }
         debug {
-            storeFile file("C:/Users/quinn/.android/release.keystore")
+            storeFile file("C:/Users/quinn/spontaniiusKey.jks")
             storePassword SPONTANIUS_STORE_PASSWORD
             keyAlias SPONTANIUS_KEY_ALIAS
             keyPassword SPONTANIUS_KEY_PASSWORD
@@ -28,11 +28,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug // ✅ Explicitly using debug config (your custom one)
+        }
         release {
             signingConfig signingConfigs.release
-        }
-        debug {
-            signingConfig signingConfigs.debug
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -64,13 +66,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

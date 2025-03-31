@@ -36,12 +36,5 @@ interface GoogleApiService {
         @Query("key") apiKey: String
     ): Response<GeocodingResponse>
 
-    @GET("places/{placeId}")
-    suspend fun getPlaceDetails(
-        @Path("placeId") placeId: String,
-        @Header("X-Goog-Api-Key") apiKey: String,
-        @Header("X-Goog-FieldMask") fieldMask: String = "location,formattedAddress"
-    ): Response<PlaceDetailsResponse>
-
 
 }

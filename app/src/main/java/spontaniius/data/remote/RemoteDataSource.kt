@@ -229,7 +229,7 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun getDetailsFromPlaceId(placeId: String, apiKey:String): Result<PlaceDetailsResponse>{
         return  safeApiCall {
-            googleApiService.getPlaceDetails(placeId = placeId, apiKey = apiKey)
+            placesApiService.getPlaceDetails(placeId = placeId, apiKey = apiKey)
         }
     }
 }

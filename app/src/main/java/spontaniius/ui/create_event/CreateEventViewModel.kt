@@ -13,6 +13,7 @@ import spontaniius.data.repository.EventRepository
 import spontaniius.data.repository.LocationRepository
 import spontaniius.domain.models.Event
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class CreateEventViewModel @Inject constructor(
@@ -100,11 +101,12 @@ class CreateEventViewModel @Inject constructor(
                 if (googleLocationResponse.results != null) {
                     _address.postValue(googleLocationResponse.results[0].formatted_address)
                 } else {
-                    _address.postValue(null)
+                    Log.e("Create Event","Null return from success" )
                 }
             }
-            result.onFailure {
+            result.onFailure { error ->
                 _address.postValue(null)
+                Log.e("Create Event", error.toString())
             }
         }
     }

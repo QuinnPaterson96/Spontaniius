@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "1009715812296-0d5t4956p15sg0bruqdurndif6v1g9mv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spontaniius",
+            "certificate_hash": "69f4e4776936ce8f898c403d7a398d9b4ea90636"
+          }
+        },
+        {
+          "client_id": "1009715812296-574lhhgi7t46rbcu27pcc8ogpfsqb7rm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spontaniius",
+            "certificate_hash": "ed44e197304115d9a1cc5d0ce35cd64dc928996d"
+          }
+        },
+        {
           "client_id": "1009715812296-140eg9okroe2p1885j79sgnnc7h1ljc3.apps.googleusercontent.com",
           "client_type": 3
         }

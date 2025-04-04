@@ -26,11 +26,16 @@ class EventRepository @Inject constructor(
     /**
      * Calls the API to create an event.
      */
-    suspend fun getNearbyEvents(lat: Double, lng: Double, gender: String?): Result<List<Event>> {
-        val request = FindEventRequest(lat = lat, lng = lng, gender = gender ?: "Any")  // ✅ Use default "Any"
-        return remoteDataSource.getNearbyEvents(request).map { nearbyEventResponses ->
-            nearbyEventResponses.map { it.toDomain() }
+    suspend fun getNearbyEvents(lat: Double, lng: Double, gender: String?): Result<List<Event>>? {
+        val userId = userRepository.getUserId()
+
+        if (userId!=null){
+            val request = FindEventRequest(lat = lat, lng = lng, gender = gender ?: "Any", userId = userId)  // ✅ Use default "Any"
+            return remoteDataSource.getNearbyEvents(request).map { nearbyEventResponses ->
+                nearbyEventResponses.map { it.toDomain() }
+            }
         }
+        return null
     }
 
     suspend fun createEvent(title: String,

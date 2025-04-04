@@ -47,10 +47,10 @@ class FindEventViewModel @Inject constructor(
     fun fetchEvents(lat: Double, lng: Double, gender: String?) {
         viewModelScope.launch {
             val result = eventRepository.getNearbyEvents(lat, lng, gender)
-            result.onSuccess { eventList ->
+            result?.onSuccess { eventList ->
                 _events.postValue(eventList)
             }
-            result.onFailure { exception ->
+            result?.onFailure { exception ->
                 Log.e("Find Event Fragment", exception.toString())
                 _eventError.postValue(true)
             }

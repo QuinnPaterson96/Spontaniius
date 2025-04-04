@@ -265,6 +265,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
                 R.id.drinks -> setIcon(R.drawable.activity_drinks, getString(R.string.default_text_drinks))
                 R.id.bike -> setIcon(R.drawable.activity_bike, getString(R.string.default_text_bike))
                 R.id.eating -> setIcon(R.drawable.activity_eating, getString(R.string.default_text_eating))
+                R.id.boardgames -> setIcon(R.drawable.activity_boardgames, getString(R.string.default_text_eating))
                 R.id.sports -> setIcon(R.drawable.activity_sports, getString(R.string.default_text_sports))
                 R.id.walk -> setIcon(R.drawable.activity_walk, getString(R.string.default_text_walk))
                 R.id.videogame -> setIcon(R.drawable.activity_videogame, getString(R.string.default_text_videogame))
@@ -312,8 +313,9 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
 
                 // Hide the list & update EditText
                 listView.visibility = View.GONE
+                isSettingText=true
                 searchEditText.setText(selectedPlace.placePrediction.text_field.fullText)
-
+                isSettingText=false
                 placesViewModel.getPlaceDetails(selectedPlace.placePrediction.placeId, getString(R.string.google_api_key))
             }
         }else{

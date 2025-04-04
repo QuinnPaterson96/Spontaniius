@@ -115,9 +115,10 @@
     <string name="default_text_drinks">Let\'s go have some drinks</string>
     <string name="default_text_bike">Let\'s go for a bike ride</string>
     <string name="default_text_eating">Let\'s grab some food</string>
+    <string name="default_text_baordgames">Let\'s play</string>
     <string name="default_text_sports">Let\'s go play</string>
     <string name="default_text_walk">Let\'s go for a walk</string>
-    <string name="default_text_videogame">Let\'s play some video games</string>
+    <string name="default_text_videogame">Let\'s play </string>
     <string name="default_text_coffee">Meet me for coffee</string>
     <string name="default_text_other_activity">Join me for something fun!</string>
     <string name="activity_coffee">Meet me for coffee</string>
@@ -137,4 +138,13 @@
     <string name="map">Map</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="tea_coffee">tea / coffee</string>
+    <string name="boardgames">boardgames</string>
+    <string name="eating">eating</string>
+    <string name="drinks">drinks</string>
+    <string name="sports">sports</string>
+    <string name="videogames">videogames</string>
+    <string name="walking">walking</string>
+    <string name="cycling">cycling</string>
+    <string name="other">Other</string>
 </resources>

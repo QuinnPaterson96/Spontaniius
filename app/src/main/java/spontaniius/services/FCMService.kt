@@ -79,6 +79,8 @@ class FCMService : FirebaseMessagingService() {
     }
 
     private fun handleGenericNotification(remoteMessage: RemoteMessage) {
+
+        Log.w("FCM Service", remoteMessage.toString())
         val title = remoteMessage.data["title"] ?: "Notification"
         val message = remoteMessage.data["body"] ?: "You have a new notification."
 

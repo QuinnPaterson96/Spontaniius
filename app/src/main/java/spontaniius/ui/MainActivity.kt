@@ -118,14 +118,14 @@ class MainActivity : AppCompatActivity(){
                         }
                         R.id.about_us -> {
                             val openURL = Intent(android.content.Intent.ACTION_VIEW)
-                            openURL.data = Uri.parse("https://www.spontaniius.com")
+                            openURL.data = Uri.parse("https://quinnpaterson1996.wixsite.com/spontaniius")
                             startActivity(openURL)
                             return true
                         }
 
                         R.id.report_an_issue ->{
                             val openURL = Intent(android.content.Intent.ACTION_VIEW)
-                            openURL.data = Uri.parse("https://www.spontaniius.com/contact")
+                            openURL.data = Uri.parse("https://quinnpaterson1996.wixsite.com/spontaniius/contact")
                             startActivity(openURL)
                             return true
                         }

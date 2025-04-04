@@ -1,6 +1,5 @@
 package spontaniius.ui.event_chat
 
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.spontaniius.R
@@ -27,59 +25,54 @@ import java.util.*
 
 @AndroidEntryPoint
 class EventChatFragment : Fragment() {
+
     private val viewModel: EventChatViewModel by viewModels()
 
-    lateinit var messagesRef: DatabaseReference
-    lateinit var listOfMessages: RecyclerView
-    lateinit var sendMessageButton: Button
-    lateinit var input: EditText
+    private lateinit var messagesRef: DatabaseReference
+    private lateinit var listOfMessages: RecyclerView
+    private lateinit var sendMessageButton: Button
+    private lateinit var input: EditText
+    private lateinit var backButton: Button
     private var chatAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder>? = null
-    lateinit var backButton: Button
-    lateinit var currentUser: User
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private var currentUser: User? = null
+    private var eventId: Int = -1
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_event_chat, container, false)
 
-        val eventId: Int = arguments?.getInt("eventId") ?: 0
-        messagesRef = FirebaseDatabase.getInstance().getReference(eventId.toString())
-        Log.d("ChatFragment", "Event ID: $eventId")
+        eventId = arguments?.getInt("eventId") ?: -1
+        if (eventId == -1) {
+            Log.e("ChatFragment", "No event ID passed")
+            findNavController().popBackStack()
+            return view
+        }
 
-
-        backButton = view.findViewById(R.id.button_back)
+        messagesRef = FirebaseDatabase.getInstance().getReference("chats/$eventId")
+        Log.d("ChatFragment", "Using Firebase path: chats/$eventId")
 
         listOfMessages = view.findViewById(R.id.list_of_chat_messages)
-        listOfMessages.layoutManager = LinearLayoutManager(requireContext()) // Add this line
-
         sendMessageButton = view.findViewById(R.id.send_message_button)
         input = view.findViewById(R.id.edit_text_message)
+        backButton = view.findViewById(R.id.button_back)
 
+        listOfMessages.layoutManager = LinearLayoutManager(requireContext())
+        backButton.setOnClickListener { findNavController().popBackStack() }
+        sendMessageButton.setOnClickListener { sendMessage() }
 
-        backButton.setOnClickListener {
-            findNavController().popBackStack()
-        }
-        displayChatMessages()
-
-        sendMessageButton.setOnClickListener {
-            sendMessage()
-        }
-
-
-        viewModel.userDetails.observe(viewLifecycleOwner){ user ->
+        viewModel.userDetails.observe(viewLifecycleOwner) { user ->
             if (user != null) {
                 currentUser = user
-            }else{
-                Log.e("Chat Fragment", "Error Retrieving User")
+            } else {
+                Log.e("ChatFragment", "User not retrieved")
             }
-
         }
 
         viewModel.getUserDetails()
+        displayChatMessages()
+
         return view
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -91,7 +84,6 @@ class EventChatFragment : Fragment() {
         chatAdapter?.stopListening()
     }
 
-
     private fun displayChatMessages() {
         val query = messagesRef.orderByChild("messageTime")
 
@@ -101,8 +93,7 @@ class EventChatFragment : Fragment() {
 
         chatAdapter = object : FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.message, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.message, parent, false)
                 return ChatViewHolder(view)
             }
 
@@ -112,26 +103,38 @@ class EventChatFragment : Fragment() {
         }
 
         listOfMessages.adapter = chatAdapter
+
+        chatAdapter?.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                listOfMessages.scrollToPosition(chatAdapter!!.itemCount - 1)
+            }
+        })
+
     }
 
     private fun sendMessage() {
-        if (::currentUser.isInitialized) {
-            val message = ChatMessage(input.text.toString(), currentUser.name)
+        val user = currentUser
+        if (user != null) {
+            val text = input.text.toString().trim()
+            if (text.isBlank()) return
+
+            val message = ChatMessage(text, user.name)
+            Log.d("FirebaseSend", "Sending to path: ${messagesRef.path}, message: $message")
 
             messagesRef.push().setValue(message)
+                .addOnSuccessListener {
+                    Log.d("FirebaseSend", "Message sent successfully")
+                    input.setText("")
+                }
                 .addOnFailureListener { e ->
                     Log.e("FirebaseSend", "Failed to send message", e)
                 }
-
-            input.setText("")
         } else {
             Log.e("FirebaseSend", "User not initialized, cannot send message")
         }
     }
 
-
-
-    // ViewHolder Class
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val messageText: TextView = itemView.findViewById(R.id.message_text)
         private val messageUser: TextView = itemView.findViewById(R.id.message_user)
@@ -141,44 +144,20 @@ class EventChatFragment : Fragment() {
             messageText.text = chatMessage.messageText
             messageUser.text = chatMessage.messageUser
             messageTime.text = convertLongToTime(chatMessage.messageTime)
+            itemView.alpha = 0f
+            itemView.animate()
+                .alpha(1f)
+                .setDuration(500)
+                .start()
 
-            // If specific messages trigger an update
-            if (chatMessage.messageText!!.contains("Hey, I'm coming to join in") ||
-                chatMessage.messageText!!.contains("Hope everyone had a good time, this event has ended")
+            if (chatMessage.messageText?.contains("Hey, I'm coming to join in") == true ||
+                chatMessage.messageText?.contains("Hope everyone had a good time, this event has ended") == true
             ) {
-                // #TODO Fix this later   eventUpdate()
+                // #TODO implement eventUpdate()
             }
-
         }
 
-        // Function to convert timestamp to readable format
-        private fun convertLongToTime(time: Long): String { // ViewHolder Class
-            class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-                private val messageText: TextView = itemView.findViewById(R.id.message_text)
-                private val messageUser: TextView = itemView.findViewById(R.id.message_user)
-                private val messageTime: TextView = itemView.findViewById(R.id.message_time)
-
-                fun bind(chatMessage: ChatMessage) {
-                    messageText.text = chatMessage.messageText
-                    messageUser.text = chatMessage.messageUser
-                    messageTime.text = convertLongToTime(chatMessage.messageTime)
-
-                    // If specific messages trigger an update
-                    if (chatMessage.messageText!!.contains("Hey, I'm coming to join in") ||
-                        chatMessage.messageText!!.contains("Hope everyone had a good time, this event has ended")
-                    ) {
-                        // #TODO Fix this later   eventUpdate()
-                    }
-
-                }
-
-                // Function to convert timestamp to readable format
-                private fun convertLongToTime(time: Long): String {
-                    val date = Date(time)
-                    val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
-                    return format.format(date)
-                }
-            }
+        private fun convertLongToTime(time: Long): String {
             val date = Date(time)
             val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
             return format.format(date)

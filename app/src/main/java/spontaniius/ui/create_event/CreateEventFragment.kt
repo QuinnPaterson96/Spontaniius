@@ -14,13 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -30,7 +24,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import spontaniius.common.PlacesViewModel
 import spontaniius.data.remote.models.PlaceSuggestion
-import spontaniius.ui.find_event.FindEventFragmentDirections
 import java.time.LocalTime
 import java.util.*
 
@@ -265,7 +258,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
                 R.id.drinks -> setIcon(R.drawable.activity_drinks, getString(R.string.default_text_drinks))
                 R.id.bike -> setIcon(R.drawable.activity_bike, getString(R.string.default_text_bike))
                 R.id.eating -> setIcon(R.drawable.activity_eating, getString(R.string.default_text_eating))
-                R.id.boardgames -> setIcon(R.drawable.activity_boardgames, getString(R.string.default_text_eating))
+                R.id.boardgames -> setIcon(R.drawable.activity_boardgames, getString(R.string.default_text_boardgames))
                 R.id.sports -> setIcon(R.drawable.activity_sports, getString(R.string.default_text_sports))
                 R.id.walk -> setIcon(R.drawable.activity_walk, getString(R.string.default_text_walk))
                 R.id.videogame -> setIcon(R.drawable.activity_videogame, getString(R.string.default_text_videogame))

@@ -25,18 +25,19 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var context: Context // ✅ Injected context using Hilt
-
-    @Inject
-    lateinit var userRepository: UserRepository // ✅ Inject user repository to update the token
-
-    @Inject
-    lateinit var userDao: UserDao
+    @Inject lateinit var context: Context
+    @Inject lateinit var userRepository: UserRepository
+    @Inject lateinit var userDao: UserDao
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        val type = remoteMessage.data["type"]
+        // If a notification payload is present, show it immediately
+        remoteMessage.notification?.let {
+            showNotification(it.title ?: "Spontaniius", it.body ?: "You have a new message.")
+            return
+        }
 
+        // Otherwise, handle based on custom data payload
+        val type = remoteMessage.data["type"]
         when (type) {
             "EVENT_CREATED" -> handleEventCreated(remoteMessage)
             "USER_JOINED_EVENT" -> handleUserJoined(remoteMessage)
@@ -49,7 +50,7 @@ class FCMService : FirebaseMessagingService() {
         Log.d("FCMService", "New FCM Token: $token")
 
         CoroutineScope(Dispatchers.IO).launch {
-            retryUntilUserAvailable {  sendTokenToServer(token) }
+            retryUntilUserAvailable { sendTokenToServer(token) }
         }
     }
 
@@ -57,51 +58,53 @@ class FCMService : FirebaseMessagingService() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 userRepository.updateUserFCMToken(token)
-                Log.d("FCMService", "FCM Token successfully updated on server")
+                Log.d("FCMService", "✅ FCM Token successfully updated on server")
             } catch (e: Exception) {
-                Log.e("FCMService", "Failed to update FCM Token", e)
+                Log.e("FCMService", "❌ Failed to update FCM Token", e)
             }
         }
     }
 
     private fun handleEventCreated(remoteMessage: RemoteMessage) {
-        val title = "New Event Nearby!"
-        val message = remoteMessage.data["event_name"] ?: "An event was created near you."
+        val title = remoteMessage.notification?.title ?: "New Event Nearby!"
+        val message = remoteMessage.notification?.body ?: remoteMessage.data["event_name"]
+        ?: "An event was created near you."
 
         showNotification(title, message)
     }
 
     private fun handleUserJoined(remoteMessage: RemoteMessage) {
-        val title = "New Member!"
-        val message = "${remoteMessage.data["user_name"]} just joined your event."
+        val title = remoteMessage.notification?.title ?: "New Member!"
+        val message = remoteMessage.notification?.body
+            ?: "${remoteMessage.data["user_name"] ?: "Someone"} just joined your event."
 
         showNotification(title, message)
     }
 
     private fun handleGenericNotification(remoteMessage: RemoteMessage) {
-
-        Log.w("FCM Service", remoteMessage.toString())
-        val title = remoteMessage.data["title"] ?: "Notification"
-        val message = remoteMessage.data["body"] ?: "You have a new notification."
+        val title = remoteMessage.notification?.title ?: remoteMessage.data["title"] ?: "Notification"
+        val message = remoteMessage.notification?.body ?: remoteMessage.data["body"] ?: "You have a new notification."
 
         showNotification(title, message)
     }
 
     private fun showNotification(title: String, message: String) {
         val channelId = "spontaniius_notifications"
-
         val channel = NotificationChannel(
-            channelId, "Spontaniius Notifications",
+            channelId,
+            "Spontaniius Notifications",
             NotificationManager.IMPORTANCE_HIGH
         )
+
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
 
         val notificationManager = NotificationManagerCompat.from(context)
         val largeIconBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.spontaniius_notification)
 
-        // ✅ Check if permission is granted before sending notification
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED) {
+
             val builder = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_monochrome)
                 .setLargeIcon(largeIconBitmap)
@@ -110,23 +113,18 @@ class FCMService : FirebaseMessagingService() {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
 
-            notificationManager.notify(1, builder.build())
+            notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
         } else {
-            Log.w("FCMService", "Notification permission not granted. Skipping notification.")
+            Log.w("FCMService", "❗ Notification permission not granted. Skipping.")
         }
     }
 
-    suspend fun retryUntilUserAvailable(action: suspend () -> Unit) {
+    private suspend fun retryUntilUserAvailable(action: suspend () -> Unit) {
         var retries = 0
         while (userDao.getUser() == null && retries < 5) {
-            delay(1000) // Wait 1 second before retrying
+            delay(1000)
             retries++
         }
-        if (userDao.getUser() != null) {
-            action()
-        } else {
-            Log.e("FCMService", "User still not available after retries. Skipping FCM token update.")
-        }
+        userDao.getUser()?.let { action() } ?: Log.e("FCMService", "❌ User not found after retries.")
     }
-
 }

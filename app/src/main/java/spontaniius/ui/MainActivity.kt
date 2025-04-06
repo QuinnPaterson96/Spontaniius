@@ -129,6 +129,11 @@ class MainActivity : AppCompatActivity(){
                             startActivity(openURL)
                             return true
                         }
+
+                        R.id.report->{
+                            navController!!.navigate(R.id.reportUserFragment)
+                            return true
+                        }
                         R.id.sign_out -> {
                             authViewModel.signOut()
                             authViewModel.checkAuthState()

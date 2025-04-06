@@ -45,7 +45,11 @@ class ReportUserFragment : Fragment() {
             if (reportMessage.isEmpty()) {
                 Toast.makeText(requireContext(), "Please enter a report message.", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.submitReport(cardId = cardId, reportText = reportMessage)
+                if(cardId!=-1)
+                    viewModel.submitReport(cardId = cardId, reportText = reportMessage)
+                else{
+                    viewModel.submitReport(reportText = reportMessage)
+                }
             }
         }
 

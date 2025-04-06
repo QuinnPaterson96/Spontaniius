@@ -12,7 +12,7 @@ class ReportUserRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val userRepository: UserRepository
 ) {
-    suspend fun reportUser(cardId: Int, reportText: String): Result<ReportResponse> {
+    suspend fun reportUser(cardId: Int?, reportText: String): Result<ReportResponse> {
         return withContext(Dispatchers.IO) {
             val reporterId = userRepository.getUserId()
 

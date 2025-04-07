@@ -7,6 +7,7 @@ import spontaniius.data.local.dao.UserDao
 import spontaniius.data.local.entities.UserEntity
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.models.CreateUserRequest
+import spontaniius.data.remote.models.DeleteUserRequest
 import spontaniius.data.remote.models.UpdateUserCardRequest
 import spontaniius.data.remote.models.UpdateUserFCMTokenRequest
 import spontaniius.data.remote.models.UpdateUserRequest
@@ -135,6 +136,20 @@ class UserRepository @Inject constructor(
     suspend fun acceptTermsAndConditions(): Result<Unit> {
         val userId = userDao.getUser()!!.id // Get user ID from local storage
         return remoteDataSource.updateTermsAndConditions(userId)
+    }
+
+    suspend fun deleteUser(): Result<Unit> {
+        return try {
+            val userId = userDao.getUser()!!.id // Get user ID from local storage
+            val externalId = userDao.getUser()!!.external_id // Get user ID from local storage
+
+            return remoteDataSource.deleteUser(
+                userId = userId,
+                request = DeleteUserRequest(external_id = externalId!!)
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
 

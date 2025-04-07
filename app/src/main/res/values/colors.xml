@@ -21,5 +21,6 @@
     <color name="google_blue">#4285F4</color>
     <color name="lightBackground">#F8F8F8</color> <!-- Soft white/light gray -->
     <color name="highlight_orange">#FFB74D</color> <!-- Warm pastel orange -->
+    <color name="exit_red">#E80707</color>
 
 </resources>

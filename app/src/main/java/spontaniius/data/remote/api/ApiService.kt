@@ -122,4 +122,11 @@ interface ApiService {
     suspend fun updateTermsAndConditions(
         @Path("id") userId: String,
     ): Response<Unit>
+
+    @HTTP(method = "DELETE", path = "users/{id}", hasBody = true)
+    suspend fun deleteUser(
+        @Path("id") userId: String,
+        @Body request: DeleteUserRequest
+    ): Response<Unit>
+
 }

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/user_details" android:title=" Edit User Details"/>
+        android:id="@+id/user_details" android:title="@string/user_options"/>
     <item
-        android:id="@+id/edit_card" android:title="Edit Card"/>
+        android:id="@+id/edit_card" android:title="@string/edit_card"/>
     <item
-        android:id="@+id/about_us" android:title="About App"/>]
+        android:id="@+id/about_us" android:title="@string/about_app"/>
     <item
-        android:id="@+id/report_an_issue" android:title="App Feedback"/>
+        android:id="@+id/report_an_issue" android:title="@string/app_feedback"/>
     <item
-        android:id="@+id/report" android:title="Report"/>
+        android:id="@+id/report" android:title="@string/report"/>
     <item
         android:id="@+id/blank" android:title=""/>
     <item
-        android:id="@+id/sign_out" android:title="Sign out"/>
+        android:id="@+id/sign_out" android:title="@string/sign_out"/>
 
 
 </menu>

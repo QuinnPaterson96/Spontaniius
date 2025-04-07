@@ -154,6 +154,12 @@ class RemoteDataSource @Inject constructor(
         }
     }
 
+    suspend fun deleteUser(userId: String, request: DeleteUserRequest): Result<Unit>{
+        return safeApiCall {
+            apiService.deleteUser(userId, request)
+        }
+    }
+
     /** GOOGLE MAPS API **/
     suspend fun getLocationFromAddress(address: String, apiKey: String): Result<LatLng> {
         return try {

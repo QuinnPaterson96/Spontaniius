@@ -1,5 +1,6 @@
 package spontaniius.ui.user_options
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,6 +42,19 @@ class UserOptionsFragment : Fragment() {
         saveButton = view.findViewById(R.id.save_button)
         cancelButton = view.findViewById(R.id.cancel_button)
         loadingProgressBar = view.findViewById(R.id.loading)
+
+        val deleteButton: Button = view.findViewById(R.id.delete_account_button)
+
+        deleteButton.setOnClickListener {
+            showDeleteConfirmationDialog()
+        }
+
+        viewModel.accountDeleted.observe(viewLifecycleOwner) { deleted ->
+            if (deleted) {
+                Toast.makeText(requireContext(), "Account deleted", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.loginFragment)
+            }
+        }
 
         // Observe user data
         viewModel.user.observe(viewLifecycleOwner) { user ->
@@ -85,4 +99,25 @@ class UserOptionsFragment : Fragment() {
         // Load user data initially
         viewModel.loadUser()
     }
+
+    private fun showDeleteConfirmationDialog() {
+        val input = EditText(requireContext())
+        input.hint = "Type 'delete' to confirm"
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirm Deletion")
+            .setMessage("Are you sure you want to delete your account? This cannot be undone.")
+            .setView(input)
+            .setPositiveButton("Delete") { dialog, _ ->
+                if (input.text.toString().lowercase() == "delete") {
+                    viewModel.deleteUser()
+                } else {
+                    Toast.makeText(requireContext(), "Confirmation word not matched", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+            .show()
+    }
+
 }

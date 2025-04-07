@@ -137,6 +137,5 @@ class AuthRepository @Inject constructor(
      */
     fun signOut() {
         firebaseAuth.signOut()
-       // googleSignInClient.signOut()
     }
 }

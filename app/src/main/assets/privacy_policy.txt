@@ -1,0 +1,57 @@
+
+Privacy Policy
+
+Effective Date: April 4, 2025
+
+1. Introduction
+Spontaniius (“we”, “us”, “our”) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use the Spontaniius mobile app.
+
+2. Information We Collect
+We may collect the following information from users:
+
+Name and gender (provided during signup)
+
+Google account information (via OAuth)
+
+Last known location
+
+Device information
+
+Data stored locally on your device
+
+3. Purpose of Data Collection
+Your data is collected for the following purposes:
+
+To enable sign-ups and participation in events
+
+To display your name and allow identification by other users
+
+To send you location-based notifications
+
+To identify and ban users who violate our Terms of Service
+
+To improve app performance and user experience through analytics
+
+4. Data Sharing
+We do not sell your data. Data may be shared with trusted third-party services strictly for app functionality, including:
+
+Firebase for authentication, database storage, and notifications
+
+Google Maps API for geolocation services
+
+Google Analytics for performance and usage tracking
+
+5. Account and Data Deletion
+Users may request to delete their account and associated data at any time. Contact us at [Insert Contact Email] to initiate this process.
+
+6. Children's Privacy
+This app is not intended for individuals under the age of 18. We do not knowingly collect personal information from minors.
+
+7. Local Storage
+Spontaniius may use your device's local storage to cache data for performance and offline functionality.
+
+8. Updates
+We may update this policy from time to time. Changes will be reflected on this page with an updated effective date.
+
+9. Contact
+For questions regarding this Privacy Policy, contact us at quinnpaterson_1996@yahoo.ca.

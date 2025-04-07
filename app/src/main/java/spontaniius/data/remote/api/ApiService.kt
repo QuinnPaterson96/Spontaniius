@@ -118,7 +118,7 @@ interface ApiService {
         @Body request: UpdateUserFCMTokenRequest
     ): Response<Unit>
 
-    @PATCH("users/{id}/terms-and-condtions")
+    @PATCH("users/{id}/accept-terms")
     suspend fun updateTermsAndConditions(
         @Path("id") userId: String,
     ): Response<Unit>

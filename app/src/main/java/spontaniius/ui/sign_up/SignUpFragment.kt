@@ -42,7 +42,7 @@ class SignUpFragment : Fragment() {
         val loading = binding.loading
 
         // Gender dropdown
-        val genderOptions = arrayOf("Male", "Female", "Other")
+        val genderOptions = arrayOf("Male", "Female", "Non-Binary", "Other")
         genderSpinner.adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, genderOptions)
 

@@ -12,7 +12,7 @@
         android:id="@+id/pageHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Let's see who you've met!"
+        android:text="@string/let_s_see_who_you_ve_met"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -80,7 +80,7 @@
             android:paddingRight="8dp"
             android:textSize="40sp"
             android:textStyle="bold"
-            tools:text="Welcome To Spontaniius"
+            android:text="Welcome To Spontaniius"
             android:textColor="@color/quantum_black_100"
 
             />
@@ -99,7 +99,7 @@
             android:textSize="20sp"
 
 
-            tools:text="Go and meet some new people" />
+            android:text="Go and meet some new people" />
 
     </RelativeLayout>
 

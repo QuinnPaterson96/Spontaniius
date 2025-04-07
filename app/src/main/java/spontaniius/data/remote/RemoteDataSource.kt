@@ -148,7 +148,11 @@ class RemoteDataSource @Inject constructor(
         }
     }
 
-
+    suspend fun updateTermsAndConditions(userId: String): Result<Unit>{
+        return safeApiCall {
+            apiService.updateTermsAndConditions(userId)
+        }
+    }
 
     /** GOOGLE MAPS API **/
     suspend fun getLocationFromAddress(address: String, apiKey: String): Result<LatLng> {

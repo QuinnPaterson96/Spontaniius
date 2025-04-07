@@ -19,7 +19,6 @@ class UserRepository @Inject constructor(
     private val userDao: UserDao // ✅ Local Storage
 ) {
     private val _userDetails = MutableLiveData<UserResponse?>()
-    val userDetails: LiveData<UserResponse?> get() = _userDetails
 
     /**
      * Fetches user details from the API and updates local database + LiveData.
@@ -49,7 +48,8 @@ class UserRepository @Inject constructor(
             gender = user.gender,
             card_id = user.card_id,
             external_id = user.external_id,
-            auth_provider = user.auth_provider
+            auth_provider = user.auth_provider,
+            terms_accepted = user.terms_accepted
         )
         userDao.insertUser(userEntity)
     }
@@ -130,6 +130,11 @@ class UserRepository @Inject constructor(
     suspend fun updateUserFCMToken(fcmToken: String) {
         val userId = userDao.getUser()!!.id // Get user ID from local storage
         remoteDataSource.updateUserFCMToken(userId, UpdateUserFCMTokenRequest(fcmToken))
+    }
+
+    suspend fun acceptTermsAndConditions(): Result<Unit> {
+        val userId = userDao.getUser()!!.id // Get user ID from local storage
+        return remoteDataSource.updateTermsAndConditions(userId)
     }
 }
 

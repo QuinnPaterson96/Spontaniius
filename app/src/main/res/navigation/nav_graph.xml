@@ -121,8 +121,9 @@
             app:argType="string"
             android:defaultValue="" />
         <action
-            android:id="@+id/action_signupFragment_to_cardEditingFragment"
-            app:destination="@id/cardEditingFragment" />
+            android:id="@+id/action_signupFragment_to_termsAndConditionsFragment"
+            app:destination="@id/termsAndConditionsFragment" />
+
     </fragment>
 
 
@@ -145,9 +146,6 @@
         android:id="@+id/cardEditingFragment"
         android:name="spontaniius.ui.card_editing.CardEditingFragment"
         android:label="Card editing fragment">
-        <argument
-            android:name="name"
-            app:argType="string"/>
         <argument
             android:name="newUser"
             app:argType="boolean" />
@@ -193,6 +191,14 @@
                 android:name="eventId"
                 app:argType="integer" />
         </action>
+    </fragment>
+    <fragment
+        android:id="@+id/termsAndConditionsFragment"
+        android:name="spontaniius.ui.terms_and_conditions.TermsAndConditionsFragment"
+        android:label="TermsAndConditionsFragment" >
+        <action
+            android:id="@+id/action_termsAndConditionsFragment_to_cardEditingFragment"
+            app:destination="@id/cardEditingFragment" />
     </fragment>
 
 

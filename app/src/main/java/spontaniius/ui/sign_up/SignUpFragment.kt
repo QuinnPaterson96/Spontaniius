@@ -52,10 +52,7 @@ class SignUpFragment : Fragment() {
             result.fold(
                 onSuccess = {
                     val action = SignUpFragmentDirections
-                        .actionSignupFragmentToCardEditingFragment(
-                            name = userName.text.toString().trim(),  // Replace with actual value
-                            newUser = true
-                        )
+                        .actionSignupFragmentToTermsAndConditionsFragment()
                     findNavController().navigate(action)
 
              // ✅ Navigate to Find Events

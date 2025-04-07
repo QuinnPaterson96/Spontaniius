@@ -15,7 +15,7 @@ import spontaniius.data.local.entities.UserEntity
 
 @Database(
     entities = [UserEntity::class, CardEntity::class, EventEntity::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

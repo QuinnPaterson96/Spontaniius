@@ -23,6 +23,7 @@ class CardEditingFragment : Fragment() {
     private lateinit var selectedCardBackground: ImageView
     private lateinit var cardGreetingEdit: EditText
     private lateinit var loadingBar: ProgressBar
+    private lateinit var userNameView: TextView
 
     private var backgroundID = 0
     private val cardBackgrounds = arrayOf(
@@ -43,7 +44,7 @@ class CardEditingFragment : Fragment() {
         cardGreetingEdit = view.findViewById(R.id.card_greeting_edit)
 
 
-        view.findViewById<TextView>(R.id.selected_card_user_name).text = args.name
+        userNameView = view.findViewById<TextView>(R.id.selected_card_user_name)
         selectedCardBackground.setImageResource(cardBackgrounds[0])
         backgroundID = cardBackgrounds[0]
 
@@ -62,6 +63,25 @@ class CardEditingFragment : Fragment() {
             viewModel.createCard(cardGreetingEdit.text.toString(), backgroundID)
         }
 
+        setupObservers()
+
+
+        // Text change listener
+        cardGreetingEdit.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                greetingView.text = s.toString()
+            }
+        })
+
+
+        viewModel.getUserCardDetails()
+        viewModel.getUserDetails()
+
+    }
+
+    fun setupObservers(){
         // Observe ViewModel state
         viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
             loadingBar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -76,16 +96,6 @@ class CardEditingFragment : Fragment() {
                 findNavController().navigate(R.id.findEventFragment)
             }
         }
-
-        // Text change listener
-        cardGreetingEdit.addTextChangedListener(object : android.text.TextWatcher {
-            override fun afterTextChanged(s: android.text.Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                greetingView.text = s.toString()
-            }
-        })
-
         viewModel.userCard.observe(viewLifecycleOwner){ card ->
             if (card!=null){
                 if (card.greeting!=null){
@@ -94,8 +104,9 @@ class CardEditingFragment : Fragment() {
                 selectedCardBackground.setImageResource(card.background.toInt())
             }
         }
-        viewModel.getUserCardDetails()
-
+        viewModel.userDetails.observe(viewLifecycleOwner){ user ->
+            userNameView.text = user.name
+        }
     }
 
     private fun setupCardSelection(view: View) {

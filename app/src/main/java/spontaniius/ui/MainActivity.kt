@@ -109,7 +109,6 @@ class MainActivity : AppCompatActivity(){
                         }
                         R.id.edit_card -> {
                             val bundle = bundleOf(
-                                "name" to userDetails!!.name,
                                 "newUser" to false
                             )
 
@@ -149,7 +148,7 @@ class MainActivity : AppCompatActivity(){
 
         navController!!.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.loginFragment, R.id.signupFragment, R.id.phoneLoginFragment, R.id.OTPVerificationFragment -> {
+                R.id.loginFragment, R.id.signupFragment, R.id.phoneLoginFragment, R.id.OTPVerificationFragment, R.id.termsAndConditionsFragment-> {
                     bottomNavigation.visibility = View.GONE
                     optionsMenu.visibility = View.GONE
                 }
@@ -169,9 +168,13 @@ class MainActivity : AppCompatActivity(){
 
     fun setupObservers(){
         // User authentication handling
-        userViewModel.userAttributes.observe(this) { attributes ->
-            if (attributes!=null){
-                userDetails = attributes
+        userViewModel.userAttributes.observe(this) { user ->
+            if (user!=null){
+                userDetails = user
+                if (!user.terms_accepted){ // Indicates that the user hasn't accepted terms and conditions
+                    navController!!.navigate(R.id.termsAndConditionsFragment)
+                }
+
             }else{
                 // Indicates user didn't finish signup process
                 authViewModel.signOut()

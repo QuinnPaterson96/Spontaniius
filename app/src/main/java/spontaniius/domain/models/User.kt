@@ -7,5 +7,6 @@ data class User(
     val gender: String?,
     val cardId: Int?,
     val externalId: String?,
-    val authProvider: String?
+    val authProvider: String?,
+    val terms_accepted: Boolean
 )

@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import spontaniius.data.local.entities.UserEntity
 import spontaniius.data.repository.CardRepository
 import spontaniius.data.repository.UserRepository
 import spontaniius.domain.models.Card
+import spontaniius.domain.models.User
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +19,9 @@ class CardEditingViewModel @Inject constructor(
     private val cardRepository: CardRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
+
+    private val _userDetails = MutableLiveData<User>()
+    val userDetails = _userDetails
 
     private val _userCard = MutableLiveData<Card?>()
     val userCard: LiveData<Card?> = _userCard
@@ -42,6 +47,12 @@ class CardEditingViewModel @Inject constructor(
                 _error.value = error.message
             }
             _loading.value = false
+        }
+    }
+
+    fun getUserDetails(){
+        viewModelScope.launch {
+            userDetails.postValue(userRepository.getUserDetails()?.toDomainModel())
         }
     }
 

@@ -1,0 +1,54 @@
+📜 Spontaniius Terms of Service
+Last Updated: March 31, 2025
+
+Welcome to Spontaniius! These Terms of Service ("Terms") govern your use of the Spontaniius mobile app and related services ("Services"), provided by Spontaniius Inc. ("we", "us", "our").
+
+By signing in or using the app, you agree to these Terms. If you do not agree, you must not use the app.
+
+1. Eligibility and Account Use
+You must be at least 18 years old to use Spontaniius. By signing in (e.g. via Google OAuth), you confirm you meet this requirement. You are responsible for any activity under your account.
+
+2. Personal Data and Permissions
+We collect limited data to personalize your experience and support event functionality:
+
+Name and gender
+
+Email (via Google OAuth)
+
+Location (used only to show nearby events)
+
+We do not sell or share personal data for marketing. Local device storage is used to optimize app performance. For full details, refer to our Privacy Policy.
+
+3. User Conduct and Community Guidelines
+To keep Spontaniius safe and welcoming:
+
+Do not harass, impersonate, or bully others.
+
+Do not share offensive, harmful, or sexually exploitative content.
+
+Do not promote illegal activity.
+
+We reserve the right to ban or restrict users for violating these Terms.
+
+4. Child Safety Standards (CSAE Compliance)
+Spontaniius strictly prohibits all forms of Child Sexual Abuse and Exploitation (CSAE).
+
+We monitor and remove CSAE content.
+
+Users may report concerns via in-app feedback or email.
+
+All CSAM (Child Sexual Abuse Material) will be reported to authorities.
+
+CSAE Contact: Quinn Paterson – support@spontaniius.app
+
+5. In-App Feedback
+You can report users or give feedback via our in-app form or email us at support@spontaniius.app.
+
+6. Intellectual Property
+The Spontaniius name, logo, and app content are the property of Spontaniius Inc. You may not reproduce or distribute content without permission.
+
+7. Termination
+We may suspend or terminate access for users who violate these Terms.
+
+8. Changes to These Terms
+We may update these Terms periodically. Your continued use means you agree to the changes.

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1009715812296",
+    "firebase_url": "https://spontaniius-abba6-default-rtdb.firebaseio.com",
     "project_id": "spontaniius-abba6",
     "storage_bucket": "spontaniius-abba6.firebasestorage.app"
   },
@@ -35,6 +36,22 @@
           "android_info": {
             "package_name": "com.spontaniius",
             "certificate_hash": "8064dcc4d7509425232ea40c2f87bbdd1c9e4dc9"
+          }
+        },
+        {
+          "client_id": "1009715812296-e95ls2t4lp5rq7iplqe731a94mbb7vkp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spontaniius",
+            "certificate_hash": "262ca5fa519a1ea6d43888da47b88e1af51898de"
+          }
+        },
+        {
+          "client_id": "1009715812296-hc4782kru270acetabrkm4magt8bulms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spontaniius",
+            "certificate_hash": "04fc7f67d96014ab60f6e5a26c0ac2791c2fd388"
           }
         },
         {

@@ -65,7 +65,7 @@ class EventJoinViewModel @Inject constructor(
         }
     }
 
-    fun getGoogleMapsUrl(streetAddress: String?): String? {
-        return eventRepository.getGoogleMapsUrl(streetAddress)
+    fun getGoogleMapsUrl(lat: Double, lng: Double): String? {
+        return eventRepository.getGoogleMapsUrl(lat = lat, lng = lng)
     }
 }

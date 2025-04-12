@@ -225,8 +225,7 @@ class EventManagementFragment : Fragment() {
 
         getDirectionsButton = fragmentView.findViewById<View>(R.id.directions) as Button
         getDirectionsButton.setOnClickListener {
-            val streetAddress = currentEvent.address as? String
-            val mapsUrl = viewModel.getGoogleMapsUrl(streetAddress)
+            val mapsUrl = viewModel.getGoogleMapsUrl(lat = currentEvent.longitude, lng = currentEvent.longitude)
 
             mapsUrl?.let {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))

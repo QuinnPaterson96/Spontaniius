@@ -30,8 +30,7 @@ import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-
-
+import androidx.core.net.toUri
 
 
 /**
@@ -69,7 +68,7 @@ class EventJoinFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
         super.onCreate(savedInstanceState)
@@ -235,11 +234,10 @@ class EventJoinFragment : Fragment() {
 
         getDirectionsButton = fragmentView.findViewById<View>(R.id.directions) as Button
         getDirectionsButton.setOnClickListener {
-            val streetAddress = currentEvent.address as? String
-            val mapsUrl = viewModel.getGoogleMapsUrl(streetAddress)
+            val mapsUrl = viewModel.getGoogleMapsUrl(lat= currentEvent.latitude, lng = currentEvent.longitude)
 
             mapsUrl?.let {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                val intent = Intent(Intent.ACTION_VIEW, it.toUri())
                 startActivity(intent)
             }
         }

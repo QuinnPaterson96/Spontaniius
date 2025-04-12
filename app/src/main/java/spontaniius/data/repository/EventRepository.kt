@@ -101,9 +101,8 @@ class EventRepository @Inject constructor(
     }
 
 
-    fun getGoogleMapsUrl(streetAddress: String?): String? {
-        if (streetAddress.isNullOrEmpty()) return null
-        return "https://www.google.com/maps/dir/?api=1&destination=$streetAddress"
+    fun getGoogleMapsUrl(lat: Double, lng: Double): String {
+        return "https://www.google.com/maps/dir/?api=1&destination=$lat,$lng"
     }
 
     fun formatDate(date: Date): String {

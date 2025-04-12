@@ -156,4 +156,12 @@
     <string name="sign_out">Sign out</string>
     <string name="user_options">User Options</string>
     <string name="let_s_see_who_you_ve_met">Let\'s see who you\'ve met!</string>
+    <string name="starts_in_format">starts in</string>
+    <string name="ends_in_format">ends in</string>
+    <string name="event_has_ended">Event has ended</string>
+    <string name="hours_and_minutes">%3$s %1$d hour(s) %2$d minute(s)</string>
+    <string name="only_hours">%2$s %1$d hour(s)</string>
+    <string name="only_minutes">%2$s %1$d minute(s)</string>
+
+
 </resources>

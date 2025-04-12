@@ -168,7 +168,7 @@ class FindEventFragment : Fragment() {
                 hintButton.visibility = GONE
 
             }
-            val eventTiles = events.map { EventTile.fromDomain(it) }
+            val eventTiles = events.map { EventTile.fromDomain(it, requireContext()) }
             processEventTiles(eventTiles)
         }
 

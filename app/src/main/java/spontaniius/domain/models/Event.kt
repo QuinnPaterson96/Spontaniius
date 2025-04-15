@@ -1,8 +1,5 @@
 package spontaniius.domain.models
 
-import androidx.room.Entity
-
-import org.json.JSONObject
 import spontaniius.data.EventEntity
 
 
@@ -12,7 +9,7 @@ data class Event(
     val title: String,
     val description: String?,
     val gender: String,
-    val address: String,
+    val streetName: String?,
     val icon: String,
     val startTime: String,
     val endTime: String,
@@ -28,7 +25,7 @@ data class Event(
             ownerId = ownerId,
             description = this.description,
             gender = this.gender,
-            address = this.address,
+            streetName = this.streetName,
             icon = this.icon,
             startTime = this.startTime,
             endTime = this.endTime,

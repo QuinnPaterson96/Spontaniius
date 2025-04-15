@@ -45,9 +45,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
     private lateinit var selectedButton: RadioButton
     private lateinit var startTimeText: TextInputEditText
     private lateinit var endTimeText: TextInputEditText
-
-
-
+    private lateinit var searchEditText: EditText
     private var selectedGender: String = "Any"
     private var selectedIcon: String = ""
     private var userLatLng: LatLng? = null
@@ -81,7 +79,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         }
 
 
-        val searchEditText = viewLayout.findViewById<EditText>(R.id.locationSearchEditText)
+        searchEditText = viewLayout.findViewById<EditText>(R.id.locationSearchEditText)
         val suggestionsListView = viewLayout.findViewById<ListView>(R.id.suggestionsList)
 
 
@@ -213,6 +211,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             icon = selectedIcon,
             event_starts = getFormattedDateString(selectedStartTime.hour, selectedStartTime.minute),
             event_ends = getFormattedDateString(selectedEndTime.hour, selectedEndTime.minute),
+            streetName = searchEditText.text.toString(),
             latLng = userLatLng!!,
             max_radius = 5000)
     }

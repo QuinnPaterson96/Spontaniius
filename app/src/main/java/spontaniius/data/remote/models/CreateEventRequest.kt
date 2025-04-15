@@ -7,6 +7,7 @@ data class CreateEventRequest(
     @SerializedName("event_title") val eventTitle: String,
     @SerializedName("event_text") val eventText: String,
     @SerializedName("gender_restrict") val genderRestrict: String,
+    @SerializedName("street_name") val StreetName: String?,
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double,
     @SerializedName("icon") val icon: String,

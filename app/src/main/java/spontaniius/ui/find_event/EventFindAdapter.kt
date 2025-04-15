@@ -23,13 +23,14 @@ class EventFindAdapter(private var eventList: List<EventTile>) :
 
     class EventCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mImageView: ImageView = itemView.findViewById(R.id.imageView)
-        val mTextView1: TextView = itemView.findViewById(R.id.textView)
-        val mTextView2: TextView = itemView.findViewById(R.id.textView2)
-        val mTextViewDistance: TextView = itemView.findViewById(R.id.textView3)
-        val mTextViewTime: TextView = itemView.findViewById(R.id.textView4)
+        val eventTitle: TextView = itemView.findViewById(R.id.eventTitleField)
+        val eventDescriptionField: TextView = itemView.findViewById(R.id.eventDescriptionField)
+        val mTextViewDistance: TextView = itemView.findViewById(R.id.eventDistanceField)
+        val mTextViewTime: TextView = itemView.findViewById(R.id.eventTimeField)
         val directionButton: ImageView = itemView.findViewById(R.id.directionButton)
         val details: ConstraintLayout = itemView.findViewById(R.id.details)
         val timeRemainIndicator: Button = itemView.findViewById(R.id.time_indicator)
+        val addressField: TextView = itemView.findViewById(R.id.address_section)
 
         var eventId: Int = 0
         lateinit var event: Event
@@ -44,8 +45,9 @@ class EventFindAdapter(private var eventList: List<EventTile>) :
         val currentItem = eventList[position]
 
         holder.mImageView.setImageResource(currentItem.imageResource)
-        holder.mTextView1.text = currentItem.title
-        holder.mTextView2.text = currentItem.description
+        holder.eventTitle.text = currentItem.title
+        holder.eventDescriptionField.text = currentItem.description
+        holder.addressField.text = currentItem.streetName
         holder.eventId = currentItem.eventId
         holder.event = currentItem.event
 
@@ -77,7 +79,7 @@ class EventFindAdapter(private var eventList: List<EventTile>) :
         // Handle directions
         holder.directionButton.setOnClickListener {
             val locationPoint = try {
-                val locationJSON = JSONObject(currentItem.location)
+                val locationJSON = JSONObject(currentItem.streetName)
                 "${locationJSON.getDouble("x")},${locationJSON.getDouble("y")}"
             } catch (e: Exception) {
                 null

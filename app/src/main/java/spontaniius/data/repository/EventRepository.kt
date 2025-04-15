@@ -44,6 +44,7 @@ class EventRepository @Inject constructor(
                             icon: String,
                             event_starts: String,  // ISO 8601 format: YYYY-MM-DDTHH:mm:ssZ
                             event_ends: String,
+                            streetName: String?,
                             latLng: LatLng,
                             max_radius: Int): Result<EventResponse> {
 
@@ -58,6 +59,7 @@ class EventRepository @Inject constructor(
             icon = icon,
             eventStarts = event_starts,
             eventEnds = event_ends,
+            StreetName = streetName,
             latitude = latLng.latitude,
             longitude = latLng.longitude,
             maxRadius = max_radius,

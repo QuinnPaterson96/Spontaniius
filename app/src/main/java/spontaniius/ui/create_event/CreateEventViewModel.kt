@@ -42,6 +42,7 @@ class CreateEventViewModel @Inject constructor(
         description: String,
         gender: String,
         icon: String,
+        streetName: String?,
         event_starts: String,  // ISO 8601 format: YYYY-MM-DDTHH:mm:ssZ
         event_ends: String,
         latLng: LatLng,
@@ -54,6 +55,7 @@ class CreateEventViewModel @Inject constructor(
                 description = description,
                 gender = gender,
                 icon = icon,
+                streetName = streetName,
                 event_starts = event_starts,
                 event_ends = event_ends,
                 latLng = latLng,

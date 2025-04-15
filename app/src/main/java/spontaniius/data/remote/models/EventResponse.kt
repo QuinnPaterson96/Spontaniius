@@ -11,6 +11,7 @@ data class EventResponse(
     @SerializedName("event_text") val eventText: String?,
     @SerializedName("gender_restrict") val genderRestrict: String?,
     @SerializedName("street_address") val streetAddress: List<Double>?, // Maps directly to JSON array
+    @SerializedName("street_name") val streetName: String?,
     @SerializedName("icon") val icon: String?,
     @SerializedName("max_radius") val maxRadius: Int?,
     @SerializedName("event_starts") val eventStarts: String?,
@@ -27,7 +28,7 @@ data class EventResponse(
             title = eventTitle,
             description = eventText,
             gender = genderRestrict ?: "Any",
-            address = "Unknown Location",  // No explicit address field in JSON
+            streetName = streetName,  // No explicit address field in JSON
             icon = icon ?: "default_icon",
             startTime = eventStarts ?: "Unknown Start Time",
             endTime = eventEnds ?: "Unknown End Time",

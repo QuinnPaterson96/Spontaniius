@@ -130,7 +130,15 @@ class FindEventFragment : Fragment() {
         swipeContainer.setOnRefreshListener() {
             if(currLatLng!=null)
                 swipeContainer.isRefreshing = true
-                viewModel.fetchEvents(lat = currLatLng!!.latitude, lng = currLatLng!!.longitude, gender = null) // Todo maybe fix gender stuff
+                try {
+                    viewModel.fetchEvents(
+                        lat = currLatLng!!.latitude,
+                        lng = currLatLng!!.longitude,
+                        gender = null
+                    )
+                }catch (error: Exception){
+                    Log.e("Find Event Fragment", error.toString())
+                }
         }
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(

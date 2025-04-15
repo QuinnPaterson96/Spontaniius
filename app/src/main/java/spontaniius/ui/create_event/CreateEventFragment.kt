@@ -211,7 +211,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             icon = selectedIcon,
             event_starts = getFormattedDateString(selectedStartTime.hour, selectedStartTime.minute),
             event_ends = getFormattedDateString(selectedEndTime.hour, selectedEndTime.minute),
-            streetName = searchEditText.text.toString(),
+            streetName = searchEditText.text.toString().split(",")[0],
             latLng = userLatLng!!,
             max_radius = 5000)
     }

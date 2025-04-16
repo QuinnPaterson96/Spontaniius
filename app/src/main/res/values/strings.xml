@@ -162,6 +162,18 @@
     <string name="hours_and_minutes">%3$s %1$d hour(s) %2$d minute(s)</string>
     <string name="only_hours">%2$s %1$d hour(s)</string>
     <string name="only_minutes">%2$s %1$d minute(s)</string>
-
-
+    <string name="title_empty_error">Title cannot be empty!</string>
+    <string name="select_location_error">Please select a location.</string>
+    <string name="location_permission_error">Location permission denied</string>
+    <string name="activation_code">Activation code</string>
+    <string name="phone_number_prompt">Phone #</string>
+    <string name="no_name_error_prompt">Please enter your name</string>
+    <string name="report_text_error_prompt">Please enter a report message.</string>
+    <string name="enter_the_activation_code">Enter the activation code</string>
+    <string name="delete_confirm_prompt">Type \'%1$s\' to confirm</string>
+    <string name="delete_account_dialog_title">Confirm Deletion</string>
+    <string name="delete_confirmation_word">delete</string> <!-- For English -->
+    <string name="delete_account_dialog">Are you sure you want to delete your account? This cannot be undone.</string>
+    <string name="delete_confirmation_not_matched">Confirmation word not matched</string>
+    <string name="please_enter_your_phone_number">Please enter your phone number</string>
 </resources>

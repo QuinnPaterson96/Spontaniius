@@ -14,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.spontaniius.R
 import dagger.hilt.android.AndroidEntryPoint
 import spontaniius.ui.user_menu.UserOptionsViewModel
+import java.util.*
 
 @AndroidEntryPoint
 class UserOptionsFragment : Fragment() {
@@ -102,22 +103,30 @@ class UserOptionsFragment : Fragment() {
 
     private fun showDeleteConfirmationDialog() {
         val input = EditText(requireContext())
-        input.hint = "Type 'delete' to confirm"
+        val expectedConfirmation = getString(R.string.delete_confirmation_word)
+        input.hint = getString(R.string.delete_confirm_prompt, expectedConfirmation)
+        expectedConfirmation.lowercase()
+
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Confirm Deletion")
-            .setMessage("Are you sure you want to delete your account? This cannot be undone.")
+            .setTitle(getString(R.string.delete_account_dialog_title))
+            .setMessage(getString(R.string.delete_account_dialog))
             .setView(input)
-            .setPositiveButton("Delete") { dialog, _ ->
-                if (input.text.toString().lowercase() == "delete") {
+            .setPositiveButton(getString(R.string.delete_confirmation_word).replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }) { dialog, _ ->
+                if (input.text.toString().lowercase() == expectedConfirmation) {
                     viewModel.deleteUser()
                 } else {
-                    Toast.makeText(requireContext(), "Confirmation word not matched", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.delete_confirmation_not_matched), Toast.LENGTH_SHORT).show()
                 }
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+            .setNegativeButton(getString(android.R.string.cancel)) { dialog, _ -> dialog.cancel() }
             .show()
     }
+
 
 }

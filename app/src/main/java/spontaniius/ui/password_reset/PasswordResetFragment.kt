@@ -102,9 +102,9 @@ class ResetPasswordFragment : Fragment() {
     private fun transitionToCodeInput() {
         ccp.visibility = View.GONE
         passwordSection.visibility = View.VISIBLE
-        instructionTextView.text = "Enter the activation code"
+        instructionTextView.text = getString(R.string.enter_the_activation_code)
         confirmationCodeEditText.setText("")
-        confirmationCodeEditText.hint = "Activation Code"
+        confirmationCodeEditText.hint = getString(R.string.activation_code)
         resendCodeButton.visibility = View.VISIBLE
         confirmPhoneButton.visibility = View.GONE
         confirmButton.visibility = View.VISIBLE
@@ -113,9 +113,9 @@ class ResetPasswordFragment : Fragment() {
     private fun resetToPhoneInput() {
         passwordSection.visibility = View.GONE
         ccp.visibility = View.VISIBLE
-        instructionTextView.text = "Please enter your phone number"
+        instructionTextView.text = getString(R.string.please_enter_your_phone_number)
         confirmationCodeEditText.setText(phoneNumber)
-        confirmationCodeEditText.hint = "Phone #"
+        confirmationCodeEditText.hint = getString(R.string.phone_number_prompt)
         confirmPhoneButton.visibility = View.VISIBLE
         confirmButton.visibility = View.GONE
         resendCodeButton.visibility = View.GONE

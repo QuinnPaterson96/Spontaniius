@@ -43,7 +43,7 @@ class ReportUserFragment : Fragment() {
         sendReportButton.setOnClickListener {
             val reportMessage = reportText.text.toString().trim()
             if (reportMessage.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter a report message.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.report_text_error_prompt), Toast.LENGTH_SHORT).show()
             } else {
                 if(cardId!=-1)
                     viewModel.submitReport(cardId = cardId, reportText = reportMessage)
@@ -55,13 +55,6 @@ class ReportUserFragment : Fragment() {
 
         // Observe ViewModel
         viewModel.reportResult.observe(viewLifecycleOwner) { report ->
-            Toast.makeText(
-                requireContext(),
-                "Report Submitted! Report ID: ${report.reportId}\n" +
-                        "Reported Card ID: ${report.reportedId}\n" +
-                        "Created At: ${report.createdAt}",
-                Toast.LENGTH_LONG
-            ).show()
             findNavController().navigateUp() // Go back after submission
         }
 

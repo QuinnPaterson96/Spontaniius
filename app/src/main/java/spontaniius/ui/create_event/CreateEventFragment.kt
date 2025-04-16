@@ -187,12 +187,12 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
         val description = descriptionField.text.toString().trim()
 
         if (title.isEmpty()) {
-            Toast.makeText(requireContext(), "Title cannot be empty!", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.title_empty_error), Toast.LENGTH_LONG).show()
             return
         }
 
         if (userLatLng == null) {
-            Toast.makeText(requireContext(), "Please select a location.", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.select_location_error) , Toast.LENGTH_LONG).show()
             return
         }
         /*
@@ -284,7 +284,7 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
             viewModel.permissionGranted() // Reset permission flag in ViewModel
             viewModel.getCurrentLocation() // Retry fetching location
         } else {
-            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.location_permission_error), Toast.LENGTH_SHORT).show()
         }
     }
 

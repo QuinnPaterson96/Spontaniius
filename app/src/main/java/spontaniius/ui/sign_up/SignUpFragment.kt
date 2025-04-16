@@ -72,7 +72,7 @@ class SignUpFragment : Fragment() {
                 loading.visibility = View.VISIBLE
                 viewModel.registerUser(args.externalId, args.authProvider, nameText, gender)
             } else {
-                Toast.makeText(requireContext(), "Please enter your name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.no_name_error_prompt), Toast.LENGTH_SHORT).show()
             }
         }
     }

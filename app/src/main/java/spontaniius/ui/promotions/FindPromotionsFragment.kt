@@ -50,40 +50,6 @@ class FindPromotionsFragment : Fragment() {
     private var PromosForList = ArrayList<PromotionEntry>() //[1]
     private var promotionDetailList = ArrayList<PromotionDetailPage>()
 
-   /* override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-           // param1 = it.getString(ARG_PARAM1)
-           // param2 = it.getString(ARG_PARAM2)
-        }
-        PromosForList.add(PromotionEntry(1, "FirstYETI", "This is a text feild yooo!")) //[1]
-        promotionDetailList.add(PromotionDetailPage(1,"FirstYETI","This is a detail pargarapgh. This code likely requires further rewrites but let's get the intial concept up and running"))
-        PromosForList.add(PromotionEntry(2, "YETI^2", "Huh we still out here with text lads"))
-        promotionDetailList.add(PromotionDetailPage(2,"YETI^2","YETI*YETI = YETI^2 QUICKMATHS"))
-        PromosForList.add(
-            PromotionEntry(
-                3,
-                "YETI YEET",
-                "Listening to chillhop at 4:17am and coding. Quarintine life"
-            )
-        )
-        promotionDetailList.add(PromotionDetailPage(3,"YETI YEET","The wild yeti can be heard screaming 'Yeet!' from the mountaintops regularly in this spectacular display of a mating call in the Hymilayas"))
-       var promoAdapter = PromoDetailAdapter(requireActivity().application
-           ,PromosForList);
-        Promotion_List.adapter = promoAdapter
-        Promotion_List.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
-            Toast.makeText(requireActivity().application, "Click on " + PromosForList[position].title, Toast.LENGTH_SHORT).show()
-            //val intent = Intent(this, PromotionTab::class.java)
-
-           // val ID = "ID"
-           // intent.putExtra(ID, PromosForList[position].id as? Int)
-           // startActivity(intent);
-
-        }
-
-
-    } */
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

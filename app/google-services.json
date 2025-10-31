@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "1009715812296-5tl3l72gsl3cik3bbss4jo8pk1sju166.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spontaniius",
+            "certificate_hash": "11917e6f1535158e04828009b0105995a786afc3"
+          }
+        },
+        {
           "client_id": "1009715812296-9e01ki79c2a5do8ppglhvj37cci63j2f.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -61,7 +69,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD8afMLq2baCUnYoXDrwsuhn8ghU9WVF9E"
+          "current_key": "AIzaSyAsN2y0T_2lNfLZIY4kzj2RhDYrpAWbEYk"
         }
       ],
       "services": {

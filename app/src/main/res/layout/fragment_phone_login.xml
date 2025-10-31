@@ -6,42 +6,60 @@
     android:layout_height="match_parent"
     android:padding="20dp">
 
+    <!-- Horizontal Guideline at 30% -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3125926" />
+
+    <!-- Country Code Picker -->
     <com.hbb20.CountryCodePicker
         android:id="@+id/ccp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:ccp_defaultNameCode="CA"/>
+        app:ccp_defaultNameCode="CA"
+        app:layout_constraintTop_toTopOf="@id/guideline_30"
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Username / Phone Input -->
     <EditText
         android:id="@+id/username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/enter_phone_number"
         android:inputType="phone"
+        app:layout_constraintTop_toTopOf="@id/ccp"
+        app:layout_constraintBottom_toBottomOf="@id/ccp"
         app:layout_constraintStart_toEndOf="@id/ccp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Error Message -->
     <TextView
         android:id="@+id/phone_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/invalid_phone_number"
         android:textColor="@android:color/holo_red_light"
         android:visibility="gone"
-        android:text="@string/invalid_phone_number"
-        app:layout_constraintTop_toBottomOf="@id/username"/>
+        app:layout_constraintTop_toBottomOf="@id/ccp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Login Button -->
     <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:background="@drawable/spontaniius_primary_button"
         android:text="@string/verify_phone"
         app:layout_constraintTop_toBottomOf="@id/phone_error"
-        android:background="@drawable/spontaniius_primary_button"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Progress Indicator -->
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="wrap_content"

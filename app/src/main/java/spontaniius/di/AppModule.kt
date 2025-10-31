@@ -34,7 +34,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-    private const val BASE_URL = "https://fgvdpt3hht.us-east-1.awsapprunner.com"
+    private const val BASE_URL = "https://spontaniiusbackend-production.up.railway.app"
     private const val BASE_URL_GOOGLE = "https://maps.googleapis.com/"
     private const val BASE_URL_GOOGLE_PLACES = "https://places.googleapis.com/v1/"
 

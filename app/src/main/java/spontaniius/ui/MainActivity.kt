@@ -90,8 +90,6 @@ class MainActivity : AppCompatActivity(){
                 }
 
                 val token = task.result
-                Log.d("FCM_Debug", "FCM Token: $token")
-
                 sendTokenToServer(token) // Move token update logic here
             }
 

@@ -47,8 +47,6 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("FCMService", "New FCM Token: $token")
-
         CoroutineScope(Dispatchers.IO).launch {
             retryUntilUserAvailable { sendTokenToServer(token) }
         }

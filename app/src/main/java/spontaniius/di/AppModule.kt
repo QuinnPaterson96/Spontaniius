@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.room.Room
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import spontaniius.data.data_source.local.EventDao
@@ -19,6 +19,7 @@ import spontaniius.data.local.AppDatabase
 import spontaniius.data.local.dao.CardDao
 import spontaniius.data.local.dao.UserDao
 import spontaniius.data.remote.RemoteDataSource
+import spontaniius.data.remote.FirebaseIdTokenInterceptor
 import spontaniius.data.remote.api.ApiService
 import spontaniius.data.remote.api.GoogleApiService
 import spontaniius.data.remote.api.PlacesApiService
@@ -34,7 +35,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-    private const val BASE_URL = "https://spontaniiusbackend-production.up.railway.app"
+    private const val BASE_URL = "https://spontaniiusbackend-production.up.railway.app/"
     private const val BASE_URL_GOOGLE = "https://maps.googleapis.com/"
     private const val BASE_URL_GOOGLE_PLACES = "https://places.googleapis.com/v1/"
 
@@ -103,13 +104,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
-
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // Logs full request/response body
-        }
-
         val client = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
+            .addInterceptor(FirebaseIdTokenInterceptor(FirebaseAuth.getInstance()))
             .build()
 
         return Retrofit.Builder()
@@ -139,15 +135,10 @@ object AppModule {
     @Provides
     @Singleton
     fun providePlacesApiService(): PlacesApiService {
-        val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
-
         return Retrofit.Builder()
             .baseUrl(BASE_URL_GOOGLE_PLACES) // Ensure correct base URL
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .client(OkHttpClient.Builder().build())
             .build()
             .create(PlacesApiService::class.java)
     }

@@ -150,9 +150,6 @@ class LoginFragment : Fragment() {
         if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
 
-            // 🔹 Log the ID token to debug
-            Log.d(TAG, "Google ID Token: ${googleIdTokenCredential.idToken}")
-
             // 🔹 Ensure token is not null before proceeding
             if (googleIdTokenCredential.idToken.isNullOrEmpty()) {
                 Log.e(TAG, "Received empty Google ID Token!")

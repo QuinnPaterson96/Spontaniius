@@ -16,7 +16,7 @@ The file is a proposed replacement, not deployed rules. Run the isolated harness
 
 ## Data and logs
 
-Removed Places response/suggestion, selected-address, chat payload/path, and OTP verification-ID logging. Maps/Places initialization and automatic SDK behavior remain; no dependency upgrade or change to the Data safety declaration is claimed. Firebase uses Auth, Realtime Database and Messaging; no Analytics/Crashlytics collection was established by dependencies. Provider agreements, exact runtime SDK behavior, retention and optional-location QA remain audit tasks.
+Removed Places response/suggestion, selected-address, chat payload/path, and OTP verification-ID logging. Maps/Places initialization and automatic SDK behavior remain; no dependency upgrade or change to the Data safety declaration is claimed. Task awaiting explicitly depends on `kotlinx-coroutines-play-services:1.8.0`, matching the existing coroutines-core version. The declaration avoids relying on SDK transitive dependency resolution. Firebase uses Auth, Realtime Database and Messaging; no Analytics/Crashlytics collection was established by dependencies. Provider agreements, exact runtime SDK behavior, retention and optional-location QA remain audit tasks.
 
 ## Validation
 

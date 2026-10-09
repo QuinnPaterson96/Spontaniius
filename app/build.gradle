@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace "com.spontaniius"
-    compileSdk = 34  // Use 30 or above
+    compileSdk = 36
 
     signingConfigs {
         release {
@@ -49,7 +49,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 36
         multiDexEnabled true
-        versionCode 14
+        versionCode 19
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -60,12 +60,6 @@ android {
     buildFeatures {
         buildConfig = true // ✅ Ensures BuildConfig is generated
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11  // Use Java 11+
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -80,7 +74,6 @@ android {
 
 dependencies {
     // Play Integrity
-    implementation 'com.google.android.gms:play-services-safetynet:18.0.1' // For older versions
     implementation 'com.google.android.play:integrity:1.1.0'
 
 
@@ -126,7 +119,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0") // Logs API calls
     implementation "com.github.bumptech.glide:glide:4.16.0"
-    implementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     // Room (Database)
     def room_version = "2.6.1"

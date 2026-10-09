@@ -1,57 +1,35 @@
+SPONTANIIUS PRIVACY POLICY
+Last updated: October 9, 2026
 
-Privacy Policy
+1. About this policy
+Spontaniius connects people through nearby events, profile cards and event chat. This policy covers the Spontaniius Android app, website and shared account service. Features and information collected differ between the app and website. For privacy questions or account-deletion help, use the website Feedback page to prepare an email to the existing Spontaniius contact, quinn@spontaniius.com. You must review and send that email yourself; opening Feedback does not submit a request.
 
-Effective Date: April 4, 2025
+2. Account and profile information
+Google or phone sign-in is handled by Firebase Authentication. Depending on the method you choose, Firebase receives your phone number or Google account information such as email, display name and profile photo, together with authentication identifiers and security information. The account service stores a separate account identifier, Firebase user identifier, name, sign-in provider and profile fields submitted by the client, including phone number and gender where provided. We use this information to sign you in, synchronize your profile and authorize account actions.
 
-1. Introduction
-Spontaniius (“we”, “us”, “our”) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use the Spontaniius mobile app.
+3. Location and place searches
+Nearby searches send selected coordinates to our service. A signed-in nearby search also updates the last known location stored on your account, including when you select a place manually. It can be used to find events and target nearby event notifications. Android location permission allows the app to obtain your device location; you can control it in device settings. Place suggestions, map requests and geocoding send queries, coordinates and request information to Google Maps/Places. Event meeting coordinates and street information are stored with the event and shown to other users. Do not publish a private location that you do not want others to see.
+The website's optional Remember this area feature stores one rounded area on your device for up to seven days. Forgetting it removes that device preference; it does not remove coordinates already stored on your account. The website also keeps current search/results in memory during browsing.
 
-2. Information We Collect
-We may collect the following information from users:
+4. Events, cards, reports and messages
+We store event titles, descriptions, meeting points, dates, creator and participant references, profile-card text and backgrounds, collections of exchanged cards and report text. This supports event discovery, participation, exchanging cards and reporting concerns. Event end-time filtering hides expired events from discovery but does not automatically delete them.
+Android event chat stores message text, sender information and timestamps in Firebase Realtime Database. Information you choose to post in events, cards or chat is available to the other users involved in those features. Other users may save copies. Reports contain the information you submit about the concern and affected accounts or content.
 
-Name and gender (provided during signup)
+5. Notifications, device and operational information
+Android uses Firebase Cloud Messaging and installation/device identifiers to deliver notifications. Your account may store a notification token. Firebase and Google Maps/Places receive technical information such as IP addresses, device/app metadata, identifiers, security checks, SDK diagnostics and map interactions as described in their service disclosures. We use account and request information to operate the service, prevent abuse and apply request limits. The website uses a service-issued guest cookie for request limiting; it is not a signed-in identity.
+The app may cache account data on the device, and Firebase manages browser sign-in persistence. Website language preferences and the optional remembered area use device storage. You can clear browser/app storage, but this does not delete your server account.
 
-Google account information (via OAuth)
+6. Services and disclosure
+Google/Firebase provides authentication, Android messaging and chat storage. Google Maps/Places provides maps, place suggestions and geocoding. Railway hosts our API, Aiven hosts its PostgreSQL database, and Netlify hosts the website. These services receive the information needed to process requests and operate their services. Their security, technical-data and retention practices are described in their own policies. Google Maps/Places may also use technical information to improve Google services. Account deletion does not delete your underlying Google account.
+Sharing event, card and chat content with other users is part of the functionality you choose to use. Avoid submitting sensitive information about yourself or another person in free-text fields. The current application uses these services for functionality, account management, diagnostics and security; it does not offer an advertising feature.
 
-Last known location
+7. Retention and account deletion
+Account and submitted content remain in active storage until removed through the supported deletion process; there is no automatic 90-day account or content deletion. You can request account deletion on the Delete Account page at https://spontaniius.com/delete-account without reinstalling Android. Sign in with the same Google account or phone number, review the scope and confirm. A verified deletion request is different from completed deletion: the page reports completion only when the service confirms cleanup. Account changes are paused once removal begins, including if a later chat review prevents completion. An initial review refusal before removal begins leaves the account usable. While a request is pending, the service keeps a limited recovery record containing the account identifiers, request reference, affected event identifiers, request time and cleanup progress. That recovery record is removed when deletion completes. A separate minimal blocked account identifier remains after completion to prevent old sign-in tokens from accessing chat. This security marker contains no profile or message content and has no automatic expiry; removing it requires a security review once old tokens can no longer be valid.
+The supported process removes the account profile and its saved location/notification token, cards and collections, owned events and their shared chat rooms/collections, participation and references to your cards in others' events, linked reports, identifiable chat messages and Firebase Authentication identity. Older chat messages containing only a sender name cannot reliably be assigned to an account. They require review before deletion can complete; the service must not delete somebody else's messages based on a shared name. If the page reports review required, use Feedback for account-deletion help. Requests can also remain pending when a provider fails; retry as directed. Signing out does not delete an account. If sign-in stops working after cleanup has begun, use Feedback with the displayed deletion request reference. Signing in again may create a different Firebase identity instead of completing the old request.
+Provider logs and backups may remain after removal from active application storage. We do not publish an unverified fixed purge period for our hosting/database backups. Firebase documents that authentication information is removed from its live and backup systems within 180 days after customer-initiated deletion, and logged authentication IP addresses are retained for a few weeks. Other provider retention differs by product. Account deletion does not remove independent copies saved by other users or cached data on other devices; clear those devices' app/browser data separately.
 
-Device information
+8. Security and your choices
+The application uses HTTPS for the configured API, Google and Firebase connections. Sign-in tokens are verified by the account service for protected actions. No security measure guarantees protection against every risk. Choose what you publish, manage device location/notification permissions, forget a remembered area, sign out, or request account deletion. Contact us through Feedback if you need help with a privacy request; do not send passwords, sign-in tokens or verification codes.
 
-Data stored locally on your device
-
-3. Purpose of Data Collection
-Your data is collected for the following purposes:
-
-To enable sign-ups and participation in events
-
-To display your name and allow identification by other users
-
-To send you location-based notifications
-
-To identify and ban users who violate our Terms of Service
-
-To improve app performance and user experience through analytics
-
-4. Data Sharing
-We do not sell your data. Data may be shared with trusted third-party services strictly for app functionality, including:
-
-Firebase for authentication, database storage, and notifications
-
-Google Maps API for geolocation services
-
-Google Analytics for performance and usage tracking
-
-5. Account and Data Deletion
-Users may request to delete their account and associated data at any time. Contact us at [Insert Contact Email] to initiate this process.
-
-6. Children's Privacy
-This app is not intended for individuals under the age of 18. We do not knowingly collect personal information from minors.
-
-7. Local Storage
-Spontaniius may use your device's local storage to cache data for performance and offline functionality.
-
-8. Updates
-We may update this policy from time to time. Changes will be reflected on this page with an updated effective date.
-
-9. Contact
-For questions regarding this Privacy Policy, contact us at quinnpaterson_1996@yahoo.ca.
+9. Changes
+We update this policy when supported features or data handling change. The current policy is maintained at https://spontaniius.com/privacy. Older policy/deletion links may describe earlier versions; use this policy and the current Delete Account page for current instructions.

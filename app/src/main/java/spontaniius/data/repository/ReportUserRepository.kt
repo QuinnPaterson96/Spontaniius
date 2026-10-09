@@ -25,11 +25,11 @@ class ReportUserRepository @Inject constructor(
 
                 val response = remoteDataSource.reportUser(request)
                 response.map { reportResponse ->
-                    Log.d("ReportUserRepository", "Report submitted successfully: ${reportResponse.reportId}")
+                    Log.d("ReportUserRepository", "Report submitted successfully")
                     reportResponse // ✅ Returns ReportResponse
                 }
             } catch (e: Exception) {
-                Log.e("ReportUserRepository", "Error submitting report: ${e.localizedMessage}")
+                Log.e("ReportUserRepository", "Error submitting report: ${e.javaClass.simpleName}")
                 Result.failure(e)
             }
         }

@@ -19,6 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import spontaniius.data.local.dao.UserDao
+import spontaniius.data.repository.AccountDeletionCleanup
+import com.google.firebase.auth.FirebaseAuth
 import spontaniius.data.repository.UserRepository
 import javax.inject.Inject
 
@@ -26,10 +28,12 @@ import javax.inject.Inject
 class FCMService : FirebaseMessagingService() {
 
     @Inject lateinit var context: Context
+    @Inject lateinit var accountDeletionCleanup: AccountDeletionCleanup
     @Inject lateinit var userRepository: UserRepository
     @Inject lateinit var userDao: UserDao
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        if (accountDeletionCleanup.isPending || FirebaseAuth.getInstance().currentUser == null) return
         // If a notification payload is present, show it immediately
         remoteMessage.notification?.let {
             showNotification(it.title ?: "Spontaniius", it.body ?: "You have a new message.")
@@ -47,6 +51,7 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        if (accountDeletionCleanup.isPending || FirebaseAuth.getInstance().currentUser == null) return
         CoroutineScope(Dispatchers.IO).launch {
             retryUntilUserAvailable { sendTokenToServer(token) }
         }

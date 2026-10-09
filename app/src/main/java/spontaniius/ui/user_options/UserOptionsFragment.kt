@@ -9,6 +9,8 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import android.content.Intent
+import spontaniius.ui.MainActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.spontaniius.R
@@ -53,8 +55,16 @@ class UserOptionsFragment : Fragment() {
         viewModel.accountDeleted.observe(viewLifecycleOwner) { deleted ->
             if (deleted) {
                 Toast.makeText(requireContext(), "Account deleted", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.loginFragment)
+                startActivity(Intent(requireContext(), MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
             }
+        }
+
+        viewModel.deletionError.observe(viewLifecycleOwner) { message ->
+            if (message != null) AlertDialog.Builder(requireContext())
+                .setTitle("Account deletion incomplete").setMessage(message)
+                .setPositiveButton("Retry") { _, _ -> viewModel.deleteUser() }
+                .setNegativeButton(android.R.string.cancel, null).show()
         }
 
         // Observe user data
@@ -73,6 +83,8 @@ class UserOptionsFragment : Fragment() {
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             saveButton.isEnabled = !isLoading
+            deleteButton.isEnabled = !isLoading
+            cancelButton.isEnabled = !isLoading
         }
 
         // Save button updates user details
@@ -110,7 +122,7 @@ class UserOptionsFragment : Fragment() {
 
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.delete_account_dialog_title))
-            .setMessage(getString(R.string.delete_account_dialog))
+            .setMessage(getString(R.string.delete_account_dialog) + "\n\nYour account use will be paused once deletion cleanup begins. Older chat records may require support review. Completion is confirmed only after server and device cleanup.")
             .setView(input)
             .setPositiveButton(getString(R.string.delete_confirmation_word).replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(

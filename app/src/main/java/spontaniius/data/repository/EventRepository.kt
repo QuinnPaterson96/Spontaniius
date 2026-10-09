@@ -99,7 +99,8 @@ class EventRepository @Inject constructor(
         }
     }
     suspend fun saveCreatedEvent(event: Event){
-        eventDao.insertEvent(event.toEntity())
+        val expectedUid = userRepository.getUserDetails()?.external_id
+        userRepository.cacheForCurrentAccount(expectedUid) { eventDao.insertEvent(event.toEntity()) }
     }
 
 

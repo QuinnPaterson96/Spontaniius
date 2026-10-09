@@ -14,6 +14,7 @@ class CardRepository @Inject constructor(
     private val cardDao: CardDao
 ) {
     suspend fun getCardDetails(cardIds: List<Int>): List<Card> {
+        val expectedUid = userRepository.getUserDetails()?.external_id
         return try {
             // ✅ Get cached cards & ensure proper List<Card> return type
             val cachedCards: List<Card> = cardDao.getCardsByIds(cardIds)
@@ -33,7 +34,7 @@ class CardRepository @Inject constructor(
                     val newCards: List<Card> = response.map { it.toDomain() } // ✅ Convert to domain
                     val newCardEntities: List<CardEntity> = response.map { it.toEntity() } // ✅ Convert to entity
 
-                    cardDao.insertCards(newCardEntities) // ✅ Insert only if new cards exist
+                    userRepository.cacheForCurrentAccount(expectedUid) { cardDao.insertCards(newCardEntities) } // ✅ Insert only if new cards exist
 
                     return (cachedCards + newCards).distinctBy { it.id } // ✅ Merge and remove duplicates
                 }
@@ -69,7 +70,9 @@ class CardRepository @Inject constructor(
 
             response.fold(
                 onSuccess = { responseBody ->
-                    cardDao.insertCards(listOf(responseBody.toEntity()))
+                    userRepository.cacheForCurrentAccount(user.external_id) {
+                        cardDao.insertCards(listOf(responseBody.toEntity()))
+                    }
                     val cardId = responseBody.cardId
                     if (cardId != null) {
                         Result.success(cardId) // ✅ Return extracted card ID

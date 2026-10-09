@@ -136,6 +136,7 @@ class AuthRepository @Inject constructor(
      * ✅ **Log out user**
      */
     fun signOut() {
+        forceResendingToken = null
         firebaseAuth.signOut()
     }
 }

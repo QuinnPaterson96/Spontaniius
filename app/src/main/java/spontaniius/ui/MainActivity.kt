@@ -13,6 +13,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import spontaniius.data.repository.AccountDeletionCleanup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 
@@ -61,10 +63,28 @@ class MainActivity : AppCompatActivity(){
     @Inject
     lateinit var userDao: UserDao
 
+    @Inject lateinit var accountDeletionCleanup: AccountDeletionCleanup
+
     private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (accountDeletionCleanup.isPending) {
+            lifecycleScope.launch {
+                try {
+                    accountDeletionCleanup.resume()
+                    recreate()
+                } catch (error: Exception) {
+                    android.app.AlertDialog.Builder(this@MainActivity)
+                        .setTitle("Device cleanup pending")
+                        .setMessage("Your server account was deleted. Connect to the internet and retry to clear cached data and notifications.")
+                        .setPositiveButton("Retry") { _, _ -> recreate() }
+                        .setNegativeButton("Close") { _, _ -> finish() }
+                        .setCancelable(false).show()
+                }
+            }
+            return
+        }
         setContentView(R.layout.activity_main)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
@@ -82,23 +102,14 @@ class MainActivity : AppCompatActivity(){
         optionsMenu = actionBarView.findViewById(R.id.main_menu)
         appContext = this
 
-        FirebaseMessaging.getInstance().token
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.e("FCM_Debug", "Fetching FCM token failed", task.exception)
-                    return@addOnCompleteListener
-                }
-
-                val token = task.result
-                sendTokenToServer(token) // Move token update logic here
-            }
-
         optionsMenu.setOnClickListener {
+            if (accountDeletionCleanup.requestInProgress || accountDeletionCleanup.isPending) return@setOnClickListener
             val popup = PopupMenu(this, optionsMenu)
             val inflater = popup.menuInflater
             inflater.inflate(R.menu.main_menu, popup.menu)
             popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
                 override fun onMenuItemClick(item: MenuItem): Boolean {
+                    if (accountDeletionCleanup.requestInProgress || accountDeletionCleanup.isPending) return true
 
                     return when (item.itemId) {
                         R.id.user_details -> {
@@ -167,6 +178,13 @@ class MainActivity : AppCompatActivity(){
     fun setupObservers(){
         // User authentication handling
         userViewModel.userAttributes.observe(this) { user ->
+            if (user != null && !accountDeletionCleanup.isPending) {
+                FirebaseMessaging.getInstance().isAutoInitEnabled = true
+                FirebaseMessaging.getInstance().subscribeToTopic("spontaniius_notifications")
+                FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                    if (!accountDeletionCleanup.isPending) sendTokenToServer(token)
+                }
+            }
             if (user!=null){
                 userDetails = user
                 if (!user.terms_accepted){ // Indicates that the user hasn't accepted terms and conditions
@@ -214,6 +232,7 @@ class MainActivity : AppCompatActivity(){
         CoroutineScope(Dispatchers.IO).launch {
             try
             {
+                if (accountDeletionCleanup.isPending) return@launch
                 userRepository.updateUserFCMToken(token)
                 Log.d("FCM_Debug", "Token successfully sent to server")
             }

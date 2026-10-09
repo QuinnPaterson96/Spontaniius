@@ -71,7 +71,7 @@ class LocationRepository @Inject constructor(
                 LatLng(location.latitude, location.longitude)
             }
         } catch (e: Exception) {
-            Log.e("LocationRepository", "Error fetching location: ${e.localizedMessage}")
+            Log.e("LocationRepository", "Error fetching location: ${e.javaClass.simpleName}")
             Result.failure(e)
         }
     }

@@ -37,13 +37,12 @@ class PhoneLoginViewModel @Inject constructor(
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                Log.e("PhoneLoginViewModel", "OTP Verification Failed: ${e.localizedMessage}")
+                Log.e("PhoneLoginViewModel", "OTP Verification Failed: ${e.javaClass.simpleName}")
                 _error.postValue(e.localizedMessage)
                 callback(Result.failure(e))
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
-                Log.d("PhoneLoginViewModel", "OTP Sent: $verificationId")
                 _verificationId.postValue(verificationId)
                 forceResendingToken = token
                 callback(Result.success(verificationId))

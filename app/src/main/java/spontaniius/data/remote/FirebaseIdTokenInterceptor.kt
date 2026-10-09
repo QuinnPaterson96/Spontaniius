@@ -12,7 +12,15 @@ class FirebaseIdTokenInterceptor(
     private val firebaseAuth: FirebaseAuth
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val user = firebaseAuth.currentUser ?: return chain.proceed(chain.request())
+        val identity = chain.request().tag(AccountDeletionIdentity::class.java)
+        val user = firebaseAuth.currentUser
+        if (identity != null) {
+            if (user != null && user.uid != identity.uid) throw IOException("Account identity changed")
+            if (identity.signedToken.isBlank()) throw IOException("Firebase ID token unavailable")
+            return chain.proceed(chain.request().newBuilder()
+                .header("Authorization", "Bearer ${identity.signedToken}").build())
+        }
+        if (user == null) return chain.proceed(chain.request())
         val token = try {
             // Firebase reuses a valid cached token and refreshes it when needed.
             Tasks.await(user.getIdToken(false), 10, TimeUnit.SECONDS).token

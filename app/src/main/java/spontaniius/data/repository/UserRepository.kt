@@ -1,13 +1,15 @@
 package spontaniius.data.repository
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import spontaniius.data.local.dao.UserDao
 import spontaniius.data.local.entities.UserEntity
+import spontaniius.data.remote.AccountDeletionIdentity
 import spontaniius.data.remote.RemoteDataSource
 import spontaniius.data.remote.models.CreateUserRequest
-import spontaniius.data.remote.models.DeleteUserRequest
 import spontaniius.data.remote.models.UpdateUserCardRequest
 import spontaniius.data.remote.models.UpdateUserFCMTokenRequest
 import spontaniius.data.remote.models.UpdateUserRequest
@@ -19,6 +21,7 @@ class UserRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource, // ✅ Remote API
     private val userDao: UserDao // ✅ Local Storage
 ) {
+    private val localUserMutex = Mutex()
     private val _userDetails = MutableLiveData<UserResponse?>()
 
     /**
@@ -31,7 +34,6 @@ class UserRepository @Inject constructor(
 
         return remoteDataSource.getUser(userId, externalId).also { result ->
             result.onSuccess { user ->
-                _userDetails.postValue(user) // ✅ Update LiveData on success
                 saveUserLocally(user) // ✅ Store in Room Database
             }
         }
@@ -41,33 +43,37 @@ class UserRepository @Inject constructor(
      * Saves user details locally in Room database.
      */
     private suspend fun saveUserLocally(user: UserResponse) = withContext(Dispatchers.IO) {
-        clearUser()
-        val userEntity = UserEntity(
-            id = user.id,
-            name = user.name,
-            phone = user.phone,
-            gender = user.gender,
-            card_id = user.card_id,
-            external_id = user.external_id,
-            auth_provider = user.auth_provider,
-            terms_accepted = user.terms_accepted
-        )
-        userDao.insertUser(userEntity)
+        localUserMutex.withLock {
+            val signedInUid = FirebaseAuth.getInstance().currentUser?.uid ?: return@withLock
+            if (signedInUid != user.external_id) return@withLock
+            userDao.clearUser()
+            userDao.insertUser(UserEntity(
+                id = user.id, name = user.name, phone = user.phone, gender = user.gender,
+                card_id = user.card_id, external_id = user.external_id,
+                auth_provider = user.auth_provider, terms_accepted = user.terms_accepted
+            ))
+            _userDetails.postValue(user)
+        }
     }
 
-    /**
-     * Retrieves user details from local database.
-     */
     suspend fun getUserFromLocal(): User? = withContext(Dispatchers.IO) {
-        userDao.getUser()?.toDomainModel() // No explicit `return`
+        userDao.getUser()?.toDomainModel()
     }
 
-    /**
-     * Clears stored user details when logging out.
-     */
     suspend fun clearUser() = withContext(Dispatchers.IO) {
-        userDao.clearUser()
-        _userDetails.postValue(null) // ✅ Also clear LiveData
+        localUserMutex.withLock {
+            userDao.clearUser()
+            _userDetails.postValue(null)
+        }
+    }
+
+    /** Serializes late cache writes with deletion, refusing another or signed-out identity. */
+    suspend fun cacheForCurrentAccount(expectedUid: String?, write: suspend () -> Unit) {
+        localUserMutex.withLock {
+            if (expectedUid == null || FirebaseAuth.getInstance().currentUser?.uid != expectedUid) return@withLock
+            if (userDao.getUser()?.external_id != expectedUid) return@withLock
+            write()
+        }
     }
 
     suspend fun getUserCardId(): Int? = withContext(Dispatchers.IO) {
@@ -85,7 +91,6 @@ class UserRepository @Inject constructor(
     suspend fun createUser(request: CreateUserRequest): Result<UserResponse> {
          val response = remoteDataSource.createUser(request)
           response.onSuccess { result ->
-              _userDetails.postValue(result)
               saveUserLocally(result)
           }
         return response
@@ -122,7 +127,7 @@ class UserRepository @Inject constructor(
             user.card_id = cardId
         }
         if (user != null) {
-            userDao.insertUser(user)
+            cacheForCurrentAccount(user.external_id) { userDao.insertUser(user) }
         }
 
         return remoteDataSource.updateUserCard(request)
@@ -138,19 +143,7 @@ class UserRepository @Inject constructor(
         return remoteDataSource.updateTermsAndConditions(userId)
     }
 
-    suspend fun deleteUser(): Result<Unit> {
-        return try {
-            val userId = userDao.getUser()!!.id // Get user ID from local storage
-            val externalId = userDao.getUser()!!.external_id // Get user ID from local storage
-
-            return remoteDataSource.deleteUser(
-                userId = userId,
-                request = DeleteUserRequest(external_id = externalId!!)
-            )
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun deleteUser(identity: AccountDeletionIdentity): Result<Unit> = remoteDataSource.deleteAccount(identity).mapCatching { response ->
+        check(response.status == "completed") { "Account deletion has not completed. Please retry." }
     }
 }
-
-

@@ -1,6 +1,12 @@
 package spontaniius.ui.user_menu
 
-import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
+import spontaniius.data.remote.AccountDeletionIdentity
+import retrofit2.HttpException
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
+import spontaniius.data.repository.AccountDeletionCleanup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +14,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import spontaniius.data.local.dao.UserDao
-import spontaniius.data.remote.models.UserResponse
-import spontaniius.data.repository.AuthRepository
 import spontaniius.data.repository.UserRepository
 import spontaniius.domain.models.User
 import javax.inject.Inject
@@ -17,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserOptionsViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository,
+    private val cleanup: AccountDeletionCleanup,
     private val userDao: UserDao
 ) : ViewModel() {
 
@@ -32,6 +36,11 @@ class UserOptionsViewModel @Inject constructor(
 
     private val _accountDeleted = MutableLiveData<Boolean>()
     val accountDeleted: LiveData<Boolean> = _accountDeleted
+
+    private var serverDeletionCompleted = false
+    private var deletionIdentity: AccountDeletionIdentity? = null
+    private val _deletionError = MutableLiveData<String?>()
+    val deletionError: LiveData<String?> = _deletionError
 
     /**
      * Load user details from backend
@@ -63,21 +72,41 @@ class UserOptionsViewModel @Inject constructor(
     }
 
     fun deleteUser() {
+        if (_isLoading.value == true) return
         _isLoading.value = true
+        cleanup.requestInProgress = true
+        _deletionError.value = null
         viewModelScope.launch {
             try {
-                val user = userDao.getUser()
-                if (user != null) {
-                    val result = userRepository.deleteUser()
-                    result.onSuccess {
-                        authRepository.signOut()
-                        _accountDeleted.postValue(true)
+                if (!cleanup.isPending && !serverDeletionCompleted) {
+                    if (deletionIdentity == null) {
+                        val user = FirebaseAuth.getInstance().currentUser
+                            ?: throw IllegalStateException("Sign in before deleting your account")
+                        val token = user.getIdToken(false).await().token
+                            ?: throw IllegalStateException("Sign-in token unavailable")
+                        check(FirebaseAuth.getInstance().currentUser?.uid == user.uid)
+                        deletionIdentity = AccountDeletionIdentity(user.uid, token)
                     }
-                    result.onFailure { error ->
-                        Log.e("User Options", error.toString())
-                    }
+                    userRepository.deleteUser(checkNotNull(deletionIdentity)).getOrThrow()
+                    serverDeletionCompleted = true
                 }
-            }finally {
+                // Once the server confirms deletion, rotation must not interrupt local cleanup.
+                withContext(NonCancellable) {
+                    if (cleanup.isPending) cleanup.resume() else cleanup.afterServerCompletion(checkNotNull(deletionIdentity).uid)
+                }
+                deletionIdentity = null
+                _user.value = null
+                _accountDeleted.value = true
+            } catch (error: Exception) {
+                val currentUid = FirebaseAuth.getInstance().currentUser?.uid
+                _deletionError.value = when {
+                    deletionIdentity != null && currentUid != null && currentUid != deletionIdentity?.uid -> "Your sign-in changed. This request belongs to your previous account. No data from the current account was cleared. Use spontaniius.com/delete-account for assistance with the previous request."
+                    cleanup.isPending || serverDeletionCompleted -> "Your server account was deleted. Device cleanup could not finish. Retry to clear cached data and notifications."
+                    error is HttpException && error.code() == 409 -> "Deletion requires support review. Your account has not been fully deleted. Visit spontaniius.com/delete-account for assistance."
+                    else -> "Account deletion has not completed. Please retry. Your sign-in is kept for retry. Account use is paused once deletion cleanup begins."
+                }
+            } finally {
+                cleanup.requestInProgress = false
                 _isLoading.value = false
             }
         }

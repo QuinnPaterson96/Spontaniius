@@ -1,5 +1,6 @@
 package spontaniius.data.remote.api
 
+import spontaniius.data.remote.AccountDeletionIdentity
 import retrofit2.Response
 import retrofit2.http.*
 import spontaniius.data.remote.models.*
@@ -123,10 +124,7 @@ interface ApiService {
         @Path("id") userId: String,
     ): Response<Unit>
 
-    @HTTP(method = "DELETE", path = "users/{id}", hasBody = true)
-    suspend fun deleteUser(
-        @Path("id") userId: String,
-        @Body request: DeleteUserRequest
-    ): Response<Unit>
+    @DELETE("users/me/account")
+    suspend fun deleteAccount(@Tag identity: AccountDeletionIdentity): Response<AccountDeletionResponse>
 
 }

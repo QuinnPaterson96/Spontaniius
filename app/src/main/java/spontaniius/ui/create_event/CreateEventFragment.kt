@@ -301,7 +301,6 @@ class CreateEventFragment : Fragment(), MapsFragment.MapsInteractionListener {
 
             listView.setOnItemClickListener { _, _, position, _ ->
                 val selectedPlace = places[position]
-                Log.i("FindEventFragment", "Selected Place: ${selectedPlace.placePrediction.text_field.fullText}")
 
                 // Hide the list & update EditText
                 listView.visibility = View.GONE

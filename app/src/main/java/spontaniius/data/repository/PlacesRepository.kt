@@ -50,15 +50,13 @@ class PlacesRepository @Inject constructor(
         val request = AutocompleteRequest(input = query, locationBias = locationFilter, sessionToken = generateSessionToken())
         val result = remoteDataSource.getAutocompleteResults(request, apiKey = apiKey)
 
-        Log.d("PlacesRepository", "Raw result: $result") // 🚀 Debug API result
 
         result.fold(
             onSuccess = {
-                Log.d("PlacesRepository", "Success: ${it.suggestions}") // ✅ Log successful response
                 emit(it.suggestions)
             },
             onFailure = {
-                Log.e("PlacesRepository", "API call failed: ${it.message}") // ✅ Log error
+                Log.e("PlacesRepository", "API call failed: ${it.javaClass.simpleName}") // ✅ Log error
             }
         )
     }.flowOn(Dispatchers.IO)

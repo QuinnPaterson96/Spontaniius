@@ -154,9 +154,15 @@ class RemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun deleteUser(userId: String, request: DeleteUserRequest): Result<Unit>{
-        return safeApiCall {
-            apiService.deleteUser(userId, request)
+    suspend fun deleteAccount(identity: AccountDeletionIdentity): Result<AccountDeletionResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.deleteAccount(identity)
+            if (!response.isSuccessful) Result.failure(HttpException(response))
+            else response.body()?.takeIf { it.confirmsCompletion(response.code()) }
+                ?.let { Result.success(it) }
+                ?: Result.failure(IllegalStateException("Account deletion is pending."))
+        } catch (error: Exception) {
+            Result.failure(error)
         }
     }
 
@@ -174,7 +180,7 @@ class RemoteDataSource @Inject constructor(
                 LatLng(location.lat, location.lng)
             }
         } catch (e: Exception) {
-            Log.e("RemoteDataSource", "Error fetching location: ${e.localizedMessage}")
+            Log.e("RemoteDataSource", "Error fetching location: ${e.javaClass.simpleName}")
             Result.failure(e)
         }
     }

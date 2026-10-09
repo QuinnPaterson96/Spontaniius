@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.spontaniius.R
@@ -49,7 +50,6 @@ class EventChatFragment : Fragment() {
         }
 
         messagesRef = FirebaseDatabase.getInstance().getReference("chats/$eventId")
-        Log.d("ChatFragment", "Using Firebase path: chats/$eventId")
 
         listOfMessages = view.findViewById(R.id.list_of_chat_messages)
         sendMessageButton = view.findViewById(R.id.send_message_button)
@@ -118,9 +118,14 @@ class EventChatFragment : Fragment() {
         if (user != null) {
             val text = input.text.toString().trim()
             if (text.isBlank()) return
+            if (text.length > 10000) {
+                input.error = "Messages must be 10,000 characters or fewer"
+                return
+            }
 
-            val message = ChatMessage(text, user.name)
-            Log.d("FirebaseSend", "Sending to path: ${messagesRef.path}, message: $message")
+            val senderUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+            if (senderUid != user.externalId) return
+            val message = ChatMessage(text, user.name.take(100), senderUid = senderUid)
 
             messagesRef.push().setValue(message)
                 .addOnSuccessListener {
@@ -128,7 +133,8 @@ class EventChatFragment : Fragment() {
                     input.setText("")
                 }
                 .addOnFailureListener { e ->
-                    Log.e("FirebaseSend", "Failed to send message", e)
+                    input.error = "Message was not sent. Please retry."
+                    Log.e("FirebaseSend", "Message send failed: ${e.javaClass.simpleName}")
                 }
         } else {
             Log.e("FirebaseSend", "User not initialized, cannot send message")

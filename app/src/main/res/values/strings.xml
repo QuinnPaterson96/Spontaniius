@@ -178,6 +178,9 @@
     <string name="search_for_card_by_name">Search for card by Name</string>
     <string name="go_and_meet_some_new_people">Go and meet some new people</string>
     <string name="elipsis">...</string>
+    <string name="google_sign_in_failed">Google sign-in could not finish. Try again or continue with phone.</string>
+    <string name="sign_in_profile_unavailable">You signed in, but your profile could not be loaded.</string>
+    <string name="retry_profile_load">Retry</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="continue_with_phone">Continue with Phone</string>
     <string name="please_enter_confirmation_code_you_recieved_by_phone">Please Enter Confirmation Code You Recieved By Phone</string>
